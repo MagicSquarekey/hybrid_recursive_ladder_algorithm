@@ -1,0 +1,63 @@
+# Changelog
+
+All notable changes to this project are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
+
+## [0.0.1] — 2026-10-22
+
+First standalone open-source release, extracted from AutoTestHub.
+
+### Added
+
+* Pure decomposition core (`month → day → hour → minute`) with configurable
+  finest level, IANA timezone support and a strict tiling invariant.
+* `LadderEngine` with source-only, local-only and local-first mixed reads.
+* Local materialization with coverage tracking, a 5-minute grace period and
+  rewrite-safe coverage invalidation.
+* Segment-level verification with point-level drilling (`added`, `removed`,
+  `changed`) and repair from the authoritative source.
+* `TimeSeriesSource` and `PointStore` protocols; adapters for ThingsBoard,
+  PostgreSQL, and in-memory use.
+* PostgreSQL schema with monthly partitions, idempotent upserts, batched range
+  sums and coverage tables (`hl_readings`, `hl_coverage`).
+* ThingsBoard adapter handling the 500-bucket limit, mid-bucket timestamps,
+  inclusive `endTs`, token refresh and error translation.
+* `hybrid-ladder` CLI: `decompose`, `demo`, `sum`, `verify`, `repair`,
+  `materialize`, `serve`, `mcp`, `version`.
+* FastAPI app with async tasks, progress, cancellation, synchronous variants
+  and the `{"code":0,"data":...}` envelope.
+* MCP server with `ladder_meta`, `ladder_decompose`, `ladder_sum` and
+  `ladder_verify` (supports MCP 1.x and 2.x).
+* Agent skill package under `skills/hybrid-recursive-ladder/`.
+* Deterministic demo data and an end-to-end `hybrid-ladder demo`.
+* 90+ tests covering decomposition, folding, mixed reads, materialization,
+  verification, repair, tasks, API, CLI, MCP, ThingsBoard and PostgreSQL.
+
+### Fixed (relative to the original AutoTestHub implementation)
+
+* **Multi-level fetch grouping.** Fetch runs are grouped by fetch level +
+  contiguity instead of adjacency only. The original fetched a whole
+  multi-level range at the coarsest level, which assigned a full day's value to
+  the first hour and lost the remaining hours/minutes.
+  Regression: `tests/test_engine.py::test_multilevel_query_is_exact`.
+* **Raw chunk boundary.** Bisection now uses `[a, mid)` and `[mid, b)` under the
+  exclusive-end contract. The original used `mid + 1`, dropping a point that
+  landed exactly on the split boundary.
+  Regression: `tests/test_engine.py::test_raw_split_keeps_boundary_point`.
+
+### Changed
+
+* PostgreSQL tables are namespaced (`namespace`, `entity`, `name`) and use a
+  configurable `table_prefix` instead of AutoTestHub's
+  `connection_id/device_id/device`.
+* `TaskRegistry` is reusable (multiple instances, TTL, max tasks) instead of a
+  module-level singleton.
+* The MCP tool layer and HTTP layer share one `runtime.engine_from_env()`.
+
+### Known limitations
+
+* Only the `sum` rule is implemented. `avg` and `meter_delta` need additional
+  aggregation semantics.
+* In-process task results are lost on restart (data is not).
+* The original AutoTestHub `device_id` migration is not automatic.
