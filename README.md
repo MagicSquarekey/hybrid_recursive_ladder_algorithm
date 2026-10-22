@@ -9,7 +9,7 @@
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.2-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.3-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 
 ---
@@ -70,11 +70,11 @@ through the production benchmark and the request-count argument.
 
 ## Install
 
-> v0.0.2 is distributed through the GitHub release. PyPI publication is planned.
+> v0.0.3 is distributed through the GitHub release. PyPI publication is planned.
 
 ```bash
-# v0.0.2 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
+# v0.0.3 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.3/hybrid_recursive_ladder-0.0.3-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -355,7 +355,7 @@ incomplete data.
 
 ## Known limitations
 
-* **Sum only in v0.0.2.** Average needs `sum` + `count` weighting; meter-delta
+* **Sum only in v0.0.3.** Average needs `sum` + `count` weighting; meter-delta
   needs the first value of every segment (ThingsBoard has no `FIRST`
   aggregation), so those rules are not on the ladder yet.
 * **Data completeness ≠ arithmetic correctness.** If the source has missing
@@ -449,7 +449,7 @@ If you use this project, cite the software:
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.2},
+  version = {0.0.3},
   license = {MIT},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }

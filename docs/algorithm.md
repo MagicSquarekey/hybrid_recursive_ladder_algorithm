@@ -368,6 +368,9 @@ it does not require writing to or reconfiguring the source. See
 
 ## 13. Version notes
 
+**0.0.3** — archival release. No algorithm semantics changed. Bumps the
+version for the Zenodo DOI archive.
+
 **0.0.2** — documentation and public-disclosure release. No algorithm semantics
 changed. Adds the prior-art review, the formal refinement/segment-count/
 request-count propositions, the public disclosure document, citation metadata

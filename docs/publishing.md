@@ -1,6 +1,6 @@
 # 发布与传播清单
 
-这份清单记录 v0.0.2 已经完成的公开发布动作，以及需要账号授权的最后几步。
+这份清单记录 v0.0.3 已经完成的公开发布动作，以及需要账号授权的最后几步。
 
 ## 已经完成
 
@@ -11,17 +11,20 @@
 - `docs/related-work.md` / `.zh-CN.md`：先例对比与定位。
 - `docs/articles/why-per-bucket-queries-are-slow.md` / `.zh-CN.md`：技术文章。
 - `docs/index.html`：GitHub Pages 落地页，已启用：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
-- GitHub Release `v0.0.2`：公开时间戳 + wheel 构建。
+- GitHub Release `v0.0.3`：归档 release，触发 Zenodo DOI。
 
-## 1. Zenodo DOI（需要你登录一次）
+## 1. Zenodo DOI（仓库已启用，等待归档）
 
-Zenodo 不能由仓库里的代码自动创建，需要账户授权。步骤：
+`MagicSquarekey/hybrid_recursive_ladder_algorithm` 已在 Zenodo 的 GitHub 设置中启用。`v0.0.3` 是归档 release，Zenodo 会自动读取 `.zenodo.json` 并生成 DOI。
 
-1. 用 GitHub 登录 <https://zenodo.org>。
-2. 打开 **Settings → GitHub**，找到 `MagicSquarekey/hybrid_recursive_ladder_algorithm`，把开关打开。
-3. 回到 GitHub，创建一个新的 release（例如 `v0.0.3`；已经存在的 `v0.0.2` 不会被自动补归档）。
-4. Zenodo 会自动读取 `.zenodo.json`，生成 DOI。
-5. 把 DOI 填回：
+如果几分钟后没有出现记录：
+
+1. 刷新 Zenodo 的 GitHub 页面，确认开关是 ON、状态是 "Repository synced successfully"。
+2. 点 **Sync now**。
+3. 如果 `v0.0.3` 没有被识别，创建一个新的 release（如 `v0.0.4`）；Zenodo 只归档启用之后创建的 release。
+4. 也可以手动在 Zenodo 上传 `dist/hybrid_recursive_ladder-0.0.3.tar.gz` 和 wheel，发布后同样得到 DOI。
+
+拿到 DOI 后，填回：
    - `CITATION.cff` 的 `identifiers`（或 `doi` 字段）；
    - `README.md` / `README.zh-CN.md` 的 Citation 部分；
    - `docs/defensive-publication.md` 的 Citation 部分；
@@ -93,7 +96,7 @@ python -m twine upload dist/*
 - Description：以 “Query planning for bucket-limited time-series APIs” 开头。
 - Topics：`time-series`, `aggregation`, `query-planning`, `downsampling`, `multi-resolution`, `thingsboard`, `observability`, `python`, `mcp`, `iot` 等。
 - Homepage：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
-- Release `v0.0.2`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.2>，包含公开披露说明和 wheel。
+- Release `v0.0.3`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.3>，归档 release，包含公开披露说明和 wheel。
 
 ## 5. 维护动作
 

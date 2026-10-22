@@ -34,8 +34,8 @@
 ## インストール
 
 ```bash
-# v0.0.2 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
+# v0.0.3 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.3/hybrid_recursive_ladder-0.0.3-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -165,7 +165,7 @@ class PointStore(Protocol):
 
 ## 制限
 
-* v0.0.2 は `sum` のみ。`avg` は加重、`meter_delta` は各セグメントの先頭値が必要で未実装です。
+* v0.0.3 は `sum` のみ。`avg` は加重、`meter_delta` は各セグメントの先頭値が必要で未実装です。
 * データ欠損があると合計は物理的な総量より小さくなります。`cnt/expected` で疎であることを示すだけで、補間はしません。
 * ThingsBoard の区間集約は約 700 バケットまで（800 は拒否）。既定は 500 です。
 * バックグラウンドタスクはプロセスメモリ上にあり、再起動で失われます（結果は再計算可能）。

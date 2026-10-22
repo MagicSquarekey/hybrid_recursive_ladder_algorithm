@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
+## [0.0.3] — 2026-10-22
+
+Archival release. No code or algorithm changes. This release triggers Zenodo's
+GitHub integration so the public disclosure receives a DOI.
+
+### Changed
+
+* Bumped the package version to `0.0.3` and updated citation, install and site
+  metadata for the archival release.
+
 ## [0.0.2] — 2026-10-22
 
 Documentation and public-disclosure release. No algorithm semantics changed.

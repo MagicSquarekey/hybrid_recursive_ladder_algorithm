@@ -9,7 +9,7 @@
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.2-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.3-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 
 ---
@@ -46,11 +46,11 @@
 
 ## 安装
 
-> v0.0.2 通过 GitHub Release 分发；PyPI 发布已列入计划。
+> v0.0.3 通过 GitHub Release 分发；PyPI 发布已列入计划。
 
 ```bash
-# v0.0.2 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
+# v0.0.3 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.3/hybrid_recursive_ladder-0.0.3-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -279,7 +279,7 @@ InfluxDB / Prometheus / ClickHouse / TimescaleDB 只需实现上述方法即可�
 
 ## 已知限制
 
-* **v0.0.2 只做 sum**：平均需要 sum+cnt 加权；累计量差分需要每段首值（TB 没有 FIRST 聚合），暂未上阶梯。
+* **v0.0.3 只做 sum**：平均需要 sum+cnt 加权；累计量差分需要每段首值（TB 没有 FIRST 聚合），暂未上阶梯。
 * **数据完整 ≠ 加法正确**：数据源缺采样时，合计会偏小；用 `cnt/expected` 识别稀疏。
 * **TB 限制**：区间聚合 700 桶可、800 桶拒（默认 500）；原始序列单次 1 万点；`COUNT` 会吞同分钟重复点。
 * **后台任务在进程内存**：重启即丢，结果可重算，固化数据不丢。
@@ -361,7 +361,7 @@ pytest -m integration
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.2},
+  version = {0.0.3},
   license = {MIT},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }

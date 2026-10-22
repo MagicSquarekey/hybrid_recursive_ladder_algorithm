@@ -2,7 +2,7 @@
 
 **Author:** MagicSquarekey  
 **Date:** 2026-10-22  
-**Version:** 0.0.2  
+**Version:** 0.0.3  
 **License:** MIT  
 **Repository:** <https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm>
 
@@ -221,7 +221,7 @@ under the MIT License.
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.2},
+  version = {0.0.3},
   license = {MIT},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }
@@ -233,7 +233,7 @@ File Format; GitHub's "Cite this repository" button reads it.
 
 ## 7. Integrity and status
 
-This document is part of the `v0.0.2` release. The normative implementation at
+This document is part of the `v0.0.3` release. The normative implementation at
 that tag is the Python package in `src/hybrid_ladder/`; the normative algorithm
 specification is [`algorithm.md`](algorithm.md), with a Chinese mirror at
 [`algorithm.zh-CN.md`](algorithm.zh-CN.md). The public repository history and
