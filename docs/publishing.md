@@ -13,28 +13,27 @@
 - `docs/index.html`：GitHub Pages 落地页，已启用：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
 - GitHub Release `v0.0.3`：归档 release，触发 Zenodo DOI。
 
-## 1. Zenodo DOI（仓库已启用，等待归档）
+## 1. Zenodo DOI（已完成）
 
-`MagicSquarekey/hybrid_recursive_ladder_algorithm` 已在 Zenodo 的 GitHub 设置中启用。`v0.0.3` 是归档 release，Zenodo 会自动读取 `.zenodo.json` 并生成 DOI。
+`v0.0.3` 已被 Zenodo 归档，版本 DOI 是 **10.5281/zenodo.23556606**：
 
-如果几分钟后没有出现记录：
+- 记录：<https://zenodo.org/records/23556606>
+- 版本 DOI：<https://doi.org/10.5281/zenodo.23556606>
+- concept DOI（所有版本）：<https://doi.org/10.5281/zenodo.23556605>
+
+DOI 已填回 `CITATION.cff`、README（中英文）、`docs/defensive-publication.md` 和 `docs/index.html`。后续发版时，Zenodo 会在同一个 concept DOI 下生成新版本 DOI。
+
+如果后续版本没有自动归档：
 
 1. 刷新 Zenodo 的 GitHub 页面，确认开关是 ON、状态是 "Repository synced successfully"。
 2. 点 **Sync now**。
-3. 如果 `v0.0.3` 没有被识别，创建一个新的 release（如 `v0.0.4`）；Zenodo 只归档启用之后创建的 release。
-4. 也可以手动在 Zenodo 上传 `dist/hybrid_recursive_ladder-0.0.3.tar.gz` 和 wheel，发布后同样得到 DOI。
+3. 如果新 release 没有被识别，创建下一个 release；Zenodo 只归档启用之后创建的 release。
+4. 也可以手动在 Zenodo 上传 `dist/hybrid_recursive_ladder-<version>.tar.gz` 和 wheel。
 
-拿到 DOI 后，填回：
-   - `CITATION.cff` 的 `identifiers`（或 `doi` 字段）；
-   - `README.md` / `README.zh-CN.md` 的 Citation 部分；
-   - `docs/defensive-publication.md` 的 Citation 部分；
-   - `docs/index.html` 的 Cite 部分；
-   - GitHub 仓库的 **About → DOI** 徽章（可选）。
-
-DOI 徽章示例：
+DOI 徽章：
 
 ```markdown
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23556606.svg)](https://doi.org/10.5281/zenodo.23556606)
 ```
 
 ## 2. PyPI（可选，需要账号）

@@ -11,6 +11,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 [![Version](https://img.shields.io/badge/version-0.0.3-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23556606.svg)](https://doi.org/10.5281/zenodo.23556606)
 
 ---
 
@@ -363,11 +364,12 @@ pytest -m integration
   year    = {2026},
   version = {0.0.3},
   license = {MIT},
+  doi     = {10.5281/zenodo.23556606},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }
 ```
 
-该方法同时以[公开披露](docs/defensive-publication.md)的形式发布，作为现有技术。GitHub 的 “Cite this repository” 会读取 [`CITATION.cff`](CITATION.cff)。仓库在 Zenodo 归档后会补充 DOI。
+该方法同时以[公开披露](docs/defensive-publication.md)的形式发布，作为现有技术。GitHub 的 “Cite this repository” 会读取 [`CITATION.cff`](CITATION.cff)。版本 DOI 是 [10.5281/zenodo.23556606](https://doi.org/10.5281/zenodo.23556606)；所有版本的 concept DOI 是 [10.5281/zenodo.23556605](https://doi.org/10.5281/zenodo.23556605)。
 
 ## 许可证
 

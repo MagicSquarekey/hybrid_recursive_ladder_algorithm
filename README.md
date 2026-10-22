@@ -11,6 +11,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 [![Version](https://img.shields.io/badge/version-0.0.3-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23556606.svg)](https://doi.org/10.5281/zenodo.23556606)
 
 ---
 
@@ -451,14 +452,16 @@ If you use this project, cite the software:
   year    = {2026},
   version = {0.0.3},
   license = {MIT},
+  doi     = {10.5281/zenodo.23556606},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }
 ```
 
 The method is also published as a [public disclosure](docs/defensive-publication.md)
 and as prior art. [`CITATION.cff`](CITATION.cff) provides the same metadata for
-GitHub's "Cite this repository" button. A DOI will be added when the repository
-is archived on Zenodo.
+GitHub's "Cite this repository" button. The version DOI is
+[10.5281/zenodo.23556606](https://doi.org/10.5281/zenodo.23556606); the concept
+DOI for all versions is [10.5281/zenodo.23556605](https://doi.org/10.5281/zenodo.23556605).
 
 ## License
 

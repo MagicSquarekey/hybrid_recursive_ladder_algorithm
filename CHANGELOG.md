@@ -9,6 +9,10 @@ All notable changes to this project are documented here. The format follows
 Archival release. No code or algorithm changes. This release triggers Zenodo's
 GitHub integration so the public disclosure receives a DOI.
 
+### Added
+
+* Zenodo archive and DOI: [10.5281/zenodo.23556606](https://doi.org/10.5281/zenodo.23556606).
+
 ### Changed
 
 * Bumped the package version to `0.0.3` and updated citation, install and site
