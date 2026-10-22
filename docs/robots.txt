@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/sitemap.xml
