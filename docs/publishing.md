@@ -10,7 +10,7 @@
 - `.zenodo.json`：Zenodo 归档元数据，启用后自动使用。
 - `docs/related-work.md` / `.zh-CN.md`：先例对比与定位。
 - `docs/articles/why-per-bucket-queries-are-slow.md` / `.zh-CN.md`：技术文章。
-- `docs/index.html`：GitHub Pages 落地页。
+- `docs/index.html`：GitHub Pages 落地页，已启用：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
 - GitHub Release `v0.0.2`：公开时间戳 + wheel 构建。
 
 ## 1. Zenodo DOI（需要你登录一次）
@@ -70,7 +70,7 @@ python -m twine upload dist/*
 
 | 渠道 | 适合 | 注意 |
 |---|---|---|
-| 个人博客 / GitHub Pages | 永久链接、SEO | 已在 `docs/` 准备落地页 |
+| 个人博客 / GitHub Pages | 永久链接、SEO | 已启用：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/> |
 | dev.to | 英文开发者 | 加 `#timeseries #performance #database` 标签 |
 | Medium | 英文/综合 | 可以同步，但注意 canonical URL 指回博客 |
 | 知乎 | 中文技术读者 | 标题偏“为什么逐桶查询慢”，不要硬广 |
@@ -92,8 +92,8 @@ python -m twine upload dist/*
 
 - Description：以 “Query planning for bucket-limited time-series APIs” 开头。
 - Topics：`time-series`, `aggregation`, `query-planning`, `downsampling`, `multi-resolution`, `thingsboard`, `observability`, `python`, `mcp`, `iot` 等。
-- Homepage：GitHub Pages 地址。
-- Release `v0.0.2`：包含公开披露说明和 wheel。
+- Homepage：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
+- Release `v0.0.2`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.2>，包含公开披露说明和 wheel。
 
 ## 5. 维护动作
 
