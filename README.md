@@ -234,7 +234,8 @@ Example MCP client configuration:
 
 Copy [`skills/hybrid-recursive-ladder/`](skills/hybrid-recursive-ladder/) into
 your agent's skills directory (for example `~/.claude/skills/` or
-`~/.zcode/skills/`). The skill teaches the agent when to reach for the ladder,
+`~/.zcode/skills/`); see [`skills/README.md`](skills/README.md) for snippets.
+The skill teaches the agent when to reach for the ladder,
 how to call the CLI/API, and how to interpret `null` vs `0.0` and `source`.
 
 ## Rules (non-negotiable)
