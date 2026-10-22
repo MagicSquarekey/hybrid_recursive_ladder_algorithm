@@ -10,7 +10,7 @@
 - `.zenodo.json`：Zenodo 归档元数据，启用后自动使用。
 - `docs/related-work.md` / `.zh-CN.md`：先例对比与定位。
 - `docs/articles/why-per-bucket-queries-are-slow.md` / `.zh-CN.md`：技术文章。
-- `site/index.html`：GitHub Pages 落地页。
+- `docs/index.html`：GitHub Pages 落地页。
 - GitHub Release `v0.0.2`：公开时间戳 + wheel 构建。
 
 ## 1. Zenodo DOI（需要你登录一次）

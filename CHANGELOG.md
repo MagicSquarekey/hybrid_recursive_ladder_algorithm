@@ -15,7 +15,7 @@ Documentation and public-disclosure release. No algorithm semantics changed.
 * `CITATION.cff` and `.zenodo.json`: citation and archive metadata.
 * `docs/articles/why-per-bucket-queries-are-slow.md` and its Chinese mirror: a
   technical article with the production benchmark and prior-art framing.
-* `site/index.html`: a static landing page for GitHub Pages.
+* `docs/index.html`: a static landing page for GitHub Pages.
 * `docs/publishing.md`: release, Zenodo, PyPI and distribution checklist.
 * `docs/related-work.md` and `docs/related-work.zh-CN.md`: prior-art
   comparison, historical algorithms and a defensible novelty statement.
