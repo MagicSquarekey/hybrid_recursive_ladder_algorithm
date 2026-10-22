@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
+## [Unreleased]
+
+### Changed
+
+* Reworked `README.md` and `README.zh-CN.md` into a single narrative with
+  diagrams for the before/after comparison, calendar decomposition and
+  local-first read path.
+* Added the hero diagram to the other language READMEs.
+
 ## [0.0.3] — 2026-10-22
 
 Archival release. No code or algorithm changes. This release triggers Zenodo's
