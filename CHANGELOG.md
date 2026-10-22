@@ -9,6 +9,10 @@ All notable changes to this project are documented here. The format follows
 Documentation release. No code or algorithm changes. Reworks the READMEs and
 adds diagrams.
 
+### Added
+
+* Zenodo archive and DOI: [10.5281/zenodo.23557574](https://doi.org/10.5281/zenodo.23557574).
+
 ### Changed
 
 * Reworked `README.md` and `README.zh-CN.md` into a single narrative with
