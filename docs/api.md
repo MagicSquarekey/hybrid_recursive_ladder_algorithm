@@ -99,7 +99,8 @@ hybrid-ladder repair --source thingsboard --series ... --start ... --end ...
 ## HTTP API
 
 ```bash
-pip install "hybrid-recursive-ladder[api]"
+# from a source checkout (see README Install)
+pip install -e ".[api]"
 hybrid-ladder serve --host 127.0.0.1 --port 8000
 # OpenAPI: http://127.0.0.1:8000/docs
 ```
@@ -266,7 +267,8 @@ included only when `completed`.
 ## MCP
 
 ```bash
-pip install "hybrid-recursive-ladder[mcp]"
+# from a source checkout
+pip install -e ".[mcp]"
 hybrid-ladder mcp
 ```
 

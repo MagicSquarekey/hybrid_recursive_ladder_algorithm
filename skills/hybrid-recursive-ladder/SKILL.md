@@ -38,8 +38,13 @@ Do **not** use it for:
 ## Install
 
 ```bash
-pip install hybrid-recursive-ladder
-pip install "hybrid-recursive-ladder[thingsboard,postgres,api,mcp]"  # optional extras
+# v0.0.1 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+
+# optional extras: clone and install
+git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
+cd hybrid_recursive_ladder_algorithm
+pip install -e ".[thingsboard,postgres,api,mcp]"
 ```
 
 ## Fast path (no configuration)

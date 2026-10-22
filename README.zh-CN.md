@@ -39,18 +39,25 @@
 
 ## 安装
 
+> v0.0.1 通过 GitHub Release 分发；PyPI 发布已列入计划。
+
 ```bash
-pip install hybrid-recursive-ladder
+# v0.0.1 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+
+# optional extras: clone and install
+git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
+cd hybrid_recursive_ladder_algorithm
 ```
 
 可选依赖：
 
 ```bash
-pip install "hybrid-recursive-ladder[thingsboard]"   # ThingsBoard 数据源（httpx）
-pip install "hybrid-recursive-ladder[postgres]"      # 本地固化（psycopg 3）
-pip install "hybrid-recursive-ladder[api]"           # FastAPI HTTP 接口
-pip install "hybrid-recursive-ladder[mcp]"           # MCP server
-pip install "hybrid-recursive-ladder[all]"           # 全部
+pip install -e ".[thingsboard]"   # ThingsBoard 数据源（httpx）
+pip install -e ".[postgres]"      # 本地固化（psycopg 3）
+pip install -e ".[api]"           # FastAPI HTTP 接口
+pip install -e ".[mcp]"           # MCP server
+pip install -e ".[all]"           # 全部
 ```
 
 核心分解**零第三方依赖**（仅 `tzdata`，保证 Windows 上的 IANA 时区可用）。
@@ -166,7 +173,7 @@ curl -X POST "http://127.0.0.1:8000/v1/ladder/sum?sync=true" ...
 ### MCP
 
 ```bash
-pip install "hybrid-recursive-ladder[mcp]"
+pip install -e ".[mcp]"   # from the source checkout
 hybrid-ladder mcp
 ```
 

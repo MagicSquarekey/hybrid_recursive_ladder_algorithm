@@ -85,7 +85,7 @@ class PostgresStore:
         except ImportError as exc:  # pragma: no cover - dependency error path
             raise ImportError(
                 "PostgresStore needs psycopg; install with "
-                "'pip install \"hybrid-recursive-ladder[postgres]\"'"
+                "'pip install -e \".[postgres]\" (source checkout)'"
             ) from exc
         self._pool = ConnectionPool(
             self.dsn,

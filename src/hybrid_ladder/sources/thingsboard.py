@@ -69,7 +69,7 @@ class ThingsBoardSource:
             except ImportError as exc:  # pragma: no cover - dependency error path
                 raise ImportError(
                     "ThingsBoardSource needs httpx; install with "
-                    "'pip install \"hybrid-recursive-ladder[thingsboard]\"'"
+                    "'pip install -e \".[thingsboard]\" (source checkout)'"
                 ) from exc
             self._client = httpx.Client(
                 timeout=timeout, verify=verify, follow_redirects=True

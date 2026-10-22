@@ -34,17 +34,22 @@
 ## इंस्टॉलेशन
 
 ```bash
-pip install hybrid-recursive-ladder
+# v0.0.1 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+
+# optional extras: clone and install
+git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
+cd hybrid_recursive_ladder_algorithm
 ```
 
 वैकल्पिक एक्सट्रा:
 
 ```bash
-pip install "hybrid-recursive-ladder[thingsboard]"
-pip install "hybrid-recursive-ladder[postgres]"
-pip install "hybrid-recursive-ladder[api]"
-pip install "hybrid-recursive-ladder[mcp]"
-pip install "hybrid-recursive-ladder[all]"
+pip install -e ".[thingsboard]"
+pip install -e ".[postgres]"
+pip install -e ".[api]"
+pip install -e ".[mcp]"
+pip install -e ".[all]"
 ```
 
 कोर विभाजन में कोई तीसरे पक्ष की निर्भरता नहीं है (केवल IANA टाइमज़ोन के लिए `tzdata`)।

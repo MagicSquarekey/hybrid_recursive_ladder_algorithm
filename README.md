@@ -50,18 +50,25 @@ steps on complete bricks.
 
 ## Install
 
+> v0.0.1 is distributed through the GitHub release. PyPI publication is planned.
+
 ```bash
-pip install hybrid-recursive-ladder
+# v0.0.1 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+
+# optional extras: clone and install
+git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
+cd hybrid_recursive_ladder_algorithm
 ```
 
 Optional extras:
 
 ```bash
-pip install "hybrid-recursive-ladder[thingsboard]"   # ThingsBoard source (httpx)
-pip install "hybrid-recursive-ladder[postgres]"      # local store (psycopg 3)
-pip install "hybrid-recursive-ladder[api]"           # FastAPI HTTP API
-pip install "hybrid-recursive-ladder[mcp]"           # MCP server
-pip install "hybrid-recursive-ladder[all]"           # everything
+pip install -e ".[thingsboard]"   # ThingsBoard source (httpx)
+pip install -e ".[postgres]"      # local store (psycopg 3)
+pip install -e ".[api]"           # FastAPI HTTP API
+pip install -e ".[mcp]"           # MCP server
+pip install -e ".[all]"           # everything
 ```
 
 The core decomposition has **zero third-party dependencies** (only `tzdata` for
@@ -196,7 +203,7 @@ on error, matching the original AutoTestHub contract. See
 ### MCP server
 
 ```bash
-pip install "hybrid-recursive-ladder[mcp]"
+pip install -e ".[mcp]"   # from the source checkout
 hybrid-ladder mcp
 ```
 

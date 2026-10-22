@@ -3,7 +3,7 @@
 
 Run with::
 
-    pip install "hybrid-recursive-ladder[api]"
+    pip install -e ".[api]"   # from a source checkout
     hybrid-ladder serve --port 8000
 
 Or embed::

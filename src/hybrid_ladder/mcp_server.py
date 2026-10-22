@@ -3,7 +3,7 @@
 
 Run::
 
-    pip install "hybrid-recursive-ladder[mcp]"
+    pip install -e ".[mcp]"   # from a source checkout
     hybrid-ladder mcp
 
 Configure the source with the same ``HL_*`` environment variables as the HTTP
@@ -77,7 +77,7 @@ def build_server():
     except ImportError as exc:  # pragma: no cover - dependency error path
         raise ImportError(
             "the MCP server needs the mcp package; install with "
-            "'pip install \"hybrid-recursive-ladder[mcp]\"'"
+            "'pip install -e \".[mcp]\" (source checkout)'"
         ) from exc
 
     server = _Server("hybrid-recursive-ladder")

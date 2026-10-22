@@ -362,13 +362,13 @@ def cmd_serve(args: argparse.Namespace) -> int:
         import uvicorn
     except ImportError:
         raise SystemExit(
-            "serve needs uvicorn: pip install \"hybrid-recursive-ladder[api]\""
+            "serve needs uvicorn: pip install -e \".[api]\" (source checkout)"
         ) from None
     try:
         from .api import create_app
     except ImportError as exc:
         raise SystemExit(
-            "serve needs fastapi: pip install \"hybrid-recursive-ladder[api]\""
+            "serve needs fastapi: pip install -e \".[api]\" (source checkout)"
         ) from exc
 
     engine = _build_engine(args)
@@ -382,7 +382,7 @@ def cmd_mcp(_: argparse.Namespace) -> int:
         from .mcp_server import run
     except ImportError as exc:
         raise SystemExit(
-            "MCP server needs the mcp package: pip install \"hybrid-recursive-ladder[mcp]\""
+            "MCP server needs the mcp package: pip install -e \".[mcp]\" (source checkout)"
         ) from exc
     run()
     return 0
