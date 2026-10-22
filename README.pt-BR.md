@@ -34,8 +34,8 @@ cauda   10-21 18:49:00–18:49:59    1 segmento
 ## Instalação
 
 ```bash
-# v0.0.1 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+# v0.0.2 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -165,7 +165,7 @@ Incluídos: `MemorySource` / `MemoryStore`, `ThingsBoardSource`, `PostgresStore`
 
 ## Limitações
 
-* v0.0.1 implementa apenas `sum`. `avg` precisa de ponderação; `meter_delta` precisa do primeiro valor de cada segmento.
+* v0.0.2 implementa apenas `sum`. `avg` precisa de ponderação; `meter_delta` precisa do primeiro valor de cada segmento.
 * Amostras ausentes fazem o total ficar menor que o total físico. `cnt/expected` evidenciam isso, mas não há imputação.
 * O ThingsBoard aceita ~700 buckets e rejeita 800; o padrão é 500.
 * Tarefas em segundo plano vivem na memória do processo e são perdidas no reinício (os resultados podem ser recalculados).
@@ -192,6 +192,7 @@ python examples/benchmark.py
 * [Arquitetura](docs/architecture.md)
 * [Referência da API](docs/api.md)
 * [Benchmarks](docs/benchmarks.md)
+* [Trabalhos relacionados e posicionamento](docs/related-work.md)
 
 ## Licença
 

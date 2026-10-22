@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hybrid Recursive Ladder — query planning for bucket-limited time-series APIs</title>
+<meta name="description" content="Aggregate long time-series ranges with a handful of requests instead of thousands of per-bucket queries. A calendar-level query planner for APIs with a hard per-request bucket limit.">
+<meta property="og:title" content="Hybrid Recursive Ladder">
+<meta property="og:description" content="Aggregate long time-series ranges with a handful of requests. Calendar-level query planning for bucket-limited APIs.">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121b2e;
+    --panel-2: #17233b;
+    --text: #e8eefc;
+    --muted: #9fb0cc;
+    --line: #26344f;
+    --accent: #5eead4;
+    --accent-2: #fbbf24;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: radial-gradient(900px 500px at 80% -10%, #12324a 0%, transparent 60%), var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.65;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  header { padding: 28px 0 8px; }
+  nav { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; color: var(--muted); font-size: 14px; }
+  nav .brand { color: var(--text); font-weight: 700; letter-spacing: .2px; margin-right: auto; }
+  .hero { padding: 54px 0 30px; }
+  .eyebrow { color: var(--accent); font: 600 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+  h1 { font-size: clamp(34px, 5.6vw, 62px); line-height: 1.05; margin: 14px 0 18px; letter-spacing: -0.03em; }
+  h1 span { color: var(--accent-2); }
+  .lead { font-size: clamp(17px, 2.1vw, 21px); color: var(--muted); max-width: 760px; margin: 0 0 26px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 8px; }
+  .badge { border: 1px solid var(--line); background: rgba(18,27,46,.7); color: var(--muted); border-radius: 999px; padding: 5px 11px; font: 12px/1.3 var(--mono); }
+  .badge strong { color: var(--text); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .btn { display: inline-block; padding: 11px 16px; border-radius: 10px; border: 1px solid var(--line); color: var(--text); background: var(--panel); font-weight: 600; font-size: 14px; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #06211d; }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  section { padding: 34px 0; border-top: 1px solid rgba(38,52,79,.7); }
+  h2 { font-size: clamp(22px, 3vw, 30px); margin: 0 0 14px; letter-spacing: -0.02em; }
+  h3 { margin: 0 0 8px; font-size: 17px; }
+  p { margin: 0 0 14px; }
+  .muted { color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; }
+  .num { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 8px; background: rgba(94,234,212,.12); color: var(--accent); font: 700 13px var(--mono); margin-bottom: 10px; }
+  pre { background: #070d18; border: 1px solid var(--line); border-radius: 12px; padding: 16px; overflow: auto; font: 13px/1.55 var(--mono); color: #cfe3ff; }
+  code { font-family: var(--mono); font-size: .93em; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-family: var(--mono); }
+  .quote { border-left: 3px solid var(--accent-2); padding: 2px 0 2px 16px; color: var(--muted); margin: 18px 0; }
+  .cols { display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; align-items: start; }
+  ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+  li { margin: 5px 0; }
+  footer { padding: 34px 0 46px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+  @media (max-width: 820px) {
+    .grid, .cols { grid-template-columns: 1fr; }
+    nav .brand { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <nav>
+      <span class="brand">Hybrid Recursive Ladder</span>
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm">GitHub</a>
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/algorithm.md">Algorithm</a>
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/related-work.md">Prior art</a>
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/articles/why-per-bucket-queries-are-slow.md">Article</a>
+      <a href="#cite">Cite</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Query planning for bucket-limited time-series APIs</div>
+    <h1>Aggregate long ranges with a <span>handful of requests</span>, not thousands.</h1>
+    <p class="lead">
+      A per-bucket client pays one network round trip per output row. The Hybrid
+      Recursive Ladder decomposes a range into complete calendar units, fetches
+      each level once at the next finer aggregation, and folds locally—so the
+      request count depends on the coarse units, not the minute buckets.
+    </p>
+    <div class="badges">
+      <span class="badge"><strong>v0.0.2</strong></span>
+      <span class="badge">MIT</span>
+      <span class="badge">Python 3.10+</span>
+      <span class="badge">139 s → 0.64 s</span>
+    </div>
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm">View on GitHub</a>
+      <a class="btn" href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/articles/why-per-bucket-queries-are-slow.md">Read the technical article</a>
+      <a class="btn" href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/defensive-publication.md">Public disclosure</a>
+    </div>
+  </section>
+
+  <section>
+    <h2>The 139-second query</h2>
+    <div class="cols">
+      <div>
+        <p>
+          A production ThingsBoard query over a VPN took <strong>139 seconds</strong>
+          for 1,140 statistical buckets. The arithmetic was trivial; the network
+          was not. Each bucket needed up to four HTTP calls.
+        </p>
+        <p>
+          The obvious fixes—one coarse interval, pre-aggregation, pagination—all
+          sacrifice something: output resolution, write access to the source, or
+          the number of round trips.
+        </p>
+        <p class="quote">
+          The useful question: can the source return a coarser or finer
+          aggregation over a contiguous run, so one request fills many output
+          units?
+        </p>
+      </div>
+      <div>
+        <pre>2026-01-01 → 2026-10-21
+
+month   Jan … Sep          9
+day     Oct 1 … Oct 20    20
+hour    Oct 21 00–17      18
+minute  Oct 21 18:00–18:48 49
+tail    18:49–18:49:59     1
+                          ───
+                          97 segments
+                          ~5–7 requests
+
+423,049 minute buckets avoided</pre>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="num">1</div>
+        <h3>Decompose</h3>
+        <p>Split the range into complete calendar units. Emit only complete units; push partial left and right edges to the next finer level.</p>
+      </div>
+      <div class="card">
+        <div class="num">2</div>
+        <h3>Fetch once per level</h3>
+        <p>Fetch each maximal contiguous run sharing a fetch level at the next finer aggregation: months as days, days as hours, hours as minutes.</p>
+      </div>
+      <div class="card">
+        <div class="num">3</div>
+        <h3>Fold locally</h3>
+        <p>Sum the returned buckets into the output units. Optionally split against local coverage and fetch only the uncovered sub-ranges.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Measured on a production deployment</h2>
+    <table>
+      <thead>
+        <tr><th>Scenario</th><th class="num">Segments</th><th class="num">Requests</th><th class="num">Time</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2 days, minute level</td><td class="num">69</td><td class="num">~4</td><td class="num">0.64 s</td></tr>
+        <tr><td>1 year, day level</td><td class="num">42</td><td class="num">~4</td><td class="num">1.18 s cold / 0.20 s warm</td></tr>
+        <tr><td>10 months, mixed levels</td><td class="num">97</td><td class="num">~5–7</td><td class="num">sub-second</td></tr>
+        <tr><td>Local read, 42–90 segments</td><td class="num">42–90</td><td class="num">0</td><td class="num">9–19 ms</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top:12px;font-size:13px;">Production numbers over a VPN; latency depends on network, source load and data density. The reproducible benchmark prints segment and request counts without a server.</p>
+  </section>
+
+  <section>
+    <h2>What it is—and is not</h2>
+    <div class="cols">
+      <div>
+        <h3>It is a query-planning composition</h3>
+        <ul>
+          <li>calendar hierarchy as the query plan, not just the display bucket;</li>
+          <li>next-finer fetch plus local fold;</li>
+          <li>fetch-level + contiguity grouping;</li>
+          <li>coverage-aware gap filling;</li>
+          <li>request count bounded by the source's per-request bucket limit.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>It is not a new database or a new theory</h3>
+        <ul>
+          <li>RRDtool / Whisper: multi-resolution archives;</li>
+          <li>BTrDB: hierarchical time-partitioned summaries;</li>
+          <li>TimescaleDB: hierarchical continuous aggregates;</li>
+          <li>Druid: calendar period granularity;</li>
+          <li>Prometheus / Grafana: point caps and single-step downsampling;</li>
+          <li>segment trees and timing wheels: aligned decomposition and level cascade.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:14px;">
+      The method is published as a
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/defensive-publication.md">public disclosure</a>
+      and released under the MIT License. The
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/related-work.md">prior-art review</a>
+      documents the closest systems and the differences.
+    </p>
+  </section>
+
+  <section id="cite">
+    <h2>Cite this work</h2>
+    <pre>@software{hybrid_recursive_ladder_2026,
+  author  = {MagicSquarekey},
+  title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
+  year    = {2026},
+  version = {0.0.2},
+  license = {MIT},
+  url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
+}</pre>
+    <p class="muted">
+      A DOI will be added when the repository is archived on Zenodo. GitHub's
+      "Cite this repository" button reads
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CITATION.cff">CITATION.cff</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>Try it</h2>
+    <pre>pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
+
+hybrid-ladder demo
+hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
+python examples/benchmark.py</pre>
+    <p class="muted">
+      No database, no network, no configuration required for the demo.
+      Documentation: <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm#readme">README</a> ·
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/algorithm.md">algorithm spec</a> ·
+      <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/articles/why-per-bucket-queries-are-slow.zh-CN.md">中文文章</a>.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Hybrid Recursive Ladder · MIT · 2026 · <a href="https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm">GitHub</a>
+  </div>
+</footer>
+</body>
+</html>

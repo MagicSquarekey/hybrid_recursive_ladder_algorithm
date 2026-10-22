@@ -4,12 +4,12 @@
 
 **Languages:** [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md)
 
-[Algorithm spec](docs/algorithm.md) · [API reference](docs/api.md) · [Benchmarks](docs/benchmarks.md)
+[Algorithm spec](docs/algorithm.md) · [API reference](docs/api.md) · [Benchmarks](docs/benchmarks.md) · [Related work](docs/related-work.md) · [Public disclosure](docs/defensive-publication.md)
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.1-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.2-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -48,13 +48,32 @@ roughly **5–7 aggregation requests**, not thousands.
 The name is literal: a *hybrid* of calendar recursion and a *ladder* that only
 steps on complete bricks.
 
+## Prior art and positioning
+
+This is a **query-planning method** for deployments where you can read an
+interval-aggregation endpoint but cannot write to or reconfigure the source. It
+is not a new general-purpose aggregation algorithm. Calendar decomposition is a
+mixed-radix instance of canonical interval decomposition; folding is a roll-up;
+multi-resolution aggregation is the core of RRDtool, Whisper and BTrDB. What is
+specific here is the combination: one request plan across calendar levels, each
+level fetched once at the next finer aggregation, local coverage filling the
+gaps, under a hard per-request bucket limit.
+
+See [Related work and positioning](docs/related-work.md) for the closest systems
+(BTrDB, RRDtool/Whisper, TimescaleDB hierarchical continuous aggregates, Druid
+period granularity), the historical algorithms (segment trees, timing wheels,
+calendar arithmetic, OLAP roll-up), and the defensible novelty statement. The
+method is also published as a [public disclosure](docs/defensive-publication.md);
+a [technical article](docs/articles/why-per-bucket-queries-are-slow.md) walks
+through the production benchmark and the request-count argument.
+
 ## Install
 
-> v0.0.1 is distributed through the GitHub release. PyPI publication is planned.
+> v0.0.2 is distributed through the GitHub release. PyPI publication is planned.
 
 ```bash
-# v0.0.1 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+# v0.0.2 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -335,7 +354,7 @@ incomplete data.
 
 ## Known limitations
 
-* **Sum only in v0.0.1.** Average needs `sum` + `count` weighting; meter-delta
+* **Sum only in v0.0.2.** Average needs `sum` + `count` weighting; meter-delta
   needs the first value of every segment (ThingsBoard has no `FIRST`
   aggregation), so those rules are not on the ladder yet.
 * **Data completeness ≠ arithmetic correctness.** If the source has missing
@@ -419,6 +438,26 @@ pytest -m integration
 * Celery/RQ task backend for multi-process deployments
 * OpenTelemetry metrics and structured request accounting
 * PyPI trusted publishing on tag
+
+## Citation
+
+If you use this project, cite the software:
+
+```bibtex
+@software{hybrid_recursive_ladder_2026,
+  author  = {MagicSquarekey},
+  title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
+  year    = {2026},
+  version = {0.0.2},
+  license = {MIT},
+  url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
+}
+```
+
+The method is also published as a [public disclosure](docs/defensive-publication.md)
+and as prior art. [`CITATION.cff`](CITATION.cff) provides the same metadata for
+GitHub's "Cite this repository" button. A DOI will be added when the repository
+is archived on Zenodo.
 
 ## License
 

@@ -4,6 +4,32 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
+## [0.0.2] — 2026-10-22
+
+Documentation and public-disclosure release. No algorithm semantics changed.
+
+### Added
+
+* `docs/defensive-publication.md`: a public disclosure of the method and its
+  formal properties as prior art.
+* `CITATION.cff` and `.zenodo.json`: citation and archive metadata.
+* `docs/articles/why-per-bucket-queries-are-slow.md` and its Chinese mirror: a
+  technical article with the production benchmark and prior-art framing.
+* `site/index.html`: a static landing page for GitHub Pages.
+* `docs/publishing.md`: release, Zenodo, PyPI and distribution checklist.
+* `docs/related-work.md` and `docs/related-work.zh-CN.md`: prior-art
+  comparison, historical algorithms and a defensible novelty statement.
+* `docs/prior-art-search.zh-CN.md` and `docs/prior-art-matrix.csv`: a
+  repeatable prior-art/patent search plan and recording template.
+* Formal refinement-locality, segment-count and request-count propositions in
+  the algorithm specs.
+
+### Changed
+
+* Repositioned the project as a query-planning method for bucket-limited
+  time-series APIs (README, algorithm spec, package description).
+* Bumped the package version to `0.0.2` for the public-disclosure release.
+
 ## [0.0.1] — 2026-10-22
 
 First standalone open-source release, extracted from AutoTestHub.

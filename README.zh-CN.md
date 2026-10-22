@@ -4,12 +4,12 @@
 
 **语言 / Languages:** [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md)
 
-[算法规范](docs/algorithm.zh-CN.md) · [API 参考](docs/api.md) · [性能数据](docs/benchmarks.md)
+[算法规范](docs/algorithm.zh-CN.md) · [API 参考](docs/api.md) · [性能数据](docs/benchmarks.md) · [相关工作](docs/related-work.zh-CN.md) · [公开披露](docs/defensive-publication.md)
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.1-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.2-green.svg)](CHANGELOG.md)
 
 ---
 
@@ -37,13 +37,19 @@
 
 **97 段替代 423,049 个分钟桶**，压缩约 4,360 倍。典型 10 个月查询约 **5–7 次聚合请求**，而不是几千次。
 
+## 相关工作与定位
+
+这是**查询规划方法**，面向「能读区间聚合接口、但不能写源端、也不能改源端存储/降采样策略」的部署；不是新的通用聚合算法。日历分解是「规范区间分解」的混合进制实例；折叠是 roll-up；多分辨率聚合是 RRDtool、Whisper、BTrDB 的核心。这里真正具体的是组合：一次查询跨多个日历经度做请求计划，每层只按「下一级更细」抓一次，本地覆盖补缺口，并且整个计划受源端每请求桶数上限约束。
+
+最接近的系统（BTrDB、RRDtool/Whisper、TimescaleDB 层级连续聚合、Druid 日历经度）、历史算法（线段树、时间轮、日历算术、OLAP roll-up）以及可辩护的新颖性表述，见 [相关工作与定位](docs/related-work.zh-CN.md)。方法同时以[公开披露](docs/defensive-publication.md)的形式发布；[技术文章](docs/articles/why-per-bucket-queries-are-slow.zh-CN.md)完整讲了生产 benchmark 和请求数论证。
+
 ## 安装
 
-> v0.0.1 通过 GitHub Release 分发；PyPI 发布已列入计划。
+> v0.0.2 通过 GitHub Release 分发；PyPI 发布已列入计划。
 
 ```bash
-# v0.0.1 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+# v0.0.2 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -272,7 +278,7 @@ InfluxDB / Prometheus / ClickHouse / TimescaleDB 只需实现上述方法即可�
 
 ## 已知限制
 
-* **v0.0.1 只做 sum**：平均需要 sum+cnt 加权；累计量差分需要每段首值（TB 没有 FIRST 聚合），暂未上阶梯。
+* **v0.0.2 只做 sum**：平均需要 sum+cnt 加权；累计量差分需要每段首值（TB 没有 FIRST 聚合），暂未上阶梯。
 * **数据完整 ≠ 加法正确**：数据源缺采样时，合计会偏小；用 `cnt/expected` 识别稀疏。
 * **TB 限制**：区间聚合 700 桶可、800 桶拒（默认 500）；原始序列单次 1 万点；`COUNT` 会吞同分钟重复点。
 * **后台任务在进程内存**：重启即丢，结果可重算，固化数据不丢。
@@ -344,6 +350,23 @@ pytest -m integration
 * Celery/RQ 任务后端，支持多进程部署
 * OpenTelemetry 指标与请求计数
 * 打 tag 时自动发布 PyPI
+
+## 引用
+
+如果你使用了本项目，请引用：
+
+```bibtex
+@software{hybrid_recursive_ladder_2026,
+  author  = {MagicSquarekey},
+  title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
+  year    = {2026},
+  version = {0.0.2},
+  license = {MIT},
+  url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
+}
+```
+
+该方法同时以[公开披露](docs/defensive-publication.md)的形式发布，作为现有技术。GitHub 的 “Cite this repository” 会读取 [`CITATION.cff`](CITATION.cff)。仓库在 Zenodo 归档后会补充 DOI。
 
 ## 许可证
 

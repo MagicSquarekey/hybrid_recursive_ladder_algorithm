@@ -34,8 +34,8 @@ Rest    10-21 18:49:00–18:49:59    1 Segment
 ## Installation
 
 ```bash
-# v0.0.1 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.1/hybrid_recursive_ladder-0.0.1-py3-none-any.whl
+# v0.0.2 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.2/hybrid_recursive_ladder-0.0.2-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -165,7 +165,7 @@ Enthalten: `MemorySource` / `MemoryStore`, `ThingsBoardSource`, `PostgresStore`.
 
 ## Grenzen
 
-* v0.0.1 implementiert nur `sum`. `avg` braucht Gewichtung; `meter_delta` braucht den ersten Wert jedes Segments.
+* v0.0.2 implementiert nur `sum`. `avg` braucht Gewichtung; `meter_delta` braucht den ersten Wert jedes Segments.
 * Fehlende Messwerte machen die Summe kleiner als die physische Gesamtsumme. `cnt/expected` zeigt das an, es wird nichts interpoliert.
 * ThingsBoard akzeptiert ca. 700 Buckets und lehnt 800 ab; Standard ist 500.
 * Hintergrundtasks liegen im Prozessspeicher und gehen beim Neustart verloren (Ergebnisse sind neu berechenbar).
@@ -192,6 +192,7 @@ python examples/benchmark.py
 * [Architektur](docs/architecture.md)
 * [API-Referenz](docs/api.md)
 * [Benchmarks](docs/benchmarks.md)
+* [Verwandte Arbeiten und Positionierung](docs/related-work.md)
 
 ## Lizenz
 

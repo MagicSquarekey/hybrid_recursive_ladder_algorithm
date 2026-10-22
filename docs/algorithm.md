@@ -113,7 +113,119 @@ ceil(D_total / max_intervals) + ceil(H_total / max_intervals)
 
 `max_intervals` defaults to 500 because ThingsBoard accepts ~700 buckets and
 rejects 800 (the documentation's 1000 is not reliable). A 10-month query
-typically needs 5–7 requests.
+typically needs 5–7 requests. Section 5.4 gives the exact per-run model,
+including the adapter's chunking.
+
+### 5.3 Refinement locality
+
+Write `L_0 = month`, `L_1 = day`, `L_2 = hour`, `L_3 = minute` (coarsest
+first), and let `U_i(t)` be the unit of level `L_i` that contains `t`. Let `k`
+be the number of levels (4 in the default hierarchy). A unit is **complete** in
+`[s, e)` when it is contained in the range.
+
+**Lemma 1 (two-edge lemma).** For every level `L_i` with `i < k - 1`, the parts
+of `[s, e)` passed to level `L_{i+1}` lie inside at most two units of level
+`L_i`: the unit containing `s` and the unit containing `e - 1`. Every complete
+unit at level `L_i` is emitted at `L_i` and is never refined.
+
+*Proof.* At level `L_i` the walk (i) refines the left remainder
+`[s, next_boundary(s))` when `s` is not aligned, (ii) emits the maximal run of
+complete units, and (iii) refines the right remainder `[a, e)` when `a < e`.
+Step (i) is inside `U_i(s)`. Step (iii) is inside `U_i(e - 1)`. Step (ii) emits
+complete units and does not recurse. Each refined remainder is shorter than one
+unit at its level, i.e. below that level's maximum radix (31 days, 24 hours, 60
+minutes). ∎
+
+**Proposition 2 (bounded refinement).** Let `N_j` be the number of segments
+emitted at level `L_j`. Then, for every `i`,
+
+```
+sum_{j > i} N_j  <=  B_i
+```
+
+where `B_i` is the maximum number of segments produced by decomposing at most
+two units of level `L_i` down to the finest level. `B_i` depends only on the
+calendar hierarchy, not on the length of the range.
+
+For the standard hierarchy and `finest = minute`, a conservative bound is
+
+```
+N_day    <= 2 * 31 = 62      # at most two partial months
+N_hour   <= 4 * 24 = 96      # two partial days per partial month
+N_minute <= 8 * 60 = 480     # two partial hours per partial day
+tail     <= 1
+```
+
+The factors double because each partial unit can produce at most two partial
+units at the next finer level. These bounds are conservative, not tight.
+Summing them gives `N <= N_month + 639`, where `N` is the total number of
+segments.
+
+**Corollary 3 (segment-count growth).** The total number of segments is
+`N_month + O(1)`. It grows with the number of complete months (the coarsest
+output level), not with the number of minute buckets. For a range of `Y` years,
+`N = O(Y)`; a per-minute query would be `O(Y * 525600)`.
+
+**Proposition 4 (recursion depth).** The recursion depth of `walk` is at most
+the number of levels `k` (4 for month through minute). Each recursive call
+increments the level index, and the base case is the finest level.
+
+### 5.4 Request-count model
+
+Let `K = max_intervals`, and let a **fetch run** be a maximal contiguous
+sequence of segments that share the same fetch level (Section 5.1). For a run of
+duration `T` at fetch bucket size `Δ`, the adapter chunks it into windows of
+`K * Δ` and issues
+
+```
+r(run) = ceil(T / (K * Δ))
+```
+
+aggregation requests. The total is therefore
+
+```
+R_agg = sum over runs r of ceil(T_r / (K * Δ_r)).
+```
+
+This is the exact model implemented by `ThingsBoardSource.interval_agg`: the
+engine calls the adapter once per run, and the adapter performs the chunking.
+Let `B_F` be the total number of fetch buckets at level `F` over the range; it
+is not the number of output segments.
+
+In the common contiguous case there are at most three aggregation runs (day,
+hour, minute), so the sum has at most three terms. For the 10-month example with
+`K = 500`:
+
+```
+months          -> day fetch:    273 buckets -> 1 request
+days            -> hour fetch:   480 buckets -> 1 request
+hours + minutes -> minute fetch: 1,129 buckets -> 3 requests
+R_agg ~= 5
+```
+
+By Lemma 1, `B_day = O(N_month)`, while `B_hour` and `B_minute` are bounded by
+the two partial months and the partial days at their edges, and are therefore
+`O(1)` for a fixed hierarchy. Hence
+
+```
+R_agg = O(N_month / K + 1).
+```
+
+The request count grows with the number of complete months divided by the cap,
+not with the number of minute buckets. The raw-point tail is data-dependent:
+each raw request returns at most `max_points` points and a full page is bisected
+(Section 8), so `P` points cost `O(P / max_points)` requests, with a hard floor
+at `min_bucket_ms`.
+
+### 5.5 Fold correctness (alignment condition)
+
+`fold_sum` attributes a fetch bucket to the output segment that contains the
+bucket's **start**. If every fetch bucket is wholly contained in one output
+segment or disjoint from it, the folded sum equals the source's sum over the
+segment. Fixed-offset time zones satisfy this because every calendar unit is a
+union of fixed-size buckets. In DST zones a day or hour boundary can fall inside
+a fixed-size bucket; use a finer fetch level or raw points around transitions.
+This is a correctness condition, not a claim about arbitrary time zones.
 
 ## 6. Correctness
 
@@ -239,7 +351,27 @@ overall `source`, `source_counts` and `errors`.
 * The stable-key migration (`device_id`) from the original AutoTestHub schema
   is not automatic; see `docs/architecture.md`.
 
-## 12. Version notes
+## 12. Relationship to known techniques
+
+The decomposition is the calendar mixed-radix instance of the canonical interval
+decomposition used by segment trees: a range is covered by aligned units, and
+partial edges are pushed to a finer level. It differs in purpose: a segment tree
+merges siblings to answer one aggregate, while the ladder must return one value
+per output unit, so it emits every complete unit and uses the hierarchy to plan
+fetches. The fold is a roll-up/consolidation, the same direction as RRDtool's
+RRA consolidation, BTrDB's per-node summaries, and OLAP roll-up. The
+contribution here is the composition: one request plan across calendar levels
+under a hard per-request bucket limit, with local coverage filling the gaps. It
+is intended for sources that expose a read-only interval-aggregation endpoint;
+it does not require writing to or reconfiguring the source. See
+[`related-work.md`](related-work.md) for the full comparison and citations.
+
+## 13. Version notes
+
+**0.0.2** — documentation and public-disclosure release. No algorithm semantics
+changed. Adds the prior-art review, the formal refinement/segment-count/
+request-count propositions, the public disclosure document, citation metadata
+and the technical article.
 
 **0.0.1** — initial standalone release. Two correctness fixes relative to the
 original AutoTestHub implementation:

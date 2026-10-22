@@ -1,0 +1,13 @@
+id,type,title,authors_assignee,year,venue_or_jurisdiction,link,identifier,features_overlap,features_missing,relevance,decision,notes
+P01,system,RRDtool,Tobias Oetiker,1999,GitHub,https://github.com/oetiker/rrdtool-1.x,,F3;F7,F1;F2;F4;F5;F6,A,cite,"多分辨率 RRA + consolidation；存储侧，固定 step，无日历层级，不做查询规划"
+P02,paper,BTrDB: Optimizing Storage System Design for Timeseries Processing,M. P. Andersen; D. E. Culler,2016,USENIX FAST,https://www.usenix.org/conference/fast16/technical-sessions/presentation/andersen,,F3;F7,F1;F2;F4;F5;F6,A,cite,"时间分区树 + 每节点统计；2 的幂对齐，不是日历；数据库引擎而非外部 API 规划器"
+P03,documentation,Hierarchical continuous aggregates,TimescaleDB,n.d.,TimescaleDB docs,https://github.com/timescale/docs/blob/latest/use-timescale/continuous-aggregates/hierarchical-continuous-aggregates.md,,F1;F3;F7,F2;F4;F5;F6,A,cite,"minute→hour→day 层级物化；预计算视图，不处理任意边角和桶数上限"
+P04,documentation,Granularities: Period Granularity,Apache Druid,n.d.,Apache Druid docs,https://druid.apache.org/docs/latest/querying/granularities/,,F1;F3,F2;F4;F5;F6;F7,B,cite,"P1M/P2D 日历经度，月份从 1 号开始，支持时区；一次查询一个粒度"
+P05,documentation,query_range point limit,Prometheus,n.d.,Prometheus source,https://github.com/prometheus/prometheus/blob/main/web/api/v1/api.go#L1102,,F6,F1;F2;F3;F4;F5;F7,A,distinguish,"11,000 点/序列上限；单 step；这是问题现状，不是解法"
+P06,documentation,calculateInterval,Grafana,n.d.,Grafana source,https://github.com/grafana/grafana/blob/main/packages/grafana-data/src/datetime/rangeutil.ts#L592,,F6,F1;F2;F3;F4;F5;F7,A,distinguish,"按 maxDataPoints 选一个 interval；单粒度"
+P07,project,timescaledb-rollups,lballoriani,n.d.,GitHub,https://github.com/lballoriani/timescaledb-rollups,,F1;F3;F7,F2;F4;F5;F6,A,distinguish,"项目形态最接近：minute→month 级联；存储侧 SQL 管道，无外部 API 和桶数上限"
+P08,project,accreta,StoyanTc,n.d.,GitHub,https://github.com/StoyanTc/accreta,,F3,F1;F2;F4;F5;F6;F7,B,cite,"Monoid/Aggregator 可合并状态；聚合库，不是查询规划器"
+P09,project,quantum,marqeta,n.d.,GitHub,https://github.com/marqeta/quantum,,F3;F7,F1;F2;F4;F5;F6,B,cite,"预计算窗口聚合放 Redis；不是按需计算，无日历层级"
+P10,paper,Solutions to Klee's rectangle problems,J. L. Bentley,1977,technical report,https://en.wikipedia.org/wiki/Segment_tree,,F2,F1;F3;F4;F5;F6;F7,A,cite,"线段树规范区间分解；合并兄弟节点求一个聚合值，而 ladder 要每个输出单位一个值"
+P11,paper,Hashed and hierarchical timing wheels,G. Varghese; A. Lauck,1997,IEEE/ACM ToN,https://doi.org/10.1109/90.650142,10.1109/90.650142,F2,F1;F3;F4;F5;F6;F7,B,cite,"层级 + 余数 cascade 的结构最像；用途是定时器，不是聚合"
+P12,paper,Implementing data cubes efficiently,V. Harinarayan; A. Rajaraman; J. D. Ullman,1996,ACM SIGMOD,https://doi.org/10.1145/235968.233333,10.1145/235968.233333,F3,F1;F2;F4;F5;F6;F7,B,cite,"沿维度层级预计算 roll-up；OLAP 预计算，不是查询侧规划"

@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hybrid-recursive-ladder"
-version = "0.0.1"
-description = "Hybrid Recursive Ladder Algorithm — aggregate long time-series ranges with a handful of source requests instead of thousands of bucket queries."
+version = "0.0.2"
+description = "Query planning for bucket-limited time-series APIs — aggregate long ranges with a handful of source requests instead of thousands of per-bucket queries."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
@@ -82,6 +82,8 @@ include = [
   "/CHANGELOG.md",
   "/CONTRIBUTING.md",
   "/LICENSE",
+  "/CITATION.cff",
+  "/.zenodo.json",
   "/pyproject.toml",
 ]
 

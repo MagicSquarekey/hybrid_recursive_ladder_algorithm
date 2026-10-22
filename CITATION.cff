@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs"
+abstract: >-
+  A query-planning method for long-range time-series aggregation over APIs with
+  a hard per-request bucket limit. The range is decomposed into complete
+  calendar units; each maximal contiguous run sharing a fetch level is fetched
+  once at the next finer aggregation and folded locally; optional coverage
+  tracking fetches only uncovered sub-ranges. The method is a composition of
+  calendar mixed-radix decomposition, canonical interval decomposition, roll-up
+  and multi-resolution aggregation.
+authors:
+  - family-names: "MagicSquarekey"
+    alias: "MagicSquarekey"
+version: "0.0.2"
+date-released: "2026-10-22"
+license: "MIT"
+repository-code: "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm"
+url: "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm"
+keywords:
+  - "time series"
+  - "aggregation"
+  - "query planning"
+  - "downsampling"
+  - "multi-resolution"
+  - "ThingsBoard"
+  - "observability"
