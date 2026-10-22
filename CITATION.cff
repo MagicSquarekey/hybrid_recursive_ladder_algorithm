@@ -12,7 +12,7 @@ abstract: >-
 authors:
   - family-names: "MagicSquarekey"
     alias: "MagicSquarekey"
-version: "0.0.3"
+version: "0.0.4"
 doi: "10.5281/zenodo.23556606"
 date-released: "2026-10-22"
 license: "MIT"

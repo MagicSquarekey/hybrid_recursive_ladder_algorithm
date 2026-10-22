@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hybrid-recursive-ladder"
-version = "0.0.3"
+version = "0.0.4"
 description = "Query planning for bucket-limited time-series APIs — aggregate long ranges with a handful of source requests instead of thousands of per-bucket queries."
 readme = "README.md"
 license = { file = "LICENSE" }

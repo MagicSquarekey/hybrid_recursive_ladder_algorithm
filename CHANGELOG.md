@@ -4,14 +4,18 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
-## [Unreleased]
+## [0.0.4] — 2026-10-22
+
+Documentation release. No code or algorithm changes. Reworks the READMEs and
+adds diagrams.
 
 ### Changed
 
 * Reworked `README.md` and `README.zh-CN.md` into a single narrative with
   diagrams for the before/after comparison, calendar decomposition and
   local-first read path.
-* Added the hero diagram to the other language READMEs.
+* Added the hero diagram and DOI/website badges to the other language READMEs.
+* Bumped the package version to `0.0.4`.
 
 ## [0.0.3] — 2026-10-22
 

@@ -368,6 +368,8 @@ it does not require writing to or reconfiguring the source. See
 
 ## 13. Version notes
 
+**0.0.4** — documentation release. No algorithm semantics changed. Reworks the READMEs and adds diagrams.
+
 **0.0.3** — archival release. No algorithm semantics changed. Bumps the
 version for the Zenodo DOI archive.
 
