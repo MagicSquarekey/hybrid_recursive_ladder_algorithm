@@ -25,7 +25,7 @@ Zenodo 不能由仓库里的代码自动创建，需要账户授权。步骤：
    - `CITATION.cff` 的 `identifiers`（或 `doi` 字段）；
    - `README.md` / `README.zh-CN.md` 的 Citation 部分；
    - `docs/defensive-publication.md` 的 Citation 部分；
-   - `site/index.html` 的 Cite 部分；
+   - `docs/index.html` 的 Cite 部分；
    - GitHub 仓库的 **About → DOI** 徽章（可选）。
 
 DOI 徽章示例：
@@ -70,7 +70,7 @@ python -m twine upload dist/*
 
 | 渠道 | 适合 | 注意 |
 |---|---|---|
-| 个人博客 / GitHub Pages | 永久链接、SEO | 已在 `site/` 准备落地页 |
+| 个人博客 / GitHub Pages | 永久链接、SEO | 已在 `docs/` 准备落地页 |
 | dev.to | 英文开发者 | 加 `#timeseries #performance #database` 标签 |
 | Medium | 英文/综合 | 可以同步，但注意 canonical URL 指回博客 |
 | 知乎 | 中文技术读者 | 标题偏“为什么逐桶查询慢”，不要硬广 |
