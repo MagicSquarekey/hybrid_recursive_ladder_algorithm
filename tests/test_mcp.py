@@ -20,6 +20,20 @@ def _resolve(value):
     return value
 
 
+def _call(server, name, arguments):
+    """Call a tool and return its list of content blocks.
+
+    Newer SDK releases return ``(content, structured)``; older ones return a
+    result object carrying ``.content``.
+    """
+    result = _resolve(server.call_tool(name, arguments))
+    if isinstance(result, tuple):
+        result = result[0]
+    if not isinstance(result, list):
+        result = result.content
+    return result
+
+
 @pytest.fixture(autouse=True)
 def _fresh_engine():
     reset_engine()
@@ -34,31 +48,53 @@ def test_tools_registered():
     assert names == {"ladder_meta", "ladder_decompose", "ladder_sum", "ladder_verify"}
 
 
+def test_tool_annotations():
+    server = build_server()
+    tools = {tool.name: tool for tool in _resolve(server.list_tools())}
+
+    # Reads only local configuration and demo data.
+    for name in ("ladder_meta", "ladder_decompose"):
+        annotations = tools[name].annotations
+        assert annotations.readOnlyHint is True
+        assert annotations.openWorldHint is False
+        assert annotations.destructiveHint is False
+
+    # ladder_sum can write to the local store through materialize=True, so it
+    # must not be advertised as read-only.
+    annotations = tools["ladder_sum"].annotations
+    assert annotations.readOnlyHint is False
+    assert annotations.destructiveHint is False
+    assert annotations.openWorldHint is True
+
+    # ladder_verify reaches the source but never writes.
+    annotations = tools["ladder_verify"].annotations
+    assert annotations.readOnlyHint is True
+    assert annotations.openWorldHint is True
+
+
 def test_decompose_tool():
     server = build_server()
-    result = _resolve(
-        server.call_tool(
-            "ladder_decompose",
-            {"start": "2026-01-01", "end": "2026-10-21T18:49:59"},
-        )
+    result = _call(
+        server,
+        "ladder_decompose",
+        {"start": "2026-01-01", "end": "2026-10-21T18:49:59"},
     )
-    payload = json.loads(result.content[0].text)
+    payload = json.loads(result[0].text)
     assert payload["count"] == 97
     assert payload["by_level"] == {"month": 9, "day": 20, "hour": 18, "minute": 50}
 
 
 def test_sum_tool_with_demo_data():
     server = build_server()
-    result = _resolve(
-        server.call_tool(
-            "ladder_sum",
-            {
-                "series": [{"entity": "demo-chiller-1", "key": "energy"}],
-                "start": "2026-01-01",
-                "end": "2026-02-01",
-            },
-        )
+    result = _call(
+        server,
+        "ladder_sum",
+        {
+            "series": [{"entity": "demo-chiller-1", "key": "energy"}],
+            "start": "2026-01-01",
+            "end": "2026-02-01",
+        },
     )
-    payload = json.loads(result.content[0].text)
+    payload = json.loads(result[0].text)
     assert payload["grand_total"] is not None
     assert payload["rows"][0]["segments_count"] == 1

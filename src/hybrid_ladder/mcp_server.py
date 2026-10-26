@@ -74,6 +74,7 @@ def build_server():
             from mcp.server.fastmcp import FastMCP as _Server  # mcp 1.x
         except ImportError:
             from mcp.server.mcpserver import MCPServer as _Server  # mcp 2.x
+        from mcp.types import ToolAnnotations
     except ImportError as exc:  # pragma: no cover - dependency error path
         raise ImportError(
             "the MCP server needs the mcp package; install with "
@@ -82,7 +83,29 @@ def build_server():
 
     server = _Server("hybrid-recursive-ladder")
 
-    @server.tool()
+    # Clients use these hints to decide whether to ask for confirmation and
+    # whether calls can be batched.  Nothing here deletes data: the only write
+    # path is materialization, which replaces a range and is safe to repeat.
+    local_only = ToolAnnotations(
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=False,
+    )
+    reads_source = ToolAnnotations(
+        readOnlyHint=True,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+    writes_local = ToolAnnotations(
+        readOnlyHint=False,
+        destructiveHint=False,
+        idempotentHint=True,
+        openWorldHint=True,
+    )
+
+    @server.tool(title="Ladder metadata", annotations=local_only)
     def ladder_meta() -> dict[str, Any]:
         """Return version, configuration, source/store type and demo range."""
         engine = _engine()
@@ -95,7 +118,7 @@ def build_server():
             "demo": demo_info(),
         }
 
-    @server.tool()
+    @server.tool(title="Decompose a time range", annotations=local_only)
     def ladder_decompose(
         start: str,
         end: str,
@@ -118,7 +141,7 @@ def build_server():
             "segments": [segment.as_dict() for segment in segments],
         }
 
-    @server.tool()
+    @server.tool(title="Sum time series", annotations=writes_local)
     def ladder_sum(
         series: list[dict[str, Any]],
         start: str,
@@ -157,7 +180,7 @@ def build_server():
                 result.materialized = engine.materialize_ranges(items)
         return result.as_dict()
 
-    @server.tool()
+    @server.tool(title="Verify against source", annotations=reads_source)
     def ladder_verify(
         series: list[dict[str, Any]],
         start: str,
