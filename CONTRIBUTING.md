@@ -88,6 +88,10 @@ before the fix.
 * API changes require an update to `docs/api.md` and `CHANGELOG.md`.
 * Add benchmarks only with methodology and caveats; never present a
   single-machine number as a guarantee.
+* README diagrams are language-specific: `docs/assets/<name>.<lang>.png` is
+  rendered from the English `docs/assets/<name>.svg` by
+  `python tools/localize_assets.py`. After editing an SVG or a translation,
+  re-run it; `--check` reports strings that have no translation yet.
 
 ## Release process
 

@@ -14,7 +14,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23557574.svg)](https://doi.org/10.5281/zenodo.23557574)
 
 <p align="center">
-  <img src="docs/assets/hero.png" alt="逐桶客户端：1,140 个桶，每桶最多 4 次调用，139 秒。日历阶梯：97 段，约 5–7 次请求，0.64 秒。" width="100%">
+  <img src="docs/assets/hero.zh-CN.png" alt="逐桶客户端：1,140 个桶，每桶最多 4 次调用，139 秒。日历阶梯：97 段，约 5–7 次请求，0.64 秒。" width="100%">
 </p>
 
 <p align="center"><em>同样的输出粒度。逐桶客户端每个输出行付一次往返；阶梯每层只取一次。</em></p>
@@ -43,7 +43,7 @@
 4. **折叠**：把返回的桶在本地折成输出段。
 
 <p align="center">
-  <img src="docs/assets/decomposition.png" alt="区间先切成 9 个完整月，再把 10 月切成 20 天，把 10 月 21 日切成 18 个小时，把不完整的小时切成 49 分钟和 1 个零头：一共 97 段。" width="100%">
+  <img src="docs/assets/decomposition.zh-CN.png" alt="区间先切成 9 个完整月，再把 10 月切成 20 天，把 10 月 21 日切成 18 个小时，把不完整的小时切成 49 分钟和 1 个零头：一共 97 段。" width="100%">
 </p>
 
 对 `2026-01-01 00:00:00 → 2026-10-21 18:49:59`，这是 **97 段，而不是 423,049 个分钟桶**。典型 10 个月查询约 **5–7 次聚合请求**。
@@ -192,7 +192,7 @@ hybrid-ladder mcp
 有本地点存储时，同一套段会先按已固化的覆盖区间切开：已覆盖部分用一条批量本地查询求和；未覆盖部分走数据源；部分覆盖的段只补缺的那一截。
 
 <p align="center">
-  <img src="docs/assets/architecture.png" alt="纯源路径：分解、按取数层级和连续性分组、每个 run 在桶数上限内取一次、本地折叠。本地优先路径：按覆盖切分段、已覆盖部分本地求和、未覆盖部分取源、合并两者。" width="100%">
+  <img src="docs/assets/architecture.zh-CN.png" alt="纯源路径：分解、按取数层级和连续性分组、每个 run 在桶数上限内取一次、本地折叠。本地优先路径：按覆盖切分段、已覆盖部分本地求和、未覆盖部分取源、合并两者。" width="100%">
 </p>
 
 ```python

@@ -11,7 +11,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23557574.svg)](https://doi.org/10.5281/zenodo.23557574)
 
 <p align="center">
-  <img src="docs/assets/hero.png" alt="Per-bucket client versus calendar ladder" width="100%">
+  <img src="docs/assets/hero.es.png" alt="Per-bucket client versus calendar ladder" width="100%">
 </p>
 
 <p align="center"><em>Misma salida. Números de solicitudes muy distintos.</em></p>

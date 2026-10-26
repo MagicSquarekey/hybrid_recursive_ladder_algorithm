@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">十个月区间的日历分解</title>
+  <desc id="desc">区间先切成 9 个完整月，再把不完整的 10 月切成 20 天，把 10 月 21 日切成 18 个小时，把不完整的小时切成 49 分钟和 1 个零头：一共 97 段。</desc>
+
+  <rect width="1200" height="640" fill="#f8fafc" />
+  <text x="48" y="50" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="28.0" font-weight="700" fill="#0f172a">一个区间，四层，97 段</text>
+  <text x="48" y="78" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="15.0" fill="#475569">逐层剥离完整单位，把左右残边下沉到下一层。</text>
+
+  
+  <text x="48" y="141" font-family="'Noto Sans SC', Consolas, monospace" font-size="13.0" fill="#475569">完整区间</text>
+  <text x="1120" y="116" text-anchor="end" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#0f766e">9 个完整月</text>
+  <g fill="#0f766e">
+    <rect x="200" y="125" width="88" height="26" rx="4" /><rect x="290" y="125" width="88" height="26" rx="4" /><rect x="380" y="125" width="88" height="26" rx="4" /><rect x="470" y="125" width="88" height="26" rx="4" /><rect x="560" y="125" width="88" height="26" rx="4" /><rect x="650" y="125" width="88" height="26" rx="4" /><rect x="740" y="125" width="88" height="26" rx="4" /><rect x="830" y="125" width="88" height="26" rx="4" /><rect x="920" y="125" width="88" height="26" rx="4" />
+  </g>
+  <rect x="1010" y="125" width="110" height="26" rx="4" fill="#ccfbf1" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="5 4" />
+  <text x="1065" y="143" text-anchor="middle" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#0f766e">10 月</text>
+  <text x="1140" y="143" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#0f766e">9</text>
+
+  
+  <path d="M 1010 151 L 200 235" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5" />
+  <path d="M 1120 151 L 1120 235" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5" />
+
+  
+  <text x="48" y="251" font-family="'Noto Sans SC', Consolas, monospace" font-size="13.0" fill="#475569">10 月</text>
+  <text x="1120" y="226" text-anchor="end" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#0d9488">20 个完整日</text>
+  <g fill="#0d9488">
+    <rect x="200" y="235" width="42" height="26" rx="3" /><rect x="244" y="235" width="42" height="26" rx="3" /><rect x="288" y="235" width="42" height="26" rx="3" /><rect x="332" y="235" width="42" height="26" rx="3" /><rect x="376" y="235" width="42" height="26" rx="3" /><rect x="420" y="235" width="42" height="26" rx="3" /><rect x="464" y="235" width="42" height="26" rx="3" /><rect x="508" y="235" width="42" height="26" rx="3" /><rect x="552" y="235" width="42" height="26" rx="3" /><rect x="596" y="235" width="42" height="26" rx="3" /><rect x="640" y="235" width="42" height="26" rx="3" /><rect x="684" y="235" width="42" height="26" rx="3" /><rect x="728" y="235" width="42" height="26" rx="3" /><rect x="772" y="235" width="42" height="26" rx="3" /><rect x="816" y="235" width="42" height="26" rx="3" /><rect x="860" y="235" width="42" height="26" rx="3" /><rect x="904" y="235" width="42" height="26" rx="3" /><rect x="948" y="235" width="42" height="26" rx="3" /><rect x="992" y="235" width="42" height="26" rx="3" /><rect x="1036" y="235" width="42" height="26" rx="3" />
+  </g>
+  <rect x="1080" y="235" width="40" height="26" rx="3" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5" stroke-dasharray="5 4" />
+  <text x="1140" y="253" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#0d9488">20</text>
+
+  <path d="M 1080 261 L 200 345" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5" />
+  <path d="M 1120 261 L 1120 345" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5" />
+
+  
+  <text x="48" y="361" font-family="'Noto Sans SC', Consolas, monospace" font-size="9.1" fill="#475569">10 月 21 日</text>
+  <text x="1120" y="336" text-anchor="end" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#b45309">18 个完整小时</text>
+  <g fill="#f59e0b">
+    <rect x="200" y="345" width="46" height="26" rx="3" /><rect x="248" y="345" width="46" height="26" rx="3" /><rect x="296" y="345" width="46" height="26" rx="3" /><rect x="344" y="345" width="46" height="26" rx="3" /><rect x="392" y="345" width="46" height="26" rx="3" /><rect x="440" y="345" width="46" height="26" rx="3" /><rect x="488" y="345" width="46" height="26" rx="3" /><rect x="536" y="345" width="46" height="26" rx="3" /><rect x="584" y="345" width="46" height="26" rx="3" /><rect x="632" y="345" width="46" height="26" rx="3" /><rect x="680" y="345" width="46" height="26" rx="3" /><rect x="728" y="345" width="46" height="26" rx="3" /><rect x="776" y="345" width="46" height="26" rx="3" /><rect x="824" y="345" width="46" height="26" rx="3" /><rect x="872" y="345" width="46" height="26" rx="3" /><rect x="920" y="345" width="46" height="26" rx="3" /><rect x="968" y="345" width="46" height="26" rx="3" /><rect x="1016" y="345" width="46" height="26" rx="3" />
+  </g>
+  <rect x="1064" y="345" width="56" height="26" rx="3" fill="#fef3c7" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4" />
+  <text x="1140" y="363" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#b45309">18</text>
+
+  <path d="M 1064 371 L 200 455" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5" />
+  <path d="M 1120 371 L 1120 455" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 5" />
+
+  
+  <text x="48" y="471" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#475569">18:00</text>
+  <text x="1120" y="446" text-anchor="end" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="13.0" fill="#6d28d9">49 个完整分钟 + 1 个零头</text>
+  <g fill="#8b5cf6">
+    <rect x="200" y="455" width="16" height="26" rx="2" /><rect x="217.5" y="455" width="16" height="26" rx="2" /><rect x="235" y="455" width="16" height="26" rx="2" /><rect x="252.5" y="455" width="16" height="26" rx="2" /><rect x="270" y="455" width="16" height="26" rx="2" /><rect x="287.5" y="455" width="16" height="26" rx="2" /><rect x="305" y="455" width="16" height="26" rx="2" /><rect x="322.5" y="455" width="16" height="26" rx="2" /><rect x="340" y="455" width="16" height="26" rx="2" /><rect x="357.5" y="455" width="16" height="26" rx="2" /><rect x="375" y="455" width="16" height="26" rx="2" /><rect x="392.5" y="455" width="16" height="26" rx="2" /><rect x="410" y="455" width="16" height="26" rx="2" /><rect x="427.5" y="455" width="16" height="26" rx="2" /><rect x="445" y="455" width="16" height="26" rx="2" /><rect x="462.5" y="455" width="16" height="26" rx="2" /><rect x="480" y="455" width="16" height="26" rx="2" /><rect x="497.5" y="455" width="16" height="26" rx="2" /><rect x="515" y="455" width="16" height="26" rx="2" /><rect x="532.5" y="455" width="16" height="26" rx="2" /><rect x="550" y="455" width="16" height="26" rx="2" /><rect x="567.5" y="455" width="16" height="26" rx="2" /><rect x="585" y="455" width="16" height="26" rx="2" /><rect x="602.5" y="455" width="16" height="26" rx="2" /><rect x="620" y="455" width="16" height="26" rx="2" /><rect x="637.5" y="455" width="16" height="26" rx="2" /><rect x="655" y="455" width="16" height="26" rx="2" /><rect x="672.5" y="455" width="16" height="26" rx="2" /><rect x="690" y="455" width="16" height="26" rx="2" /><rect x="707.5" y="455" width="16" height="26" rx="2" /><rect x="725" y="455" width="16" height="26" rx="2" /><rect x="742.5" y="455" width="16" height="26" rx="2" /><rect x="760" y="455" width="16" height="26" rx="2" /><rect x="777.5" y="455" width="16" height="26" rx="2" /><rect x="795" y="455" width="16" height="26" rx="2" /><rect x="812.5" y="455" width="16" height="26" rx="2" /><rect x="830" y="455" width="16" height="26" rx="2" /><rect x="847.5" y="455" width="16" height="26" rx="2" /><rect x="865" y="455" width="16" height="26" rx="2" /><rect x="882.5" y="455" width="16" height="26" rx="2" /><rect x="900" y="455" width="16" height="26" rx="2" /><rect x="917.5" y="455" width="16" height="26" rx="2" /><rect x="935" y="455" width="16" height="26" rx="2" /><rect x="952.5" y="455" width="16" height="26" rx="2" /><rect x="970" y="455" width="16" height="26" rx="2" /><rect x="987.5" y="455" width="16" height="26" rx="2" /><rect x="1005" y="455" width="16" height="26" rx="2" /><rect x="1022.5" y="455" width="16" height="26" rx="2" /><rect x="1040" y="455" width="16" height="26" rx="2" />
+  </g>
+  <rect x="1058" y="455" width="62" height="26" rx="3" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 4" />
+  <text x="1089" y="473" text-anchor="middle" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="9.6" fill="#b91c1c">零头</text>
+
+  
+  <g font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-size="12" fill="#475569">
+    <rect x="200" y="535" width="14" height="14" rx="3" fill="#0f766e" /><text x="220" y="546" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif">月</text>
+    <rect x="280" y="535" width="14" height="14" rx="3" fill="#0d9488" /><text x="300" y="546" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif">日</text>
+    <rect x="350" y="535" width="14" height="14" rx="3" fill="#f59e0b" /><text x="370" y="546" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif">时</text>
+    <rect x="425" y="535" width="14" height="14" rx="3" fill="#8b5cf6" /><text x="445" y="546" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif">分</text>
+    <rect x="510" y="535" width="14" height="14" rx="3" fill="#ef4444" /><text x="530" y="546" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif">零头</text>
+    <rect x="585" y="535" width="14" height="14" rx="3" fill="#ccfbf1" stroke="#0f766e" stroke-width="1" stroke-dasharray="4 3" /><text x="605" y="546" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif">不完整单位</text>
+  </g>
+
+  <text x="600" y="602" text-anchor="middle" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="15.0" font-weight="600" fill="#0f172a">97 段  ·  约 5–7 次请求  ·  省去 423,049 个分钟桶</text>
+  <text x="600" y="624" text-anchor="middle" font-family="'Noto Sans SC', 'Microsoft YaHei', sans-serif" font-size="12.0" fill="#64748b">同一套分解适用于任意区间和任意配置的最细层级。</text>
+</svg>
