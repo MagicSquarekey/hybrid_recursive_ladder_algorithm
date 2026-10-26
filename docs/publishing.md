@@ -1,6 +1,6 @@
 # 发布与传播清单
 
-这份清单记录 v0.0.4 已经完成的公开发布动作，以及需要账号授权的最后几步。
+这份清单记录已完成的公开发布动作，以及需要账号授权的最后几步。
 
 ## 已经完成
 
@@ -11,17 +11,18 @@
 - `docs/related-work.md` / `.zh-CN.md`：先例对比与定位。
 - `docs/articles/why-per-bucket-queries-are-slow.md` / `.zh-CN.md`：技术文章。
 - `docs/index.html`：GitHub Pages 落地页，已启用：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
-- GitHub Release `v0.0.4`：归档 release，触发 Zenodo DOI。
+- GitHub Release `v0.0.5`、`v0.0.4`：归档 release，触发 Zenodo DOI。
 
 ## 1. Zenodo DOI（已完成）
 
-`v0.0.4` 已被 Zenodo 归档，版本 DOI 是 **10.5281/zenodo.23557574**：
+| 版本 | 版本 DOI | 记录 |
+|---|---|---|
+| v0.0.5 | [10.5281/zenodo.23656844](https://doi.org/10.5281/zenodo.23656844) | <https://zenodo.org/records/23656844> |
+| v0.0.4 | [10.5281/zenodo.23557574](https://doi.org/10.5281/zenodo.23557574) | <https://zenodo.org/records/23557574> |
 
-- 记录：<https://zenodo.org/records/23557574>
-- 版本 DOI：<https://doi.org/10.5281/zenodo.23557574>
-- concept DOI（所有版本）：<https://doi.org/10.5281/zenodo.23556605>
+concept DOI（所有版本）：<https://doi.org/10.5281/zenodo.23556605>
 
-DOI 已填回 `CITATION.cff`、README（中英文）、`docs/defensive-publication.md` 和 `docs/index.html`。后续发版时，Zenodo 会在同一个 concept DOI 下生成新版本 DOI。
+DOI 已填回 `CITATION.cff`、各语言 README、`docs/defensive-publication.md` 和 `docs/index.html`。后续发版时，Zenodo 会在同一个 concept DOI 下生成新版本 DOI。
 
 如果后续版本没有自动归档：
 
@@ -30,10 +31,10 @@ DOI 已填回 `CITATION.cff`、README（中英文）、`docs/defensive-publicati
 3. 如果新 release 没有被识别，创建下一个 release；Zenodo 只归档启用之后创建的 release。
 4. 也可以手动在 Zenodo 上传 `dist/hybrid_recursive_ladder-<version>.tar.gz` 和 wheel。
 
-DOI 徽章：
+DOI 徽章（换成当前版本的版本 DOI）：
 
 ```markdown
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23557574.svg)](https://doi.org/10.5281/zenodo.23557574)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23656844.svg)](https://doi.org/10.5281/zenodo.23656844)
 ```
 
 ## 2. PyPI（可选，需要账号）
@@ -95,6 +96,7 @@ python -m twine upload dist/*
 - Description：以 “Query planning for bucket-limited time-series APIs” 开头。
 - Topics：`time-series`, `aggregation`, `query-planning`, `downsampling`, `multi-resolution`, `thingsboard`, `observability`, `python`, `mcp`, `iot` 等。
 - Homepage：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
+- Release `v0.0.5`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.5>，归档 release，包含 wheel、sdist 和自动生成的 release notes。
 - Release `v0.0.4`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.4>，归档 release，包含公开披露说明和 wheel。
 
 ## 5. 维护动作

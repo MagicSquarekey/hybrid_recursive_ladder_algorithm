@@ -5,7 +5,7 @@
 **Version:** 0.0.5  
 **License:** MIT  
 **Repository:** <https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm>  
-**DOI:** [10.5281/zenodo.23557574](https://doi.org/10.5281/zenodo.23557574)
+**DOI:** [10.5281/zenodo.23656844](https://doi.org/10.5281/zenodo.23656844)
 
 ## Purpose
 
@@ -224,13 +224,13 @@ under the MIT License.
   year    = {2026},
   version = {0.0.5},
   license = {MIT},
-  doi     = {10.5281/zenodo.23557574},
+  doi     = {10.5281/zenodo.23656844},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }
 ```
 
-The archived version is [10.5281/zenodo.23557574](https://doi.org/10.5281/zenodo.23557574)
-(record: <https://zenodo.org/records/23557574>). The concept DOI for all
+The archived version is [10.5281/zenodo.23656844](https://doi.org/10.5281/zenodo.23656844)
+(record: <https://zenodo.org/records/23656844>). The concept DOI for all
 versions is [10.5281/zenodo.23556605](https://doi.org/10.5281/zenodo.23556605).
 The [`CITATION.cff`](../CITATION.cff) file provides the same metadata in
 Citation File Format; GitHub's "Cite this repository" button reads it.

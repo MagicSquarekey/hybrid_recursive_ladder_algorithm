@@ -11,7 +11,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 [![Version](https://img.shields.io/badge/version-0.0.5-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23557574.svg)](https://doi.org/10.5281/zenodo.23557574)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23656844.svg)](https://doi.org/10.5281/zenodo.23656844)
 
 <p align="center">
   <img src="docs/assets/hero.zh-CN.png" alt="逐桶客户端：1,140 个桶，每桶最多 4 次调用，139 秒。日历阶梯：97 段，约 5–7 次请求，0.64 秒。" width="100%">
@@ -323,12 +323,12 @@ pytest -m integration
   year    = {2026},
   version = {0.0.5},
   license = {MIT},
-  doi     = {10.5281/zenodo.23557574},
+  doi     = {10.5281/zenodo.23656844},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }
 ```
 
-版本 DOI：[10.5281/zenodo.23557574](https://doi.org/10.5281/zenodo.23557574)。
+版本 DOI：[10.5281/zenodo.23656844](https://doi.org/10.5281/zenodo.23656844)。
 所有版本的 concept DOI：[10.5281/zenodo.23556605](https://doi.org/10.5281/zenodo.23556605)。
 GitHub 的 “Cite this repository” 会读取 [`CITATION.cff`](CITATION.cff)。
 
