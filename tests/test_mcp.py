@@ -41,6 +41,22 @@ def _fresh_engine():
     reset_engine()
 
 
+# SDK releases disagree on the attribute spelling of ToolAnnotations fields:
+# some expose readOnlyHint, others read_only_hint (with the camelCase form as
+# the serialization alias).  Read whichever the installed version provides.
+_HINT_ALIASES = {
+    "readOnlyHint": "read_only_hint",
+    "destructiveHint": "destructive_hint",
+    "idempotentHint": "idempotent_hint",
+    "openWorldHint": "open_world_hint",
+}
+
+
+def _hint(annotations, name):
+    attr = name if hasattr(annotations, name) else _HINT_ALIASES[name]
+    return getattr(annotations, attr)
+
+
 def test_tools_registered():
     server = build_server()
     tools = _resolve(server.list_tools())
@@ -55,21 +71,21 @@ def test_tool_annotations():
     # Reads only local configuration and demo data.
     for name in ("ladder_meta", "ladder_decompose"):
         annotations = tools[name].annotations
-        assert annotations.readOnlyHint is True
-        assert annotations.openWorldHint is False
-        assert annotations.destructiveHint is False
+        assert _hint(annotations, "readOnlyHint") is True
+        assert _hint(annotations, "openWorldHint") is False
+        assert _hint(annotations, "destructiveHint") is False
 
     # ladder_sum can write to the local store through materialize=True, so it
     # must not be advertised as read-only.
     annotations = tools["ladder_sum"].annotations
-    assert annotations.readOnlyHint is False
-    assert annotations.destructiveHint is False
-    assert annotations.openWorldHint is True
+    assert _hint(annotations, "readOnlyHint") is False
+    assert _hint(annotations, "destructiveHint") is False
+    assert _hint(annotations, "openWorldHint") is True
 
     # ladder_verify reaches the source but never writes.
     annotations = tools["ladder_verify"].annotations
-    assert annotations.readOnlyHint is True
-    assert annotations.openWorldHint is True
+    assert _hint(annotations, "readOnlyHint") is True
+    assert _hint(annotations, "openWorldHint") is True
 
 
 def test_decompose_tool():
