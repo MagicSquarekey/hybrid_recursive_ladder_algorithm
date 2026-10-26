@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.0.4-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.5-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23557574.svg)](https://doi.org/10.5281/zenodo.23557574)
 
@@ -43,8 +43,8 @@
 ## Установка
 
 ```bash
-# v0.0.4 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.4/hybrid_recursive_ladder-0.0.4-py3-none-any.whl
+# v0.0.5 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -174,7 +174,7 @@ class PointStore(Protocol):
 
 ## Ограничения
 
-* В v0.0.4 реализован только `sum`. Для `avg` нужно взвешивание; для `meter_delta` — первое значение каждого сегмента.
+* В v0.0.5 реализован только `sum`. Для `avg` нужно взвешивание; для `meter_delta` — первое значение каждого сегмента.
 * При пропусках в данных итог будет меньше физического. `cnt/expected` показывают разреженность, но данные не восполняются.
 * ThingsBoard принимает около 700 бакетов и отклоняет 800; по умолчанию используется 500.
 * Фоновые задачи живут в памяти процесса и теряются при перезапуске (результаты можно пересчитать).

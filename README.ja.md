@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.0.4-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.5-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23557574.svg)](https://doi.org/10.5281/zenodo.23557574)
 
@@ -43,8 +43,8 @@
 ## インストール
 
 ```bash
-# v0.0.4 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.4/hybrid_recursive_ladder-0.0.4-py3-none-any.whl
+# v0.0.5 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -174,7 +174,7 @@ class PointStore(Protocol):
 
 ## 制限
 
-* v0.0.4 は `sum` のみ。`avg` は加重、`meter_delta` は各セグメントの先頭値が必要で未実装です。
+* v0.0.5 は `sum` のみ。`avg` は加重、`meter_delta` は各セグメントの先頭値が必要で未実装です。
 * データ欠損があると合計は物理的な総量より小さくなります。`cnt/expected` で疎であることを示すだけで、補間はしません。
 * ThingsBoard の区間集約は約 700 バケットまで（800 は拒否）。既定は 500 です。
 * バックグラウンドタスクはプロセスメモリ上にあり、再起動で失われます（結果は再計算可能）。

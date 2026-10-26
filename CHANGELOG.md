@@ -4,6 +4,25 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
+## [0.0.5] — 2026-10-26
+
+### Added
+
+* MCP tool annotations on all four tools: a human-readable `title` plus
+  `readOnlyHint`, `destructiveHint`, `idempotentHint` and `openWorldHint`.
+  Clients can now tell that `ladder_meta` and `ladder_decompose` are local and
+  side-effect free, that `ladder_sum` can write to the local store through
+  `materialize=True`, and that `ladder_verify` reaches the source.
+* Per-language README diagrams. `docs/assets/hero.<lang>.png` ships for every
+  translated README, and `decomposition`/`architecture` are also localized for
+  Chinese. `tools/localize_assets.py` regenerates them from the English SVGs.
+
+### Fixed
+
+* `tests/test_mcp.py` now accepts the `(content, structured)` return value of
+  `call_tool` in current MCP SDK releases; the previous assertions failed on
+  `mcp` 1.27 and later.
+
 ## [0.0.4] — 2026-10-22
 
 Documentation release. No code or algorithm changes. Reworks the READMEs and
