@@ -192,7 +192,7 @@ curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=hybrid-recurs
 |---|---|---|
 | 官方 MCP Registry | 已收录 | `io.github.MagicSquarekey/hybrid-recursive-ladder`，见上 |
 | awesome-mcp-servers | PR 已提交 | [#17753](https://github.com/punkpeye/awesome-mcp-servers/pull/17753)，标题带 🤖🤖🤖 走快速通道 |
-| PulseMCP | 站点暂停收录 | 官方公告写明暂停，并说明会从官方 Registry 自动抓取；无需额外操作 |
+| PulseMCP | 等待平台恢复 | 公告仍在（2026-10-27 页面显示「2 小时前更新」），暂停新提交，并说明恢复后从官方 Registry 自动抓取。我们的输入已就绪，但目录内目前检索不到本站条目，需等其重启抓取；届时可用 `?query=` 搜索复核 |
 | Glama | 等待自动索引 | 页面按小时刷新，来源含 GitHub 与 Registry。若数日后仍无，在 /mcp/servers 点 Add Server |
 | mcp.so | 暂无免费通道 | 提交页现在只有 $39 付费自动发布，免费入口已撤 |
 | Smithery | 平台侧阻断 | CLI 发布 stdio 包返回 403「Updating servers has been removed. Contact support@smithery.ai.」，换名重试同样报错，说明是平台取消了包发布通道，不是我们的包有问题。MCPB 已构建并校验，可直接给 Claude Desktop 用；等平台恢复或用 support 邮箱申请开通 |
