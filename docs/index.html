@@ -58,10 +58,11 @@
   .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .card { background: linear-gradient(180deg, var(--panel), var(--panel-2)); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
   .card p { margin: 0; color: var(--muted); font-size: 14px; }
-  .num { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 8px; background: rgba(94,234,212,.12); color: var(--accent); font: 700 13px var(--mono); margin-bottom: 10px; }
+  .card .num { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 8px; background: rgba(94,234,212,.12); color: var(--accent); font: 700 13px var(--mono); margin-bottom: 10px; }
   pre { background: #070d18; border: 1px solid var(--line); border-radius: 12px; padding: 16px; overflow: auto; font: 13px/1.55 var(--mono); color: #cfe3ff; }
   code { font-family: var(--mono); font-size: .93em; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
   th { color: var(--muted); font-weight: 600; }
   td.num, th.num { text-align: right; font-family: var(--mono); }
@@ -174,17 +175,19 @@ tail    18:49–18:49:59     1
 
   <section>
     <h2>Measured on a production deployment</h2>
-    <table>
-      <thead>
-        <tr><th>Scenario</th><th class="num">Segments</th><th class="num">Requests</th><th class="num">Time</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>2 days, minute level</td><td class="num">69</td><td class="num">~4</td><td class="num">0.64 s</td></tr>
-        <tr><td>1 year, day level</td><td class="num">42</td><td class="num">~4</td><td class="num">1.18 s cold / 0.20 s warm</td></tr>
-        <tr><td>10 months, mixed levels</td><td class="num">97</td><td class="num">~5–7</td><td class="num">sub-second</td></tr>
-        <tr><td>Local read, 42–90 segments</td><td class="num">42–90</td><td class="num">0</td><td class="num">9–19 ms</td></tr>
-      </tbody>
-    </table>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Scenario</th><th class="num">Segments</th><th class="num">Requests</th><th class="num">Time</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2 days, minute level</td><td class="num">69</td><td class="num">~4</td><td class="num">0.64 s</td></tr>
+          <tr><td>1 year, day level</td><td class="num">42</td><td class="num">~4</td><td class="num">1.18 s cold / 0.20 s warm</td></tr>
+          <tr><td>10 months, mixed levels</td><td class="num">97</td><td class="num">~5–7</td><td class="num">sub-second</td></tr>
+          <tr><td>Local read, 42–90 segments</td><td class="num">42–90</td><td class="num">0</td><td class="num">9–19 ms</td></tr>
+        </tbody>
+      </table>
+    </div>
     <p class="muted" style="margin-top:12px;font-size:13px;">Production numbers over a VPN; latency depends on network, source load and data density. The reproducible benchmark prints segment and request counts without a server.</p>
   </section>
 
