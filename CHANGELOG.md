@@ -29,6 +29,10 @@ changes.
   installable with `pip install hybrid-recursive-ladder`.
 * `hybrid_ladder/py.typed`, so type checkers honour the inline annotations the
   `Typing :: Typed` classifier already advertised.
+* `hybrid-recursive-ladder-mcp` on PyPI: a thin wrapper whose command name
+  matches its package name, so `uvx hybrid-recursive-ladder-mcp` starts the
+  MCP server without callers having to know about extras.
+* `server.json`: the official MCP Registry descriptor for the stdio server.
 
 ### Changed
 

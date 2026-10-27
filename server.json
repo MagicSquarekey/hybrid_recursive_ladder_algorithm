@@ -1,0 +1,77 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.MagicSquarekey/hybrid-recursive-ladder",
+  "title": "Hybrid Recursive Ladder",
+  "description": "Aggregate long time-series ranges with a handful of source requests instead of one per bucket. Decomposes a range into month/day/hour/minute ladder segments, sums from ThingsBoard or PostgreSQL, materializes raw points locally, and verifies the local copy against the source. Runs on deterministic demo data with no configuration.",
+  "repository": {
+    "url": "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm",
+    "source": "github"
+  },
+  "websiteUrl": "https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/",
+  "version": "0.0.6",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "hybrid-recursive-ladder-mcp",
+      "version": "0.0.6",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "HL_SOURCE",
+          "description": "Source backend: demo (default), thingsboard, or postgres.",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "HL_TB_URL",
+          "description": "ThingsBoard base URL, for example http://localhost:9090.",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "HL_TB_USERNAME",
+          "description": "ThingsBoard username; pair with HL_TB_PASSWORD.",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "HL_TB_PASSWORD",
+          "description": "ThingsBoard password.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "HL_TB_TOKEN",
+          "description": "ThingsBoard access token, used instead of username and password.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "HL_PG_DSN",
+          "description": "PostgreSQL DSN for the local materialized store.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "HL_TIMEZONE",
+          "description": "IANA timezone for calendar boundaries; default Asia/Shanghai.",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "name": "HL_FINEST",
+          "description": "Finest ladder level: minute, hour, day, or month.",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}

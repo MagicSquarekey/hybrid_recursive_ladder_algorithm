@@ -35,6 +35,8 @@ PAIRS = {
         "skills/hybrid-recursive-ladder/SKILL.zh-CN.md",
     "skills/hybrid-recursive-ladder/reference.md":
         "skills/hybrid-recursive-ladder/reference.zh-CN.md",
+    "packages/hybrid-recursive-ladder-mcp/README.md":
+        "packages/hybrid-recursive-ladder-mcp/README.zh-CN.md",
 }
 
 # Chinese-only documents: they satisfy the rule by themselves.

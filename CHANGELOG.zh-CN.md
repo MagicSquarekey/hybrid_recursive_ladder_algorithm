@@ -27,6 +27,10 @@
   可用 `pip install hybrid-recursive-ladder` 安装。
 * 新增 `hybrid_ladder/py.typed`，让类型检查器认可以 `Typing :: Typed`
   分类器声明过的内联注解。
+* PyPI 上的 `hybrid-recursive-ladder-mcp`：一层薄封装，包名与命令名一致，
+  因此 `uvx hybrid-recursive-ladder-mcp` 即可启动 MCP 服务端，使用者不必
+  知道 extras 的存在。
+* `server.json`：面向官方 MCP Registry 的 stdio 服务描述文件。
 
 ### 变更
 

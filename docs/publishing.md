@@ -114,7 +114,52 @@ python -m twine upload dist/*
 5. 打 tag，推 tag，等 release workflow 完成。
 6. 检查 release 资产和 Pages。
 
-## 6. 不要做的事
+## 6. MCP 目录登记
+
+### 已完成
+
+- PyPI 上的 `hybrid-recursive-ladder-mcp`：包名与命令名一致，`uvx hybrid-recursive-ladder-mcp`
+  可直接启动 stdio 服务端。这一点必须满足，因为 `uvx` 按包名找同名可执行文件，
+  而 `mcp` 在主包里是可选依赖。
+- `server.json`：官方 MCP Registry 描述文件，`registryType: pypi`，
+  name 为 `io.github.MagicSquarekey/hybrid-recursive-ladder`。
+- 该包的 README 含 `<!-- mcp-name: ... -->` 注释。官方 Registry 校验 PyPI 包归属时，
+  就是读 PyPI 页面上的这段字符串，所以它必须在**已发布**的 README 里。
+
+### 官方 MCP Registry
+
+```bash
+# 1. 安装 mcp-publisher（Windows 用 tar 解包后放进 PATH）
+#    https://github.com/modelcontextprotocol/registry/releases
+
+# 2. GitHub 设备码授权
+mcp-publisher login github
+
+# 3. 在仓库根目录发布（server.json 所在目录）
+mcp-publisher publish
+
+# 4. 验证
+curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=hybrid-recursive-ladder"
+```
+
+注意：namespace 前缀必须与 GitHub 登录名一致（`io.github.MagicSquarekey/`）。
+如果 Registry 报名称不匹配，把 `server.json` 的 `name` 和 README 里的
+`mcp-name` 同时改成小写 `io.github.magicsquarekey/...` 再发一版。
+
+### 其他目录
+
+| 目录 | 方式 | 备注 |
+|---|---|---|
+| Glama <https://glama.ai/mcp/servers> | 自动索引 GitHub + 认领 | 需要 `mcp` topic 和可用的安装方式 |
+| mcp.so | 提交表单 | 填仓库地址和安装命令 |
+| PulseMCP <https://www.pulsemcp.com/submit> | 提交表单 | 同样吃仓库信息 |
+| Smithery | stdio 需要 `.mcpb` 打包 | 成本较高，优先级低于上面几个 |
+| awesome-mcp-servers | 提 PR | 按它的表格格式加一行，写清 transport 和安装命令 |
+
+提交文案统一用：一句话说清“把长区间聚合压到几次请求”，
+给出 `uvx hybrid-recursive-ladder-mcp`，再给仓库链接。不要写“首个”“唯一”。
+
+## 7. 不要做的事
 
 - 不要在多个社区同一天重复发同一篇内容；会被当成 spam。
 - 不要写 “first”“only”“invented” 这类无法穷尽验证的词；用 “we are not aware of” 或直接描述差异。

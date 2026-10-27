@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hybrid-recursive-ladder-mcp"
+version = "0.0.6"
+description = "MCP server for the Hybrid Recursive Ladder query planner: aggregate long time-series ranges with a handful of source requests."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "MagicSquarekey" }]
+keywords = [
+  "mcp",
+  "model-context-protocol",
+  "time-series",
+  "aggregation",
+  "thingsboard",
+  "observability",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Database",
+]
+dependencies = ["hybrid-recursive-ladder[mcp]>=0.0.6"]
+
+[project.scripts]
+hybrid-recursive-ladder-mcp = "hybrid_recursive_ladder_mcp:main"
+
+[project.urls]
+Homepage = "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm"
+Repository = "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm"
+Issues = "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hybrid_recursive_ladder_mcp"]
