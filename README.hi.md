@@ -4,6 +4,8 @@
 
 **भाषाएँ / Languages:** [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md)
 
+[एल्गोरिदम विनिर्देश](docs/algorithm.md) · [API संदर्भ](docs/api.md) · [बेंचमार्क](docs/benchmarks.md) · [संबंधित कार्य](docs/related-work.md) · [सार्वजनिक प्रकटीकरण](docs/defensive-publication.md) · [दस्तावेज़ सूचकांक](docs/README.md)
+
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)

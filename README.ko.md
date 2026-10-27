@@ -4,6 +4,8 @@
 
 **언어 / Languages:** [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md)
 
+[알고리즘 명세](docs/algorithm.md) · [API 참조](docs/api.md) · [벤치마크](docs/benchmarks.md) · [관련 연구](docs/related-work.md) · [공개 공시](docs/defensive-publication.md) · [문서 색인](docs/README.md)
+
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)
