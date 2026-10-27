@@ -187,7 +187,7 @@ error. Every endpoint is in [`docs/api.md`](https://github.com/MagicSquarekey/hy
 ### MCP server
 
 ```bash
-pip install -e ".[mcp]"
+pip install "hybrid-recursive-ladder[mcp]"
 hybrid-ladder mcp
 ```
 
