@@ -13,7 +13,7 @@
 - `docs/related-work.md` / `.zh-CN.md`：先例对比与定位。
 - `docs/articles/why-per-bucket-queries-are-slow.md` / `.zh-CN.md`：技术文章。
 - `docs/index.html`：GitHub Pages 落地页，已启用：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
-- GitHub Release `v0.0.5`、`v0.0.4`：归档 release，触发 Zenodo DOI。
+- GitHub Release `v0.0.6`、`v0.0.5`、`v0.0.4`：归档 release，触发 Zenodo DOI。
 
 ## 1. Zenodo DOI（已完成）
 
@@ -98,6 +98,7 @@ python -m twine upload dist/*
 - Description：以 “Query planning for bucket-limited time-series APIs” 开头。
 - Topics：`time-series`, `aggregation`, `query-planning`, `downsampling`, `multi-resolution`, `thingsboard`, `observability`, `python`, `mcp`, `iot` 等。
 - Homepage：<https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/>。
+- Release `v0.0.6`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.6>，文档与站点发布，包含 wheel、sdist 和自动生成的 release notes。
 - Release `v0.0.5`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.5>，归档 release，包含 wheel、sdist 和自动生成的 release notes。
 - Release `v0.0.4`：<https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/tag/v0.0.4>，归档 release，包含公开披露说明和 wheel。
 

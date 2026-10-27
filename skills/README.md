@@ -7,7 +7,7 @@
 The skill teaches an agent:
 
 * when the ladder is the right tool (long-range sums; not averages or
-  meter-delta in v0.0.5),
+  meter-delta in v0.0.6),
 * how to call the CLI, HTTP API or MCP tools,
 * how to interpret `null` vs `0.0`, `source`, `cnt`/`expected` and `tb_ranges`,
 * the ThingsBoard pitfalls that the adapter already handles,
@@ -34,11 +34,11 @@ skills directory.
 
 ### Install the package
 
-The skill's commands need the package. v0.0.5 is distributed through the GitHub
+The skill's commands need the package. v0.0.6 is distributed through the GitHub
 release (PyPI publication is planned):
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
 ```
 
 With optional integrations, install from a source checkout:

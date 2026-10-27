@@ -33,8 +33,8 @@
 ## 安装
 
 ```bash
-# v0.0.5 GitHub Release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
+# v0.0.6 GitHub Release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
 
 # 可选依赖：克隆后安装
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git

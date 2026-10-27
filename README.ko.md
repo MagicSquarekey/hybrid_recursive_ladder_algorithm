@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.0.5-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23656844.svg)](https://doi.org/10.5281/zenodo.23656844)
 
@@ -43,8 +43,8 @@
 ## 설치
 
 ```bash
-# v0.0.5 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
+# v0.0.6 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -174,7 +174,7 @@ class PointStore(Protocol):
 
 ## 제한
 
-* v0.0.5은 `sum`만 구현했습니다. `avg`는 가중치가 필요하고, `meter_delta`는 세그먼트별 첫 값이 필요합니다.
+* v0.0.6은 `sum`만 구현했습니다. `avg`는 가중치가 필요하고, `meter_delta`는 세그먼트별 첫 값이 필요합니다.
 * 데이터 누락이 있으면 합계는 물리적 총량보다 작아집니다. `cnt/expected`로 희소성을 표시할 뿐 보간하지 않습니다.
 * ThingsBoard 구간 집계는 약 700 버킷까지 허용(800 거부). 기본값은 500입니다.
 * 백그라운드 작업은 프로세스 메모리에 있어 재시작 시 사라집니다(결과는 재계산 가능).

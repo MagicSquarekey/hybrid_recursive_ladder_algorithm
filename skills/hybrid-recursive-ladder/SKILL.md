@@ -31,7 +31,7 @@ Use it when **all** of these are true:
 
 Do **not** use it for:
 
-* Average or meter-delta rules in v0.0.5 (average needs weighted sum+count;
+* Average or meter-delta rules in v0.0.6 (average needs weighted sum+count;
   meter-delta needs the first value of every segment).
 * Non-additive metrics or event streams.
 * Sources without interval aggregation — implement the two-method protocol
@@ -40,8 +40,8 @@ Do **not** use it for:
 ## Install
 
 ```bash
-# v0.0.5 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
+# v0.0.6 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git

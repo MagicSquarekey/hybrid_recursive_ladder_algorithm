@@ -115,7 +115,7 @@ hybrid-ladder serve --host 127.0.0.1 --port 8000
 ### `GET /health`
 
 ```json
-{"status": "ok", "version": "0.0.5", "source": "ThingsBoardSource", "store": "PostgresStore"}
+{"status": "ok", "version": "0.0.6", "source": "ThingsBoardSource", "store": "PostgresStore"}
 ```
 
 ### `GET /v1/meta`

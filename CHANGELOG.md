@@ -6,6 +6,39 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
+## [0.0.6] — 2026-10-27
+
+Documentation and site release. No algorithm, API, wire-format or storage
+changes.
+
+### Added
+
+* Chinese versions for every document in the repository. All 14 prose documents
+  now have a `.zh-CN.md` mirror — including the API reference, architecture,
+  benchmarks, changelog, contributing guide and the agent skill — and the
+  prior-art matrix has a Chinese CSV.
+* `docs/README.md` / `docs/README.zh-CN.md`: a documentation index for every
+  document, project-level file and diagram in both languages.
+* `tools/check_docs_i18n.py`: fails CI when a document lacks a Chinese mirror,
+  a diagram lacks `zh-CN` SVG/PNG assets, or a new document is not registered.
+* An 11-language switcher on the documentation site, with `?lang=` deep links,
+  a saved preference, translated metadata and right-to-left layout for Arabic.
+
+### Changed
+
+* Every document carries an English / 简体中文 switch at the top.
+* Chinese documents use the Chinese diagrams; other languages keep the English
+  or their localized hero image.
+* On the site, Chinese mode links to the Chinese editions of the algorithm,
+  prior-art, article and disclosure pages.
+* Install snippets, badges, API examples and metadata now reference `0.0.6`.
+
+### Fixed
+
+* The benchmark table on the landing page no longer collapses: the badge rule
+  is scoped to cards and wide tables scroll horizontally.
+* Numeric ranges and arrows keep left-to-right order in the Arabic RTL layout.
+
 ## [0.0.5] — 2026-10-26
 
 ### Added

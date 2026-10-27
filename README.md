@@ -9,7 +9,7 @@
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.5-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23656844.svg)](https://doi.org/10.5281/zenodo.23656844)
 
@@ -88,7 +88,7 @@ the number of minute buckets. The formal propositions are in
 ## Quick start
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
 
 hybrid-ladder demo
 hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
@@ -286,7 +286,7 @@ data; the sum is still arithmetically correct, just based on fewer points.
 
 **Limits**
 
-- **Sum only in v0.0.5.** `avg` needs `sum` + `count` weighting; `meter_delta`
+- **Sum only in v0.0.6.** `avg` needs `sum` + `count` weighting; `meter_delta`
   needs the first value of every segment (ThingsBoard has no `FIRST`), so those
   rules are not on the ladder yet.
 - **Data completeness ≠ arithmetic correctness.** Missing samples make the total
@@ -388,7 +388,7 @@ adapters; Celery/RQ task backend; OpenTelemetry metrics; PyPI trusted publishing
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.5},
+  version = {0.0.6},
   license = {MIT},
   doi     = {10.5281/zenodo.23656844},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}

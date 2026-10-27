@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.0.5-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23656844.svg)](https://doi.org/10.5281/zenodo.23656844)
 
@@ -43,8 +43,8 @@
 ## التثبيت
 
 ```bash
-# v0.0.5 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.5/hybrid_recursive_ladder-0.0.5-py3-none-any.whl
+# v0.0.6 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -174,7 +174,7 @@ class PointStore(Protocol):
 
 ## القيود
 
-* الإصدار v0.0.5 ينفّذ `sum` فقط. `avg` يحتاج ترجيحًا؛ `meter_delta` يحتاج أول قيمة في كل مقطع.
+* الإصدار v0.0.6 ينفّذ `sum` فقط. `avg` يحتاج ترجيحًا؛ `meter_delta` يحتاج أول قيمة في كل مقطع.
 * نقص القياسات يجعل الإجمالي أقل من الإجمالي الفيزيائي. `cnt/expected` يكشفان ذلك دون تعويض.
 * ThingsBoard يقبل نحو 700 دلو ويرفض 800؛ الافتراضي 500.
 * المهام الخلفية تعيش في ذاكرة العملية وتُفقد عند إعادة التشغيل (يمكن إعادة حساب النتائج).

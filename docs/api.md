@@ -117,7 +117,7 @@ Service metadata and, with demo data, a ready-to-use range and series.
 ### `GET /health`
 
 ```json
-{"status": "ok", "version": "0.0.5", "source": "ThingsBoardSource", "store": "PostgresStore"}
+{"status": "ok", "version": "0.0.6", "source": "ThingsBoardSource", "store": "PostgresStore"}
 ```
 
 ### `GET /v1/meta`
