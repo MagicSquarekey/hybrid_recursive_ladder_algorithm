@@ -186,13 +186,27 @@ curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=hybrid-recurs
 
 ### 其他目录
 
-| 目录 | 方式 | 备注 |
+### 其他目录（2026-10-27 实测状态）
+
+| 目录 | 状态 | 说明 |
 |---|---|---|
-| Glama <https://glama.ai/mcp/servers> | 自动索引 GitHub + 认领 | 需要 `mcp` topic 和可用的安装方式 |
-| mcp.so | 提交表单 | 填仓库地址和安装命令 |
-| PulseMCP <https://www.pulsemcp.com/submit> | 提交表单 | 同样吃仓库信息 |
-| Smithery | stdio 需要 `.mcpb` 打包 | 成本较高，优先级低于上面几个 |
-| awesome-mcp-servers | 提 PR | 按它的表格格式加一行，写清 transport 和安装命令 |
+| 官方 MCP Registry | 已收录 | `io.github.MagicSquarekey/hybrid-recursive-ladder`，见上 |
+| awesome-mcp-servers | PR 已提交 | [#17753](https://github.com/punkpeye/awesome-mcp-servers/pull/17753)，标题带 🤖🤖🤖 走快速通道 |
+| PulseMCP | 站点暂停收录 | 官方公告写明暂停，并说明会从官方 Registry 自动抓取；无需额外操作 |
+| Glama | 等待自动索引 | 页面按小时刷新，来源含 GitHub 与 Registry。若数日后仍无，在 /mcp/servers 点 Add Server |
+| mcp.so | 暂无免费通道 | 提交页现在只有 $39 付费自动发布，免费入口已撤 |
+| Smithery | 包已构建，待发布 | `mcpb/` + `dist-mcpb/hybrid-recursive-ladder.mcpb`；发布需先 `smithery login` |
+
+Smithery 与 Claude Desktop 用的 MCPB 包这样重建：
+
+```bash
+npx @anthropic-ai/mcpb validate mcpb/manifest.json
+npx @anthropic-ai/mcpb pack mcpb dist-mcpb/hybrid-recursive-ladder.mcpb
+smithery mcp publish dist-mcpb/hybrid-recursive-ladder.mcpb -n <你的账号>/hybrid-recursive-ladder
+```
+
+包内不打包源码：`mcp_config` 通过 `uvx --from hybrid-recursive-ladder[mcp]`
+运行已发布的 PyPI 版本，版本号天然同步。
 
 提交文案统一用：一句话说清“把长区间聚合压到几次请求”，
 给出 `uvx hybrid-recursive-ladder-mcp`，再给仓库链接。不要写“首个”“唯一”。

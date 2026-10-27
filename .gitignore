@@ -7,6 +7,7 @@ build/
 dist/
 dist-pypi/
 dist-mcp/
+dist-mcpb/
 .venv/
 .venv-*/
 venv/

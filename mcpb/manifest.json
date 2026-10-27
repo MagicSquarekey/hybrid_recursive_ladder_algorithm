@@ -1,0 +1,39 @@
+{
+  "manifest_version": "0.3",
+  "name": "hybrid-recursive-ladder",
+  "display_name": "Hybrid Recursive Ladder",
+  "version": "0.0.6",
+  "description": "Aggregate long time-series ranges with a few source requests instead of one per bucket.",
+  "long_description": "Plans a long time-series range as contiguous calendar ladder segments and fills them in roughly five to seven source requests, instead of one request per output bucket. Decomposes ranges, sums from ThingsBoard or PostgreSQL, materializes raw points locally, and verifies the local copy against the source. Works on deterministic demo data with no configuration.",
+  "author": {
+    "name": "MagicSquarekey",
+    "url": "https://github.com/MagicSquarekey"
+  },
+  "homepage": "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm"
+  },
+  "license": "MIT",
+  "keywords": ["time-series", "aggregation", "thingsboard", "observability", "query-planning"],
+  "server": {
+    "type": "python",
+    "entry_point": "server/main.py",
+    "mcp_config": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "hybrid-recursive-ladder[mcp]>=0.0.6",
+        "hybrid-ladder",
+        "mcp"
+      ]
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "python": ">=3.10,<4.0"
+    }
+  }
+}
