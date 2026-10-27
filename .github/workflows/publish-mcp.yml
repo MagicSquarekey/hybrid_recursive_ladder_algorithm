@@ -1,0 +1,36 @@
+name: Publish to MCP Registry
+
+# Metadata-only publish: the PyPI packages are uploaded by hand, this workflow
+# only registers server.json with the official MCP Registry over GitHub OIDC.
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # OIDC login to the registry; no secret needed
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher --help
+
+      - name: Authenticate to the MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish server.json
+        run: ./mcp-publisher publish
+
+      - name: Verify the listing
+        run: |
+          name=$(python -c "import json;print(json.load(open('server.json'))['name'])")
+          curl -sf "https://registry.modelcontextprotocol.io/v0.1/servers?search=$name" | head -c 2000
