@@ -13,6 +13,7 @@ changes.
 
 ### Added
 
+* Zenodo archive and DOI: [10.5281/zenodo.23683292](https://doi.org/10.5281/zenodo.23683292).
 * Chinese versions for every document in the repository. All 14 prose documents
   now have a `.zh-CN.md` mirror — including the API reference, architecture,
   benchmarks, changelog, contributing guide and the agent skill — and the

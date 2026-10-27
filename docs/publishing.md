@@ -19,6 +19,7 @@
 
 | 版本 | 版本 DOI | 记录 |
 |---|---|---|
+| v0.0.6 | [10.5281/zenodo.23683292](https://doi.org/10.5281/zenodo.23683292) | <https://zenodo.org/records/23683292> |
 | v0.0.5 | [10.5281/zenodo.23656844](https://doi.org/10.5281/zenodo.23656844) | <https://zenodo.org/records/23656844> |
 | v0.0.4 | [10.5281/zenodo.23557574](https://doi.org/10.5281/zenodo.23557574) | <https://zenodo.org/records/23557574> |
 
@@ -36,7 +37,7 @@ DOI 已填回 `CITATION.cff`、各语言 README、`docs/defensive-publication.md
 DOI 徽章（换成当前版本的版本 DOI）：
 
 ```markdown
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23656844.svg)](https://doi.org/10.5281/zenodo.23656844)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23683292.svg)](https://doi.org/10.5281/zenodo.23683292)
 ```
 
 ## 2. PyPI（可选，需要账号）
