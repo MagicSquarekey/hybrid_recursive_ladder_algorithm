@@ -125,6 +125,44 @@ python -m twine upload dist/*
   name 为 `io.github.MagicSquarekey/hybrid-recursive-ladder`。
 - 该包的 README 含 `<!-- mcp-name: ... -->` 注释。官方 Registry 校验 PyPI 包归属时，
   就是读 PyPI 页面上的这段字符串，所以它必须在**已发布**的 README 里。
+- 官方 MCP Registry 已收录：
+  `io.github.MagicSquarekey/hybrid-recursive-ladder`（v0.0.6，pypi / stdio）。
+  由 `.github/workflows/publish-mcp.yml` 通过 OIDC 发布，`workflow_dispatch` 可手动重跑。
+  验证：`curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=hybrid-recursive-ladder"`
+
+**踩过的坑**：`server.json` 的 `description` 上限是 **100 字符**，超了会发布失败，
+而 Actions 只显示“exit code 1”，真实原因在 annotation 里。工作流现在会把最后几行
+输出挂成 annotation，避免再盲猜。
+
+### 可粘贴文案
+
+短版（表单描述栏，约 200 字符）：
+
+> Hybrid Recursive Ladder MCP — aggregate long time-series ranges with a few
+> source requests instead of one per bucket. Decomposes a range into
+> month/day/hour/minute ladder segments and sums from ThingsBoard or
+> PostgreSQL. Runs on demo data with no configuration.
+
+长版（提交说明 / PR 正文）：
+
+> Most time-series APIs cost you one round trip per output bucket, so a
+> ten-month minute-level range becomes 423,049 queries. This MCP server plans
+> the same range as 97 contiguous calendar segments and fills them in roughly
+> five to seven source requests, keeping the per-minute output the client
+> actually needs. Tools: `ladder_meta`, `ladder_decompose`, `ladder_sum`,
+> `ladder_verify`. Works out of the box on deterministic demo data; point
+> `HL_SOURCE` at ThingsBoard or PostgreSQL for real data.
+>
+> Install: `uvx hybrid-recursive-ladder-mcp`
+> Repo: https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm
+
+awesome-mcp-servers 的条目（加在 Databases 小节，格式与该文件现有条目一致）：
+
+```markdown
+- [MagicSquarekey/hybrid_recursive_ladder_algorithm](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm) [![MagicSquarekey/hybrid_recursive_ladder_algorithm MCP server](https://glama.ai/mcp/servers/MagicSquarekey/hybrid_recursive_ladder_algorithm/badges/score.svg)](https://glama.ai/mcp/servers/MagicSquarekey/hybrid_recursive_ladder_algorithm) 🐍 🏠 🍎 🪟 🐧 - Aggregate long time-series ranges with a few source requests instead of one per bucket: decomposes a range into month/day/hour/minute ladder segments, sums from ThingsBoard or PostgreSQL, and keeps a verifiable local copy. `uvx hybrid-recursive-ladder-mcp`
+```
+
+徽章含义（该文件图例）：🐍 Python、🏠 本地服务、🍎 macOS、🪟 Windows、🐧 Linux。
 
 ### 官方 MCP Registry
 
