@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.MagicSquarekey/hybrid-recursive-ladder",
   "title": "Hybrid Recursive Ladder",
-  "description": "Aggregate long time-series ranges with a handful of source requests instead of one per bucket. Decomposes a range into month/day/hour/minute ladder segments, sums from ThingsBoard or PostgreSQL, materializes raw points locally, and verifies the local copy against the source. Runs on deterministic demo data with no configuration.",
+  "description": "Aggregate long time-series ranges with a few source requests instead of one per bucket.",
   "repository": {
     "url": "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm",
     "source": "github"

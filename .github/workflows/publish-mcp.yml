@@ -28,7 +28,17 @@ jobs:
         run: ./mcp-publisher login github-oidc
 
       - name: Publish server.json
-        run: ./mcp-publisher publish
+        run: |
+          set +e
+          ./mcp-publisher publish 2>&1 | tee publish.log
+          rc=${PIPESTATUS[0]}
+          if [ "$rc" -ne 0 ]; then
+            # The job log lives behind a blob host that is not always reachable,
+            # so surface the reason as an annotation on the run.
+            msg=$(tail -n 12 publish.log | tr -d '\r' | tr '\n' ' ' | sed 's/%/%25/g')
+            echo "::error title=MCP Registry publish failed::$msg"
+          fi
+          exit "$rc"
 
       - name: Verify the listing
         run: |
