@@ -28,6 +28,8 @@ jobs:
           pip install -e ".[dev]"
       - name: Lint
         run: ruff check .
+      - name: Documentation i18n coverage
+        run: python tools/check_docs_i18n.py
       - name: Test
         run: pytest
 

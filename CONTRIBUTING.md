@@ -1,5 +1,7 @@
 # Contributing
 
+**语言 / Languages:** [English](CONTRIBUTING.md) · [简体中文](CONTRIBUTING.zh-CN.md)
+
 Thanks for considering a contribution. This project values correctness and
 clarity over feature count: the algorithm's guarantees are the product.
 
@@ -83,9 +85,12 @@ before the fix.
 
 ## Documentation
 
+* Every prose document ships with a `.zh-CN.md` mirror; every diagram ships
+  with a `zh-CN` SVG and PNG. Run `python tools/check_docs_i18n.py` (also
+  enforced in CI) before opening a PR.
 * English is the primary README; keep `README.zh-CN.md` in sync when behavior
   changes.
-* API changes require an update to `docs/api.md` and `CHANGELOG.md`.
+* API changes require an update to `docs/api.md` and `docs/api.zh-CN.md`.
 * Add benchmarks only with methodology and caveats; never present a
   single-machine number as a guarantee.
 * README diagrams are language-specific: `docs/assets/<name>.<lang>.png` is

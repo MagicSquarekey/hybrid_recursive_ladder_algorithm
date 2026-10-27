@@ -1,5 +1,7 @@
 # Benchmarks
 
+**语言 / Languages:** [English](benchmarks.md) · [简体中文](benchmarks.zh-CN.md)
+
 These numbers come from a production AutoTestHub deployment (October 2026),
 aggregating a single ThingsBoard series over a VPN. They are indicative, not a
 guarantee: latency depends on network distance, ThingsBoard load, data density

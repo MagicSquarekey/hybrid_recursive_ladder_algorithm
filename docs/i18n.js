@@ -21,6 +21,33 @@
       "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/articles/why-per-bucket-queries-are-slow.zh-CN.md",
   };
 
+  const REPO = "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm";
+  const DOC_LINKS = {
+    algorithm: {
+      en: `${REPO}/blob/main/docs/algorithm.md`,
+      "zh-CN": `${REPO}/blob/main/docs/algorithm.zh-CN.md`,
+    },
+    prior: {
+      en: `${REPO}/blob/main/docs/related-work.md`,
+      "zh-CN": `${REPO}/blob/main/docs/related-work.zh-CN.md`,
+    },
+    article: {
+      en: `${REPO}/blob/main/docs/articles/why-per-bucket-queries-are-slow.md`,
+      "zh-CN": `${REPO}/blob/main/docs/articles/why-per-bucket-queries-are-slow.zh-CN.md`,
+    },
+    disclosure: {
+      en: `${REPO}/blob/main/docs/defensive-publication.md`,
+      "zh-CN": `${REPO}/blob/main/docs/defensive-publication.zh-CN.md`,
+    },
+  };
+
+  const LOCALIZED_LINKS = {
+    disclosure: { "zh-CN": `${REPO}/blob/main/docs/defensive-publication.zh-CN.md` },
+    prior: { "zh-CN": `${REPO}/blob/main/docs/related-work.zh-CN.md` },
+    readme: { "zh-CN": `${REPO}/blob/main/README.zh-CN.md` },
+    spec: { "zh-CN": `${REPO}/blob/main/docs/algorithm.zh-CN.md` },
+  };
+
   const STATIC_LINK_TEXT = {
     zenodo: "10.5281/zenodo.23656844",
     citation: "CITATION.cff",
@@ -794,11 +821,16 @@
   const select = document.getElementById("lang-select");
   if (!select) return;
 
+  function linkUrl(key, lang) {
+    const localized = LOCALIZED_LINKS[key];
+    return (localized && localized[lang]) || LINK_URLS[key];
+  }
+
   function renderTemplate(template, lang) {
     const labels = Object.assign({}, STATIC_LINK_TEXT, LINK_TEXT[lang] || LINK_TEXT.en);
     return template.replace(/\{(\w+)\}/g, (match, key) => {
       if (LINK_URLS[key] && labels[key]) {
-        return `<a href="${LINK_URLS[key]}">${labels[key]}</a>`;
+        return `<a href="${linkUrl(key, lang)}">${labels[key]}</a>`;
       }
       return match;
     });
@@ -819,6 +851,11 @@
 
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+
+    document.querySelectorAll("[data-doc-link]").forEach((el) => {
+      const links = DOC_LINKS[el.getAttribute("data-doc-link")];
+      if (links) el.href = links[lang] || links.en;
+    });
 
     const title = t("meta.title");
     const description = t("meta.description");

@@ -4,7 +4,7 @@
 
 **Languages:** [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md)
 
-[Algorithm spec](docs/algorithm.md) · [API reference](docs/api.md) · [Benchmarks](docs/benchmarks.md) · [Related work](docs/related-work.md) · [Public disclosure](docs/defensive-publication.md)
+[Algorithm spec](docs/algorithm.md) · [API reference](docs/api.md) · [Benchmarks](docs/benchmarks.md) · [Related work](docs/related-work.md) · [Public disclosure](docs/defensive-publication.md) · [Docs index](docs/README.md) · [中文文档](README.zh-CN.md)
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -83,7 +83,7 @@ Fine-grained work is confined to the two partial units at the edges. For the
 default hierarchy, `N <= N_month + 639`; recursion depth is at most 4. The
 request count is `O(N_month / K + 1)` — it grows with the coarse units, not with
 the number of minute buckets. The formal propositions are in
-[`docs/algorithm.md`](docs/algorithm.md) §5.3–5.5.
+[`docs/algorithm.md`](docs/algorithm.md) §5.3–5.5 ([中文](docs/algorithm.zh-CN.md)).
 
 ## Quick start
 
@@ -141,7 +141,7 @@ The engine depends on two small protocols: `TimeSeriesSource` (`interval_agg`,
 `raw_series`) and `PointStore` (`sum_ranges`, `series`, `coverage`,
 `upsert_points`, ...). Built-ins: `MemorySource`/`MemoryStore`,
 `ThingsBoardSource`, `PostgresStore`. See
-[`docs/architecture.md`](docs/architecture.md) to add another source.
+[`docs/architecture.md`](docs/architecture.md) ([中文](docs/architecture.zh-CN.md)) to add another source.
 
 ### CLI
 
@@ -182,7 +182,7 @@ curl http://127.0.0.1:8000/v1/tasks/<task_id>
 ```
 
 The API uses `{"code":0,"data":...}` on success and `{"code":1,"detail":...}` on
-error. Every endpoint is in [`docs/api.md`](docs/api.md).
+error. Every endpoint is in [`docs/api.md`](docs/api.md) ([中文](docs/api.zh-CN.md)).
 
 ### MCP server
 
@@ -315,7 +315,7 @@ density):
 | Local read, 42–90 segments | — | 0 | 9–19 ms | one SQL statement |
 | Mixed read (3 local + 1 source) | 4 | 1 | 0.31 s | equals source-only |
 
-See [`docs/benchmarks.md`](docs/benchmarks.md) for methodology and caveats.
+See [`docs/benchmarks.md`](docs/benchmarks.md) ([中文](docs/benchmarks.zh-CN.md)) for methodology and caveats.
 
 ## Positioning and prior art
 
@@ -331,9 +331,9 @@ aggregates, and Druid period granularity. Query-side systems such as Prometheus
 and Grafana choose one uniform step; the ladder plans multiple calendar levels
 in one query.
 
-See [Related work and positioning](docs/related-work.md) for the full
+See [Related work and positioning](docs/related-work.md) ([中文](docs/related-work.zh-CN.md)) for the full
 comparison, the historical algorithms, and the defensible novelty statement.
-The method is published as a [public disclosure](docs/defensive-publication.md);
+The method is published as a [public disclosure](docs/defensive-publication.md) ([中文](docs/defensive-publication.zh-CN.md));
 a [technical article](docs/articles/why-per-bucket-queries-are-slow.md) walks
 through the production benchmark and the request-count argument.
 

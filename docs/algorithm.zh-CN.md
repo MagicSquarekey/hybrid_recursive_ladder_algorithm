@@ -1,5 +1,7 @@
 # 混合递归阶梯算法（Hybrid Recursive Ladder Algorithm）
 
+**语言 / Languages:** [English](algorithm.md) · [简体中文](algorithm.zh-CN.md)
+
 > 本文是算法的中文规范。实现与测试以本文和 [algorithm.md](algorithm.md) 为准；口径变更必须同步更新。
 
 ## 一、定义
@@ -64,6 +66,8 @@ ladder(a, b, level):
 | 分 | 18:00 ~ 18:48 | 49 |
 | 零头 | 18:49:00 – 18:49:59 | 1 |
 | **合计** | | **97** |
+
+<img src="assets/decomposition.zh-CN.svg" alt="区间先切成 9 个完整月，再把 10 月切成 20 天，把 10 月 21 日切成 18 个小时，把不完整的小时切成 49 分钟和 1 个零头：一共 97 段。" width="100%">
 
 逐分钟是 423,049 个桶，压缩约 **4,360 倍**。
 

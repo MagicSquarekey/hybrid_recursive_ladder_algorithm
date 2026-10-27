@@ -1,5 +1,7 @@
 # Hybrid Recursive Ladder: public disclosure
 
+**语言 / Languages:** [English](defensive-publication.md) · [简体中文](defensive-publication.zh-CN.md)
+
 **Author:** MagicSquarekey  
 **Date:** 2026-10-22  
 **Version:** 0.0.5  

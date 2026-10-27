@@ -1,5 +1,7 @@
 # Hybrid Recursive Ladder — quick reference
 
+**语言 / Languages:** [English](reference.md) · [简体中文](reference.zh-CN.md)
+
 ## Segment JSON
 
 ```json

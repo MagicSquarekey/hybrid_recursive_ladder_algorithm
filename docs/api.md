@@ -1,5 +1,7 @@
 # API reference
 
+**语言 / Languages:** [English](api.md) · [简体中文](api.zh-CN.md)
+
 The package exposes the same engine through four interfaces: Python, CLI, HTTP
 and MCP.
 
@@ -115,7 +117,7 @@ Service metadata and, with demo data, a ready-to-use range and series.
 ### `GET /health`
 
 ```json
-{"status": "ok", "version": "0.0.1", "source": "ThingsBoardSource", "store": "PostgresStore"}
+{"status": "ok", "version": "0.0.5", "source": "ThingsBoardSource", "store": "PostgresStore"}
 ```
 
 ### `GET /v1/meta`

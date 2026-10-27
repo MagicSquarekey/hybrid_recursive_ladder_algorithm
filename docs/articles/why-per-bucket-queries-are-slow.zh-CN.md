@@ -1,5 +1,7 @@
 # 1,140 个桶，139 秒：逐桶时序查询为什么慢
 
+**语言 / Languages:** [English](why-per-bucket-queries-are-slow.md) · [简体中文](why-per-bucket-queries-are-slow.zh-CN.md)
+
 一个生产环境的 ThingsBoard 查询，走 VPN，1,140 个统计桶花了 **139 秒**。算术本身很便宜，贵的是网络。
 
 这是一个查询规划器的故事：它把「每个桶问一次」变成「按日历层级问几次」，请求数从几千降到个位数。

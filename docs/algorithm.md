@@ -1,5 +1,7 @@
 # Algorithm specification
 
+**语言 / Languages:** [English](algorithm.md) · [简体中文](algorithm.zh-CN.md)
+
 > This document is the authoritative specification for the Hybrid Recursive
 > Ladder Algorithm. Implementation and tests must follow it; any change in
 > semantics must update this file first.
@@ -72,6 +74,8 @@ Range `2026-01-01 00:00:00 → 2026-10-21 18:49:59`:
 | minute | 2026-10-21 18:00 … 18:48 | 49 |
 | tail | 2026-10-21 18:49:00–18:49:59 | 1 |
 | **Total** | | **97** |
+
+<img src="assets/decomposition.svg" alt="The range is split into nine complete months, then October into twenty days, then October 21 into eighteen hours, then the partial hour into forty-nine minutes and a one-minute tail: ninety-seven segments." width="100%">
 
 A per-minute query would produce 423,049 buckets, a ~4,360× reduction.
 

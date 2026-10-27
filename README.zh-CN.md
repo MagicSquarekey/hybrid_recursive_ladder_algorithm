@@ -4,7 +4,7 @@
 
 **语言 / Languages:** [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md)
 
-[算法规范](docs/algorithm.zh-CN.md) · [API 参考](docs/api.md) · [性能数据](docs/benchmarks.md) · [相关工作](docs/related-work.zh-CN.md) · [公开披露](docs/defensive-publication.md)
+[算法规范](docs/algorithm.zh-CN.md) · [API 参考](docs/api.zh-CN.md) · [性能数据](docs/benchmarks.zh-CN.md) · [相关工作](docs/related-work.zh-CN.md) · [公开披露](docs/defensive-publication.zh-CN.md) · [文档索引](docs/README.zh-CN.md)
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -115,7 +115,7 @@ print(result.rows[0].segments[0].label)   # 1970-01-01 00:00
 print(result.rows[0].empty_count)         # 0
 ```
 
-引擎只依赖两个小协议：`TimeSeriesSource`（`interval_agg`、`raw_series`）和 `PointStore`（`sum_ranges`、`series`、`coverage`、`upsert_points` 等）。内置 `MemorySource`/`MemoryStore`、`ThingsBoardSource`、`PostgresStore`；接入其他数据源见 [`docs/architecture.md`](docs/architecture.md)。
+引擎只依赖两个小协议：`TimeSeriesSource`（`interval_agg`、`raw_series`）和 `PointStore`（`sum_ranges`、`series`、`coverage`、`upsert_points` 等）。内置 `MemorySource`/`MemoryStore`、`ThingsBoardSource`、`PostgresStore`；接入其他数据源见 [`docs/architecture.zh-CN.md`](docs/architecture.zh-CN.md)。
 
 ### CLI
 
@@ -155,7 +155,7 @@ curl -X POST http://127.0.0.1:8000/v1/ladder/sum \
 curl http://127.0.0.1:8000/v1/tasks/<task_id>
 ```
 
-成功返回 `{"code":0,"data":...}`，失败返回 `{"code":1,"detail":...}`。所有端点见 [`docs/api.md`](docs/api.md)。
+成功返回 `{"code":0,"data":...}`，失败返回 `{"code":1,"detail":...}`。所有端点见 [`docs/api.zh-CN.md`](docs/api.zh-CN.md)。
 
 ### MCP server
 
@@ -261,7 +261,7 @@ if report["diff_segments"]:
 | 本地读，42–90 段 | — | 0 | 9–19 ms | 一条 SQL |
 | 混合读（3 本地 + 1 源段） | 4 | 1 | 0.31 s | 与纯源查询一致 |
 
-方法与注意事项见 [`docs/benchmarks.md`](docs/benchmarks.md)。
+方法与注意事项见 [`docs/benchmarks.zh-CN.md`](docs/benchmarks.zh-CN.md)。
 
 ## 定位与先例
 
@@ -269,7 +269,7 @@ if report["diff_segments"]:
 
 最接近的系统是 RRDtool/Whisper（多分辨率归档）、BTrDB（时间分区层级统计）、TimescaleDB 层级连续聚合、Druid 日历经度。Prometheus/Grafana 这类查询侧系统只选一个统一粒度；阶梯在一次查询里规划多个日历层级。
 
-完整对比、历史算法和可辩护的新颖性表述见 [相关工作与定位](docs/related-work.zh-CN.md)。方法同时以[公开披露](docs/defensive-publication.md)的形式发布；[技术文章](docs/articles/why-per-bucket-queries-are-slow.zh-CN.md)完整讲了生产 benchmark 和请求数论证。
+完整对比、历史算法和可辩护的新颖性表述见 [相关工作与定位](docs/related-work.zh-CN.md)。方法同时以[公开披露](docs/defensive-publication.zh-CN.md)的形式发布；[技术文章](docs/articles/why-per-bucket-queries-are-slow.zh-CN.md)完整讲了生产 benchmark 和请求数论证。
 
 ## 项目、开发与路线图
 

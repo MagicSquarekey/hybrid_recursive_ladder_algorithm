@@ -1,5 +1,7 @@
 # 1,140 buckets, 139 seconds: why per-bucket time-series queries fail
 
+**语言 / Languages:** [English](why-per-bucket-queries-are-slow.md) · [简体中文](why-per-bucket-queries-are-slow.zh-CN.md)
+
 A production ThingsBoard query over a VPN took **139 seconds** for 1,140
 statistical buckets. The arithmetic was trivial. The network was not.
 

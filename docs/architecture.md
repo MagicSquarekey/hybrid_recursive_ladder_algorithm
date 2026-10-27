@@ -1,5 +1,9 @@
 # Architecture
 
+**语言 / Languages:** [English](architecture.md) · [简体中文](architecture.zh-CN.md)
+
+<img src="assets/architecture.svg" alt="One query plan, two read paths: source-only and local-first." width="100%">
+
 ## Layering
 
 ```
