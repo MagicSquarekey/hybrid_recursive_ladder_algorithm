@@ -24,6 +24,11 @@ changes.
   a diagram lacks `zh-CN` SVG/PNG assets, or a new document is not registered.
 * An 11-language switcher on the documentation site, with `?lang=` deep links,
   a saved preference, translated metadata and right-to-left layout for Arabic.
+* First PyPI release:
+  [pypi.org/project/hybrid-recursive-ladder](https://pypi.org/project/hybrid-recursive-ladder/),
+  installable with `pip install hybrid-recursive-ladder`.
+* `hybrid_ladder/py.typed`, so type checkers honour the inline annotations the
+  `Typing :: Typed` classifier already advertised.
 
 ### Changed
 
@@ -33,6 +38,10 @@ changes.
 * On the site, Chinese mode links to the Chinese editions of the algorithm,
   prior-art, article and disclosure pages.
 * Install snippets, badges, API examples and metadata now reference `0.0.6`.
+* The quick start installs from PyPI; extras use
+  `pip install "hybrid-recursive-ladder[...]"` instead of editable installs.
+* README links and images use absolute URLs so the project page renders
+  correctly on PyPI.
 
 ### Fixed
 

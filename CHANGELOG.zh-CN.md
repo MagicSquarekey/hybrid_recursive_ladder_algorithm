@@ -22,6 +22,11 @@
   或新文档未登记时，CI 直接失败。
 * 文档站点支持 11 种语言切换：`?lang=` 深链、偏好记忆、标题/描述翻译，
   阿拉伯语使用从右到左布局。
+* 首次发布到 PyPI：
+  [pypi.org/project/hybrid-recursive-ladder](https://pypi.org/project/hybrid-recursive-ladder/)，
+  可用 `pip install hybrid-recursive-ladder` 安装。
+* 新增 `hybrid_ladder/py.typed`，让类型检查器认可以 `Typing :: Typed`
+  分类器声明过的内联注解。
 
 ### 变更
 
@@ -29,6 +34,9 @@
 * 中文文档使用中文示意图；其他语言保留英文图或各自的 hero 图。
 * 站点中文模式下的算法、先例、文章和公开披露链接指向中文版。
 * 安装命令、徽章、API 示例和元数据更新到 `0.0.6`。
+* 快速开始改为从 PyPI 安装；可选依赖改用
+  `pip install "hybrid-recursive-ladder[...]"`，不再是可编辑安装。
+* README 的链接和图片改为绝对地址，保证 PyPI 项目页正确渲染。
 
 ### 修复
 

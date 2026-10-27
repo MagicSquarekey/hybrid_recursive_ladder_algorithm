@@ -63,7 +63,7 @@ README_TRANSLATIONS = {
     "README.ru.md", "README.zh-CN.md",
 }
 
-SKIP_DIRS = {".git", ".venv", ".pytest_cache", ".ruff_cache", "dist",
+SKIP_DIRS = {".git", ".pytest_cache", ".ruff_cache", "dist", "dist-pypi",
              "build", "__pycache__", "node_modules"}
 
 
@@ -103,7 +103,8 @@ def main() -> int:
     # Any new markdown file must be registered as a pair, a Chinese-only doc,
     # or a translated README; otherwise the coverage rule would silently slip.
     for path in ROOT.rglob("*.md"):
-        if any(part in SKIP_DIRS for part in path.parts):
+        if any(part in SKIP_DIRS or part.startswith(".venv")
+               for part in path.parts):
             continue
         rel = path.relative_to(ROOT).as_posix()
         if rel in PAIRS or rel in PAIRS.values() or rel in CHINESE_ONLY:

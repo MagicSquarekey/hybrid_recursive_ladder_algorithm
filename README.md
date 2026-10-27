@@ -2,19 +2,19 @@
 
 **Query planning for bucket-limited time-series APIs.** Aggregate long ranges with a handful of source requests instead of thousands of per-bucket queries.
 
-**Languages:** [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Português](README.pt-BR.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md)
+**Languages:** [English](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.md) · [简体中文](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.zh-CN.md) · [日本語](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.ja.md) · [한국어](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.ko.md) · [Español](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.es.md) · [Français](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.fr.md) · [Deutsch](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.de.md) · [Português](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.pt-BR.md) · [Русский](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.ru.md) · [العربية](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.ar.md) · [हिन्दी](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/README.hi.md)
 
-[Algorithm spec](docs/algorithm.md) · [API reference](docs/api.md) · [Benchmarks](docs/benchmarks.md) · [Related work](docs/related-work.md) · [Public disclosure](docs/defensive-publication.md) · [Docs index](docs/README.md)
+[Algorithm spec](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/algorithm.md) · [API reference](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/api.md) · [Benchmarks](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/benchmarks.md) · [Related work](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/related-work.md) · [Public disclosure](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/defensive-publication.md) · [Docs index](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/README.md)
 
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/pyproject.toml)
+[![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23683292.svg)](https://doi.org/10.5281/zenodo.23683292)
 
 <p align="center">
-  <img src="docs/assets/hero.png" alt="Per-bucket client: 1,140 buckets, up to four calls each, 139 seconds. Calendar ladder: 97 segments, about five to seven requests, 0.64 seconds." width="100%">
+  <img src="https://raw.githubusercontent.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/main/docs/assets/hero.png" alt="Per-bucket client: 1,140 buckets, up to four calls each, 139 seconds. Calendar ladder: 97 segments, about five to seven requests, 0.64 seconds." width="100%">
 </p>
 
 <p align="center"><em>Same output granularity. The per-bucket client pays one round trip per row; the ladder fetches each level once.</em></p>
@@ -52,7 +52,7 @@ aggregate over a contiguous run can fill many output segments in one request.
 4. **Fold** the returned buckets into the output segments locally.
 
 <p align="center">
-  <img src="docs/assets/decomposition.png" alt="The range is split into nine complete months, then October into twenty days, then October 21 into eighteen hours, then the partial hour into forty-nine minutes and a one-minute tail: ninety-seven segments." width="100%">
+  <img src="https://raw.githubusercontent.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/main/docs/assets/decomposition.png" alt="The range is split into nine complete months, then October into twenty days, then October 21 into eighteen hours, then the partial hour into forty-nine minutes and a one-minute tail: ninety-seven segments." width="100%">
 </p>
 
 For `2026-01-01 00:00:00 → 2026-10-21 18:49:59`, that is **97 segments instead
@@ -83,12 +83,12 @@ Fine-grained work is confined to the two partial units at the edges. For the
 default hierarchy, `N <= N_month + 639`; recursion depth is at most 4. The
 request count is `O(N_month / K + 1)` — it grows with the coarse units, not with
 the number of minute buckets. The formal propositions are in
-[`docs/algorithm.md`](docs/algorithm.md) §5.3–5.5 ([中文](docs/algorithm.zh-CN.md)).
+[`docs/algorithm.md`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/algorithm.md) §5.3–5.5 ([中文](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/algorithm.zh-CN.md)).
 
 ## Quick start
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+pip install hybrid-recursive-ladder
 
 hybrid-ladder demo
 hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
@@ -101,11 +101,11 @@ totals match. No database, no network, no configuration.
 Optional extras:
 
 ```bash
-pip install -e ".[thingsboard]"   # ThingsBoard source (httpx)
-pip install -e ".[postgres]"      # local store (psycopg 3)
-pip install -e ".[api]"           # FastAPI HTTP API
-pip install -e ".[mcp]"           # MCP server
-pip install -e ".[all]"           # everything
+pip install "hybrid-recursive-ladder[thingsboard]"   # ThingsBoard source (httpx)
+pip install "hybrid-recursive-ladder[postgres]"      # local store (psycopg 3)
+pip install "hybrid-recursive-ladder[api]"           # FastAPI HTTP API
+pip install "hybrid-recursive-ladder[mcp]"           # MCP server
+pip install "hybrid-recursive-ladder[all]"           # everything
 ```
 
 The core decomposition has **zero third-party dependencies** (only `tzdata` for
@@ -119,7 +119,7 @@ reliable IANA time zones on Windows).
 | **CLI** | `hybrid-ladder ...` | ad-hoc inspection, scripts, cron |
 | **HTTP API** | `hybrid-ladder serve` | language-agnostic integration, async tasks |
 | **MCP server** | `hybrid-ladder mcp` | AI agents and MCP-compatible clients |
-| **Agent skill** | [`skills/hybrid-recursive-ladder/`](skills/hybrid-recursive-ladder/) | Claude/ZCode-style skill installation |
+| **Agent skill** | [`skills/hybrid-recursive-ladder/`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/skills/hybrid-recursive-ladder/) | Claude/ZCode-style skill installation |
 
 ### Python library
 
@@ -141,7 +141,7 @@ The engine depends on two small protocols: `TimeSeriesSource` (`interval_agg`,
 `raw_series`) and `PointStore` (`sum_ranges`, `series`, `coverage`,
 `upsert_points`, ...). Built-ins: `MemorySource`/`MemoryStore`,
 `ThingsBoardSource`, `PostgresStore`. See
-[`docs/architecture.md`](docs/architecture.md) ([中文](docs/architecture.zh-CN.md)) to add another source.
+[`docs/architecture.md`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/architecture.md) ([中文](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/architecture.zh-CN.md)) to add another source.
 
 ### CLI
 
@@ -182,7 +182,7 @@ curl http://127.0.0.1:8000/v1/tasks/<task_id>
 ```
 
 The API uses `{"code":0,"data":...}` on success and `{"code":1,"detail":...}` on
-error. Every endpoint is in [`docs/api.md`](docs/api.md) ([中文](docs/api.zh-CN.md)).
+error. Every endpoint is in [`docs/api.md`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/api.md) ([中文](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/api.zh-CN.md)).
 
 ### MCP server
 
@@ -214,7 +214,7 @@ client configuration:
 
 ### Agent skill
 
-Copy [`skills/hybrid-recursive-ladder/`](skills/hybrid-recursive-ladder/) into
+Copy [`skills/hybrid-recursive-ladder/`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/skills/hybrid-recursive-ladder/) into
 your agent's skills directory (for example `~/.claude/skills/` or
 `~/.zcode/skills/`). The skill teaches the agent when to use the ladder, how to
 call the CLI/API, and how to interpret `null` vs `0.0` and `source`.
@@ -227,7 +227,7 @@ uncovered parts come from the source; a partially covered segment fetches only
 the missing slice.
 
 <p align="center">
-  <img src="docs/assets/architecture.png" alt="Source-only path: decompose, group runs by fetch level and contiguity, fetch each run once within the bucket limit, fold locally. Local-first path: split each segment against coverage, sum covered parts locally, fetch uncovered parts from the source, merge the two." width="100%">
+  <img src="https://raw.githubusercontent.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/main/docs/assets/architecture.png" alt="Source-only path: decompose, group runs by fetch level and contiguity, fetch each run once within the bucket limit, fold locally. Local-first path: split each segment against coverage, sum covered parts locally, fetch uncovered parts from the source, merge the two." width="100%">
 </p>
 
 ```python
@@ -300,7 +300,7 @@ data; the sum is still arithmetically correct, just based on fewer points.
   buckets mean day/hour folds are designed for fixed-offset zones such as
   `Asia/Shanghai`. Use `hour` or `minute` fetching around DST transitions.
 
-Historical fixes and version notes live in [`CHANGELOG.md`](CHANGELOG.md).
+Historical fixes and version notes live in [`CHANGELOG.md`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CHANGELOG.md).
 
 ## Performance
 
@@ -315,7 +315,7 @@ density):
 | Local read, 42–90 segments | — | 0 | 9–19 ms | one SQL statement |
 | Mixed read (3 local + 1 source) | 4 | 1 | 0.31 s | equals source-only |
 
-See [`docs/benchmarks.md`](docs/benchmarks.md) ([中文](docs/benchmarks.zh-CN.md)) for methodology and caveats.
+See [`docs/benchmarks.md`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/benchmarks.md) ([中文](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/benchmarks.zh-CN.md)) for methodology and caveats.
 
 ## Positioning and prior art
 
@@ -331,10 +331,10 @@ aggregates, and Druid period granularity. Query-side systems such as Prometheus
 and Grafana choose one uniform step; the ladder plans multiple calendar levels
 in one query.
 
-See [Related work and positioning](docs/related-work.md) ([中文](docs/related-work.zh-CN.md)) for the full
+See [Related work and positioning](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/related-work.md) ([中文](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/related-work.zh-CN.md)) for the full
 comparison, the historical algorithms, and the defensible novelty statement.
-The method is published as a [public disclosure](docs/defensive-publication.md) ([中文](docs/defensive-publication.zh-CN.md));
-a [technical article](docs/articles/why-per-bucket-queries-are-slow.md) walks
+The method is published as a [public disclosure](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/defensive-publication.md) ([中文](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/defensive-publication.zh-CN.md));
+a [technical article](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/docs/articles/why-per-bucket-queries-are-slow.md) walks
 through the production benchmark and the request-count argument.
 
 ## Project, development and roadmap
@@ -397,9 +397,9 @@ adapters; Celery/RQ task backend; OpenTelemetry metrics; PyPI trusted publishing
 
 Version DOI: [10.5281/zenodo.23683292](https://doi.org/10.5281/zenodo.23683292).
 Concept DOI for all versions: [10.5281/zenodo.23556605](https://doi.org/10.5281/zenodo.23556605).
-[`CITATION.cff`](CITATION.cff) provides the same metadata for GitHub's
+[`CITATION.cff`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CITATION.cff) provides the same metadata for GitHub's
 "Cite this repository" button.
 
 ## License
 
-[MIT](LICENSE) © 2026 MagicSquarekey
+[MIT](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/LICENSE) © 2026 MagicSquarekey
