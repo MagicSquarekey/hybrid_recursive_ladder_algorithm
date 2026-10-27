@@ -195,14 +195,14 @@ curl "https://registry.modelcontextprotocol.io/v0.1/servers?search=hybrid-recurs
 | PulseMCP | 站点暂停收录 | 官方公告写明暂停，并说明会从官方 Registry 自动抓取；无需额外操作 |
 | Glama | 等待自动索引 | 页面按小时刷新，来源含 GitHub 与 Registry。若数日后仍无，在 /mcp/servers 点 Add Server |
 | mcp.so | 暂无免费通道 | 提交页现在只有 $39 付费自动发布，免费入口已撤 |
-| Smithery | 包已构建，待发布 | `mcpb/` + `dist-mcpb/hybrid-recursive-ladder.mcpb`；发布需先 `smithery login` |
+| Smithery | 平台侧阻断 | CLI 发布 stdio 包返回 403「Updating servers has been removed. Contact support@smithery.ai.」，换名重试同样报错，说明是平台取消了包发布通道，不是我们的包有问题。MCPB 已构建并校验，可直接给 Claude Desktop 用；等平台恢复或用 support 邮箱申请开通 |
 
-Smithery 与 Claude Desktop 用的 MCPB 包这样重建：
+Smithery 账号已登录（namespace `1035951550`，token 存在本机），支持恢复后直接重跑发布命令即可：
 
 ```bash
 npx @anthropic-ai/mcpb validate mcpb/manifest.json
 npx @anthropic-ai/mcpb pack mcpb dist-mcpb/hybrid-recursive-ladder.mcpb
-smithery mcp publish dist-mcpb/hybrid-recursive-ladder.mcpb -n <你的账号>/hybrid-recursive-ladder
+npx smithery@latest mcp publish dist-mcpb/hybrid-recursive-ladder.mcpb -n 1035951550/hybrid-recursive-ladder
 ```
 
 包内不打包源码：`mcp_config` 通过 `uvx --from hybrid-recursive-ladder[mcp]`
