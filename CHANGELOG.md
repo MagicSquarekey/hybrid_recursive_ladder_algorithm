@@ -15,6 +15,7 @@ dependencies. The ladder sum path is unchanged.
 
 ### Added
 
+* Zenodo archive and DOI: [10.5281/zenodo.24194544](https://doi.org/10.5281/zenodo.24194544).
 * Three rules over aligned calendar buckets, everywhere the library is
   reachable: `engine.calc` / `calc_local` / `calc_mixed` in Python,
   `hybrid-ladder calc` on the CLI, `POST /v1/ladder/calc` on the HTTP API

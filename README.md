@@ -11,7 +11,7 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/pyproject.toml)
 [![Version](https://img.shields.io/badge/version-0.0.7-green.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23683292.svg)](https://doi.org/10.5281/zenodo.23683292)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24194544.svg)](https://doi.org/10.5281/zenodo.24194544)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/main/docs/assets/hero.png" alt="Per-bucket client: 1,140 buckets, up to four calls each, 139 seconds. Calendar ladder: 97 segments, about five to seven requests, 0.64 seconds." width="100%">
@@ -392,12 +392,12 @@ adapters; Celery/RQ task backend; OpenTelemetry metrics; PyPI trusted publishing
   year    = {2026},
   version = {0.0.7},
   license = {MIT},
-  doi     = {10.5281/zenodo.23683292},
+  doi     = {10.5281/zenodo.24194544},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}
 }
 ```
 
-Version DOI: [10.5281/zenodo.23683292](https://doi.org/10.5281/zenodo.23683292).
+Version DOI: [10.5281/zenodo.24194544](https://doi.org/10.5281/zenodo.24194544).
 Concept DOI for all versions: [10.5281/zenodo.23556605](https://doi.org/10.5281/zenodo.23556605).
 [`CITATION.cff`](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CITATION.cff) provides the same metadata for GitHub's
 "Cite this repository" button.

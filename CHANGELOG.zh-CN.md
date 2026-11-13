@@ -14,6 +14,7 @@
 
 ### 新增
 
+* Zenodo 归档与 DOI：[10.5281/zenodo.24194544](https://doi.org/10.5281/zenodo.24194544)。
 * 对齐日历桶上的三种规则，覆盖库的全部入口：Python 的 `engine.calc` /
   `calc_local` / `calc_mixed`，CLI 的 `hybrid-ladder calc`，HTTP 的
   `POST /v1/ladder/calc`，以及 MCP 工具 `ladder_calc`。
