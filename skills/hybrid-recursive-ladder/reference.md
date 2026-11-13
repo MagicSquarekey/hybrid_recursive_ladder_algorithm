@@ -86,6 +86,7 @@ class PointStore(Protocol):
 | `HL_MAX_INTERVALS` | `500` | buckets per interval request |
 | `HL_MAX_POINTS` | `10000` | points per raw request |
 | `HL_MATERIALIZE_GRACE_MS` | `300000` | coverage grace period |
+| `HL_VERIFY_ON_READ` | `1` | fingerprint covered runs on mixed reads (`0`/`false`/`off` disables) |
 | `HL_CONCURRENCY` | `8` | parallel series |
 | `HL_CORS_ORIGINS` | — | comma-separated CORS origins |
 

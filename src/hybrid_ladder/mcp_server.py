@@ -149,6 +149,7 @@ def build_server():
         finest: str = "minute",
         mode: str = "tb",
         materialize: bool = False,
+        verify_on_read: bool | None = None,
     ) -> dict[str, Any]:
         """Sum time series over a range.
 
@@ -168,7 +169,8 @@ def build_server():
         elif mode == "local":
             result = engine.sum_local(refs, start_ms, end_ms, finest=finest)
         else:
-            result = engine.sum_mixed(refs, start_ms, end_ms, finest=finest)
+            result = engine.sum_mixed(refs, start_ms, end_ms, finest=finest,
+                                      verify_on_read=verify_on_read)
 
         if materialize and engine.store is not None:
             items = (
@@ -212,6 +214,7 @@ def build_server():
         rule: str = "sum",
         mode: str = "tb",
         materialize: bool = False,
+        verify_on_read: bool | None = None,
     ) -> dict[str, Any]:
         """Bucket [start, end) and compute one value per bucket.
 
@@ -246,7 +249,8 @@ def build_server():
                                        dimension=dimension, rule=rule)
         else:
             result = engine.calc_mixed(refs, start_ms, end_ms,
-                                       dimension=dimension, rule=rule)
+                                       dimension=dimension, rule=rule,
+                                       verify_on_read=verify_on_read)
 
         if materialize and engine.store is not None:
             items = (

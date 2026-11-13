@@ -9,7 +9,7 @@
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.7-green.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.8-green.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24194544.svg)](https://doi.org/10.5281/zenodo.24194544)
 
@@ -283,6 +283,11 @@ data; the sum is still arithmetically correct, just based on fewer points.
 - Segments tile the range exactly; no zero-length segments.
 - `null` and `0.0` are distinct everywhere.
 - Materialization is idempotent; overlapping runs cannot duplicate a timestamp.
+- Mixed reads fingerprint every covered range they use (one source interval sum
+  per range vs the store sum, clipped to the query window). A mismatched range
+  is served from the source and re-materialized afterwards; an unreachable
+  source never blocks a read. `LadderConfig(verify_on_read=False)` or
+  `HL_VERIFY_ON_READ=0` restores the pre-0.0.8 trusting behaviour.
 - The algorithm only reads the source. It never writes to ThingsBoard.
 
 **Limits**
@@ -390,7 +395,7 @@ adapters; Celery/RQ task backend; OpenTelemetry metrics; PyPI trusted publishing
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.7},
+  version = {0.0.8},
   license = {MIT},
   doi     = {10.5281/zenodo.24194544},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}

@@ -24,8 +24,8 @@ Rule semantics (unchanged from the upstream decision):
 
 from __future__ import annotations
 
-import bisect
 import math
+import threading
 from collections.abc import Callable, Sequence
 from typing import Any
 
@@ -43,6 +43,7 @@ from .models import (
     CalcRow,
     SeriesRef,
     coerce_refs,
+    merge_verify_stats,
     source_counts_calc,
 )
 
@@ -157,6 +158,7 @@ class CalcMixin:
         *,
         dimension: str = "day",
         rule: str = "sum",
+        verify_on_read: bool | None = None,
         progress: ProgressFn | None = None,
         cancel: CancelFn | None = None,
     ) -> CalcResult:
@@ -164,14 +166,30 @@ class CalcMixin:
 
         Each bucket is split against the merged coverage ranges: covered
         sub-ranges come from the store, the missing pieces from the source —
-        the same read strategy as :meth:`~hybrid_ladder.engine.LadderEngine.sum_mixed`.
+        the same read strategy (and the same ``verify_on_read`` default) as
+        :meth:`~hybrid_ladder.engine.LadderEngine.sum_mixed`.
         """
         store = self._require_store()
         series = coerce_refs(refs)
         self._check_calc_args(start_ms, end_ms, dimension, rule)
+        do_verify = self.config.verify_on_read if verify_on_read is None else verify_on_read
+        # meter_delta reads one bucket past end for the last anchor, so the
+        # verification window must cover that extension too.
+        window_end = end_ms
+        if rule == "meter_delta":
+            window_end = next_boundary(end_ms, dimension, self.config.timezone)
+
+        verify_parts: list[dict[str, Any]] = []
+        verify_lock = threading.Lock()
 
         def one(ref: SeriesRef) -> CalcRow:
             coverage = merge_coverage(store.coverage(ref))
+            if do_verify:
+                coverage, stats = self._verify_covered_runs(
+                    ref, coverage, start_ms, window_end, cancel
+                )
+                with verify_lock:
+                    verify_parts.append(stats)
             return self._calc_one(ref, start_ms, end_ms, dimension, rule,
                                   coverage, cancel)
 
@@ -185,6 +203,7 @@ class CalcMixin:
             overall = "mixed"
         result = self._calc_result(rule, dimension, rows, errors, overall)
         result.source_counts = counts
+        result.verify = merge_verify_stats(verify_parts) if verify_parts else None
         return result
 
     # ------------------------------------------------------------------
@@ -319,50 +338,60 @@ class CalcMixin:
                 raise CancelledError("cancelled")
             raw.extend(self._raw_points(ref, a - lookback, b))
         raw.sort(key=lambda point: point[0])
-        raw_ts = [point[0] for point in raw]
 
-        def raw_first(a: int, b: int) -> tuple[int, Any] | None:
-            index = bisect.bisect_left(raw_ts, a)
-            if index < len(raw_ts) and raw_ts[index] < b:
-                return raw[index]
-            return None
+        # Single forward cursor over the raw points: buckets are processed in
+        # ascending order, so the whole anchor pass is O(buckets + points)
+        # instead of a binary search (or, worse, a rescan) per bucket.
+        cursor = {"i": 0}
+        prev_point: list[tuple[int, Any] | None] = [None]
 
-        def raw_last_before(target: int) -> tuple[int, Any] | None:
-            index = bisect.bisect_left(raw_ts, target) - 1
-            if index >= 0 and raw_ts[index] >= target - lookback:
-                return raw[index]
+        def advance(target: int) -> None:
+            while cursor["i"] < len(raw) and raw[cursor["i"]][0] < target:
+                prev_point[0] = raw[cursor["i"]]
+                cursor["i"] += 1
+
+        def raw_in(a: int, b: int) -> tuple[int, Any] | None:
+            """First raw point in [a, b); the cursor is already at ``a``."""
+            if cursor["i"] < len(raw) and raw[cursor["i"]][0] < b:
+                return raw[cursor["i"]]
             return None
 
         anchors: list[tuple[int, Any] | None] = []
         missing: list[int] = []
+        prev_before: list[tuple[int, Any] | None] = []
         for bucket, covered, uncovered in parts:
-            candidates: list[tuple[int, Any]] = []
+            advance(bucket.start)
+            prev_before.append(prev_point[0])  # last raw point before this bucket
+            best: tuple[int, Any] | None = None
             for a, _ in covered:
                 point = local_first.get(a)
-                if point is not None:
-                    candidates.append(point)
+                if point is not None and (best is None or point[0] < best[0]):
+                    best = point
             for a, b in uncovered:
-                point = raw_first(a, b)
-                if point is not None:
-                    candidates.append(point)
-            anchor = min(candidates, key=lambda point: point[0]) if candidates else None
-            if anchor is None:
+                advance(a)
+                point = raw_in(a, b)
+                if point is not None and (best is None or point[0] < best[0]):
+                    best = point
+                break  # earliest uncovered sub-range decides; later ones are later points
+            if best is None:
                 missing.append(bucket.start)
-            anchors.append(anchor)
+            anchors.append(best)
 
         ext_anchor: tuple[int, Any] | None = None
+        ext_prev: tuple[int, Any] | None = None
         if ext_end is not None:
-            ext_candidates: list[tuple[int, Any]] = []
+            advance(end_ms)
+            ext_prev = prev_point[0]
             for a, _ in ext_covered:
                 point = local_first.get(a)
-                if point is not None:
-                    ext_candidates.append(point)
+                if point is not None and (ext_anchor is None or point[0] < ext_anchor[0]):
+                    ext_anchor = point
             for a, b in ext_uncovered:
-                point = raw_first(a, b)
-                if point is not None:
-                    ext_candidates.append(point)
-            if ext_candidates:
-                ext_anchor = min(ext_candidates, key=lambda point: point[0])
+                advance(a)
+                point = raw_in(a, b)
+                if point is not None and (ext_anchor is None or point[0] < ext_anchor[0]):
+                    ext_anchor = point
+                break  # earliest uncovered part decides
 
         fallback_targets = list(missing)
         if ext_end is not None and ext_anchor is None:
@@ -374,16 +403,22 @@ class CalcMixin:
         for index, (bucket, _covered, _uncovered) in enumerate(parts):
             anchor = anchors[index]
             if anchor is None:
-                candidates = [point for point in
-                              (raw_last_before(bucket.start),
-                               local_fallback.get(bucket.start))
-                              if point is not None]
+                candidates: list[tuple[int, Any]] = []
+                raw_fallback = prev_before[index]
+                if raw_fallback is not None and raw_fallback[0] >= bucket.start - lookback:
+                    candidates.append(raw_fallback)
+                local_point = local_fallback.get(bucket.start)
+                if local_point is not None:
+                    candidates.append(local_point)
                 anchor = max(candidates, key=lambda point: point[0]) if candidates else None
             firsts.append(anchor)
         if ext_end is not None and ext_anchor is None:
-            candidates = [point for point in
-                          (raw_last_before(end_ms), local_fallback.get(end_ms))
-                          if point is not None]
+            candidates = []
+            if ext_prev is not None and ext_prev[0] >= end_ms - lookback:
+                candidates.append(ext_prev)
+            local_point = local_fallback.get(end_ms)
+            if local_point is not None:
+                candidates.append(local_point)
             ext_anchor = max(candidates, key=lambda point: point[0]) if candidates else None
 
         cells, chain_total, ok = delta_chain(firsts, ext_anchor)

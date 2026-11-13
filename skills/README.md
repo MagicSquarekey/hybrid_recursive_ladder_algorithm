@@ -34,11 +34,10 @@ skills directory.
 
 ### Install the package
 
-The skill's commands need the package. v0.0.7 is distributed through the GitHub
-release (PyPI publication is planned):
+The skill's commands need the package. v0.0.8 is on PyPI:
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
+pip install hybrid-recursive-ladder
 ```
 
 With optional integrations, install from a source checkout:

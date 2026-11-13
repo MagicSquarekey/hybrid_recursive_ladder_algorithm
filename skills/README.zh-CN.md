@@ -32,10 +32,10 @@ cp -r skills/hybrid-recursive-ladder ~/.zcode/skills/
 
 ### 安装软件包
 
-技能中的命令需要软件包。v0.0.7 通过 GitHub Release 分发（PyPI 发布在计划中）：
+技能中的命令需要软件包。v0.0.8 已发布到 PyPI：
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
+pip install hybrid-recursive-ladder
 ```
 
 需要可选集成时，从源码检出安装：

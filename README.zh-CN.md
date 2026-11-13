@@ -9,7 +9,7 @@
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.7-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.8-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24194544.svg)](https://doi.org/10.5281/zenodo.24194544)
 
@@ -69,7 +69,7 @@ requests(run) = ceil(T / (K * Δ))
 ## 快速开始
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
+pip install hybrid-recursive-ladder
 
 hybrid-ladder demo
 hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
@@ -238,6 +238,10 @@ if report["diff_segments"]:
 - 段精确铺满区间，不产生零长段。
 - `null` 与 `0.0` 在所有层都严格区分。
 - 固化幂等；重叠的固化不会重复写入同一个时间戳。
+- 混合读取会先对要使用的已固化区间做 SUM 指纹校验（每段一次数据源区间
+  和 vs 本地和，裁剪到查询窗口）。不一致的区间本次改读源端、查后重固化
+  自愈；源端不可达不会阻塞查询。`LadderConfig(verify_on_read=False)` 或
+  `HL_VERIFY_ON_READ=0` 可恢复 0.0.8 之前的信任行为。
 - 算法只读数据源，从不写 ThingsBoard。
 
 **限制**
@@ -322,7 +326,7 @@ pytest -m integration
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.7},
+  version = {0.0.8},
   license = {MIT},
   doi     = {10.5281/zenodo.24194544},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}

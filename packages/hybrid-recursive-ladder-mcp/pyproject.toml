@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hybrid-recursive-ladder-mcp"
-version = "0.0.7"
+version = "0.0.8"
 description = "MCP server for the Hybrid Recursive Ladder query planner: aggregate long time-series ranges with a handful of source requests."
 readme = "README.md"
 license = "MIT"
@@ -28,7 +28,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Topic :: Database",
 ]
-dependencies = ["hybrid-recursive-ladder[mcp]>=0.0.7"]
+dependencies = ["hybrid-recursive-ladder[mcp]>=0.0.8"]
 
 [project.scripts]
 hybrid-recursive-ladder-mcp = "hybrid_recursive_ladder_mcp:main"

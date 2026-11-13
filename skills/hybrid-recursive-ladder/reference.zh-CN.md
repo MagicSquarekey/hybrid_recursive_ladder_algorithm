@@ -86,6 +86,7 @@ class PointStore(Protocol):
 | `HL_MAX_INTERVALS` | `500` | 单次区间请求的桶数 |
 | `HL_MAX_POINTS` | `10000` | 单次原始点请求的点数 |
 | `HL_MATERIALIZE_GRACE_MS` | `300000` | 覆盖宽限期 |
+| `HL_VERIFY_ON_READ` | `1` | 混合读取前校验已固化段（`0`/`false`/`off` 关闭） |
 | `HL_CONCURRENCY` | `8` | 并行序列数 |
 | `HL_CORS_ORIGINS` | — | 逗号分隔的 CORS 来源 |
 

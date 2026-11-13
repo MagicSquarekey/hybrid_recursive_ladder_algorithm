@@ -153,7 +153,7 @@ N <= N_month + 639
 ## 复现
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+pip install hybrid-recursive-ladder
 
 hybrid-ladder demo
 hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59

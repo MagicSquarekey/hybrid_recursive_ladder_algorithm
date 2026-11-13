@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import math
+import threading
 import time
 from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -26,6 +27,7 @@ from .models import (
     Row,
     SeriesRef,
     coerce_refs,
+    merge_verify_stats,
     source_counts,
     summarize_row,
 )
@@ -212,6 +214,7 @@ class LadderEngine(CalcMixin):
         end_ms: int,
         *,
         finest: str | None = None,
+        verify_on_read: bool | None = None,
         progress: ProgressFn | None = None,
         cancel: CancelFn | None = None,
     ) -> QueryResult:
@@ -221,15 +224,29 @@ class LadderEngine(CalcMixin):
         covered segments use one batched SQL sum; fully uncovered segments are
         fetched with grouped aggregation; partially covered segments combine a
         local sum with a source sum for the missing tail only.
+
+        With ``verify_on_read`` (default: :attr:`LadderConfig.verify_on_read`)
+        every covered run inside the window is SUM-fingerprinted against the
+        source first; see :meth:`_verify_covered_runs`.
         """
         store = self._require_store()
         series = coerce_refs(refs)
         finest = finest or self.config.finest
+        do_verify = self.config.verify_on_read if verify_on_read is None else verify_on_read
         self.decompose(start_ms, end_ms, finest)
+
+        verify_parts: list[dict[str, Any]] = []
+        verify_lock = threading.Lock()
 
         def one(ref: SeriesRef) -> Row:
             segments = self.decompose(start_ms, end_ms, finest)
             coverage = merge_coverage(store.coverage(ref))
+            if do_verify:
+                coverage, stats = self._verify_covered_runs(
+                    ref, coverage, start_ms, end_ms, cancel
+                )
+                with verify_lock:
+                    verify_parts.append(stats)
             parts = []
             for seg in segments:
                 covered, uncovered = split_by_coverage(seg.start, seg.end, coverage)
@@ -317,6 +334,7 @@ class LadderEngine(CalcMixin):
             source=overall,
             source_counts=counts,
             errors=errors,
+            verify=merge_verify_stats(verify_parts) if verify_parts else None,
         )
 
     def _sum_range(self, ref: SeriesRef, start_ms: int, end_ms: int) -> tuple[float | None, int]:
@@ -338,6 +356,98 @@ class LadderEngine(CalcMixin):
         if not values:
             return None, 0
         return sum(values), len(values)
+
+    # ------------------------------------------------------------------
+    # Query-time verification
+    # ------------------------------------------------------------------
+    def _verify_covered_runs(
+        self,
+        ref: SeriesRef,
+        coverage: Sequence[tuple[int, int]],
+        window_start: int,
+        window_end: int,
+        cancel: CancelFn | None = None,
+    ) -> tuple[list[tuple[int, int]], dict[str, Any]]:
+        """Fingerprint every covered run inside the window before using it.
+
+        For each merged coverage run that intersects
+        ``[window_start, window_end)`` the engine compares one source interval
+        sum with the store sum of the same range:
+
+        * consistent — the run stays covered and the read uses the store;
+        * mismatched — the run is dropped from coverage, so this query reads
+          the range from the source (correct numbers now) and, with
+          ``materialize`` enabled, re-pulls it afterwards (self-healing);
+        * the source cannot be reached — the run stays covered (a read is
+          never blocked by verification) and is counted as ``unverified``.
+
+        The fingerprint is a SUM, not a COUNT: sources may collapse duplicate
+        points inside an interval bucket, which would make COUNT comparisons
+        report false mismatches.  Runs outside the window are not touched, so
+        the cost of a query does not grow with the materialized history.
+
+        Returns ``(pruned_coverage, stats)``.
+        """
+        store = self.store
+        assert store is not None  # callers require a store for mixed reads
+        stats: dict[str, Any] = {
+            "verified": 0,
+            "consistent": 0,
+            "mismatched": 0,
+            "unverified": 0,
+            "mismatched_detail": [],
+        }
+        window = [
+            (max(start, int(window_start)), min(end, int(window_end)))
+            for start, end in coverage
+            if end > window_start and start < window_end
+        ]
+        if not window:
+            return window, stats
+
+        try:
+            local_sums = store.sum_ranges(ref, window)
+        except Exception:
+            stats["unverified"] = len(window)
+            return list(window), stats
+
+        kept: list[tuple[int, int]] = []
+        for start, end in window:
+            if cancel and cancel():
+                raise CancelledError("cancelled")
+            local_value, _ = local_sums.get(start, (None, 0))
+            local_value = float(local_value) if local_value is not None else None
+            try:
+                source_value, _ = self._sum_range(ref, start, end)
+            except Exception:
+                stats["unverified"] += 1
+                kept.append((start, end))
+                continue
+            source_value = float(source_value) if source_value is not None else None
+            stats["verified"] += 1
+            consistent = (source_value is None and local_value is None) or (
+                source_value is not None
+                and local_value is not None
+                and abs(source_value - local_value)
+                <= _TOLERANCE * max(1.0, abs(source_value))
+            )
+            if consistent:
+                stats["consistent"] += 1
+                kept.append((start, end))
+            else:
+                stats["mismatched"] += 1
+                stats["mismatched_detail"].append(
+                    {
+                        "entity": ref.entity,
+                        "key": ref.key,
+                        "start": start,
+                        "end": end,
+                        "source": source_value,
+                        "local": local_value,
+                    }
+                )
+        stats["mismatched_detail"] = stats["mismatched_detail"][:20]
+        return kept, stats
 
     # ------------------------------------------------------------------
     # Materialize (source -> store)

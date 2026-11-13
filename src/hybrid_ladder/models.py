@@ -183,6 +183,13 @@ class LadderConfig:
     max_segments: int | None = None
     #: Smallest bucket used for arbitrary sub-range sums.
     min_bucket_ms: int = 60_000
+    #: Fingerprint local covered runs on every mixed read (query-time
+    #: verification): one source interval sum per covered run, compared with
+    #: the store sum.  A mismatched run is read from the source for this
+    #: query (correct numbers now) and, with ``materialize`` enabled,
+    #: re-pulled afterwards (self-healing).  Source failures never block the
+    #: query: the run stays local and is reported as ``unverified``.
+    verify_on_read: bool = True
 
     def __post_init__(self) -> None:
         if self.finest not in LEVEL_INDEX:
@@ -241,6 +248,10 @@ class QueryResult:
     errors: list[dict[str, Any]] = field(default_factory=list)
     materialized: dict[str, Any] | None = None
     materialize_error: str | None = None
+    #: Query-time verification stats (``None`` when verification did not
+    #: run): verified / consistent / mismatched / unverified counts plus a
+    #: capped ``mismatched_detail`` list.
+    verify: dict[str, Any] | None = None
 
     def as_dict(self) -> dict[str, Any]:
         out = {
@@ -254,6 +265,8 @@ class QueryResult:
             out["materialized"] = self.materialized
         if self.materialize_error is not None:
             out["materialize_error"] = self.materialize_error
+        if self.verify is not None:
+            out["verify"] = dict(self.verify)
         return out
 
     to_dict = as_dict
@@ -369,6 +382,9 @@ class CalcResult:
     errors: list[dict[str, Any]] = field(default_factory=list)
     materialized: dict[str, Any] | None = None
     materialize_error: str | None = None
+    #: Query-time verification stats (``None`` when verification did not
+    #: run); same shape as :attr:`QueryResult.verify`.
+    verify: dict[str, Any] | None = None
 
     def as_dict(self) -> dict[str, Any]:
         out = {
@@ -384,6 +400,8 @@ class CalcResult:
             out["materialized"] = self.materialized
         if self.materialize_error is not None:
             out["materialize_error"] = self.materialize_error
+        if self.verify is not None:
+            out["verify"] = dict(self.verify)
         return out
 
     to_dict = as_dict
@@ -397,6 +415,27 @@ def source_counts_calc(rows: list[CalcRow]) -> dict[str, int]:
             key = bucket.source or "unknown"
             counts[key] = counts.get(key, 0) + 1
     return counts
+
+
+def merge_verify_stats(parts: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Merge per-series verification stats into one block.
+
+    ``mismatched_detail`` keeps the first 20 entries across all series; the
+    per-series detail lists are already capped by the engine.
+    """
+    merged: dict[str, Any] = {
+        "verified": 0,
+        "consistent": 0,
+        "mismatched": 0,
+        "unverified": 0,
+        "mismatched_detail": [],
+    }
+    for part in parts:
+        for key in ("verified", "consistent", "mismatched", "unverified"):
+            merged[key] += int(part.get(key, 0))
+        merged["mismatched_detail"].extend(part.get("mismatched_detail", []))
+    merged["mismatched_detail"] = merged["mismatched_detail"][:20]
+    return merged
 
 
 def summarize_row(ref: SeriesRef, segments: list[Segment],

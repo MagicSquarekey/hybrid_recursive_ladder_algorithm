@@ -313,7 +313,7 @@ the store, raw series on the source, so no `FIRST` aggregation is required.
 
 ## 8. Coverage and the local-first read path
 
-### 7.1 Coverage
+### 8.1 Coverage
 
 A materialized range is recorded in a coverage table as
 `(start_ts, end_ts, covered_at)`. Coverage is only recorded up to
@@ -322,7 +322,7 @@ trustworthy local data. A range is recorded even when the source returned zero
 points ("we asked, there is nothing"), so the next query does not hit the
 source again.
 
-### 7.2 Sub-range split
+### 8.2 Sub-range split
 
 For every segment:
 
@@ -338,11 +338,47 @@ For every segment:
 `tb_ranges` in the result is the merged list of uncovered sub-ranges — the
 input for materialization.
 
-### 7.3 Rewrite safety
+### 8.3 Rewrite safety
 
 Before rewriting a range, the store clears coverage rows that overlap the
 range. If the pull fails halfway, the range is no longer marked as covered, so
 a later query re-fetches it instead of trusting incomplete local data.
+
+### 8.4 Query-time verification (0.0.8)
+
+Coverage answers "was this range pulled?" — not "is the local copy still
+equal to the source?". From 0.0.8, every mixed read (`sum_mixed`,
+`calc_mixed`) fingerprints the covered runs it is about to use, before using
+them:
+
+1. Clip the merged coverage to the query window — runs outside the window are
+   not touched, so verification cost does not grow with the materialized
+   history. For `meter_delta` the window includes the one-bucket extension
+   past `end`, because the last anchor can come from there.
+2. For each clipped run, compare one source interval sum with the store sum
+   of the same range (the store side is one batched call).
+3. **Consistent** — the run stays covered and is read locally.
+4. **Mismatched** — the run is dropped from coverage for this query: the range
+   is fetched from the source (the numbers are correct now) and appears in
+   `tb_ranges`, so a caller with `materialize` enabled re-pulls it afterwards.
+   The next mixed read verifies the healed range again.
+5. **Unverified** — if the source cannot be reached, the run stays covered:
+   verification never blocks a read; the offline local copy is served.
+
+The fingerprint is a **SUM, not a COUNT**: sources may collapse duplicate
+points inside an interval bucket, which would make COUNT comparisons report
+false mismatches. Both sums use `1e-9` relative tolerance; `None == None`
+(empty range on both sides) counts as consistent. Two same-length sums can
+still hide compensating edits (for example a pure zero-value point added and
+a duplicate removed) — that residual blind spot is why the explicit
+`verify`/`repair` commands still exist for audits.
+
+The results carry a `verify` block: `verified`, `consistent`, `mismatched`,
+`unverified` counters and a capped `mismatched_detail` list with the source
+and local sums of each mismatched run. Verification is controlled by
+`LadderConfig.verify_on_read` (default on), can be overridden per call
+(`sum_mixed(..., verify_on_read=False)`) or per environment
+(`HL_VERIFY_ON_READ=0`).
 
 ## 9. Materialization, verification and repair
 
@@ -427,6 +463,13 @@ it does not require writing to or reconfiguring the source. See
 [`related-work.md`](related-work.md) for the full comparison and citations.
 
 ## 14. Version notes
+
+**0.0.8** — mixed reads now verify the covered ranges they use: a SUM
+fingerprint per covered run (source interval sum vs store sum, clipped to the
+query window), mismatched runs served from the source and re-materialized
+afterwards, source failures never blocking a read (§8.4). The meter_delta
+anchor pass became a single forward cursor — O(buckets + points) instead of a
+binary search per bucket.
 
 **0.0.7** — adds the bucket calculator: `sum`, `avg` and `meter_delta` over aligned minute/hour/day/month buckets (§7), with the local-first read path, anomaly codes for meter resets and missing anchors, `first_ranges`/`last_before` store reads, and `calc` entries in the CLI, HTTP API and MCP server.
 

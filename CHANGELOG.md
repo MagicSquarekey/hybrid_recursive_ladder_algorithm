@@ -6,6 +6,43 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
+## [0.0.8] — 2026-11-13
+
+Correctness release: mixed reads no longer trust coverage blindly.
+
+### Added
+
+* Query-time verification of covered ranges on every mixed read
+  (`sum_mixed`, `calc_mixed`): each covered run inside the query window is
+  SUM-fingerprinted (one source interval sum vs one batched store sum). A
+  consistent run is read locally; a mismatched run is dropped for this query,
+  read from the source (correct numbers now), reported in `tb_ranges` and
+  re-materialized when `materialize` is enabled — self-healing. A source that
+  cannot be reached never blocks the read: the run stays local and is counted
+  as `unverified`. The fingerprint uses SUM, not COUNT, because sources may
+  collapse duplicate points inside an interval bucket.
+* Results carry a `verify` block: `verified` / `consistent` / `mismatched` /
+  `unverified` counters plus a capped `mismatched_detail` list (source and
+  local sums per mismatched run).
+* The verification window is clipped to the query (for `meter_delta` it
+  includes the one-bucket extension), so per-query cost does not grow with
+  the materialized history.
+* Controls: `LadderConfig.verify_on_read` (default on), per-call
+  `verify_on_read=` on `sum_mixed`/`calc_mixed`, `HL_VERIFY_ON_READ`
+  environment variable, `--no-verify` on the CLI `sum`/`calc` commands, a
+  `verify_on_read` request field on the HTTP endpoints and an MCP parameter.
+* `docs/algorithm.md` §8.4 (and its Chinese mirror) specifies the
+  fingerprint, the window clipping and the residual blind spot.
+
+### Changed
+
+* The `meter_delta` anchor pass became a single forward cursor over the raw
+  points — O(buckets + points) instead of a binary search per bucket, with
+  the per-bucket fallback reads still batched.
+* All READMEs, the site, the skill and the article now point at
+  `pip install hybrid-recursive-ladder` (PyPI) instead of a per-release wheel
+  URL, so install instructions stop churning with every version.
+
 ## [0.0.7] — 2026-11-13
 
 Algorithm release: the **bucket calculator**. Ports the upstream field

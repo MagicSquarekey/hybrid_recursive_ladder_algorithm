@@ -40,8 +40,8 @@ Do **not** use it for:
 ## Install
 
 ```bash
-# v0.0.7 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
+# PyPI
+pip install hybrid-recursive-ladder
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -187,6 +187,10 @@ for the points that exist; it is not an estimate of missing data.
 * `verify` reports 0 differences after a clean materialize.
 * Tampering with one local point is detected and can be repaired.
 * Coverage never includes the in-flight tail (5-minute grace by default).
+* Mixed reads fingerprint covered ranges against the source on every query
+  (SUM per covered run, `HL_VERIFY_ON_READ=0` to disable): a mismatched
+  range is served from the source and shows up in `tb_ranges`, so
+  `--materialize` heals it; an unreachable source never blocks the read.
 
 ## Reference
 

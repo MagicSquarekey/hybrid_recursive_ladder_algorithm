@@ -103,6 +103,7 @@ def _build_engine(args: argparse.Namespace, refs: list[SeriesRef] | None = None)
     config = LadderConfig(
         finest=getattr(args, "finest", "minute"),
         timezone=getattr(args, "timezone", "Asia/Shanghai"),
+        verify_on_read=not getattr(args, "no_verify", False),
     )
     source_name = getattr(args, "source", "memory")
     if source_name == "memory":
@@ -480,6 +481,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_sum.add_argument("--mode", choices=["tb", "mixed", "local"], default="tb")
     p_sum.add_argument("--materialize", action="store_true",
                        help="write missing raw points to the local store after the query")
+    p_sum.add_argument("--no-verify", action="store_true",
+                       help="skip the query-time verification of covered ranges (mixed mode)")
     p_sum.set_defaults(func=cmd_sum)
 
     p_calc = sub.add_parser(
@@ -492,6 +495,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_calc.add_argument("--mode", choices=["tb", "mixed", "local"], default="tb")
     p_calc.add_argument("--materialize", action="store_true",
                         help="write missing raw points to the local store after the query")
+    p_calc.add_argument("--no-verify", action="store_true",
+                        help="skip the query-time verification of covered ranges (mixed mode)")
     p_calc.set_defaults(func=cmd_calc)
 
     p_verify = sub.add_parser("verify", help="compare the source with the local store")

@@ -8,13 +8,13 @@
     "source": "github"
   },
   "websiteUrl": "https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "packages": [
     {
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "hybrid-recursive-ladder-mcp",
-      "version": "0.0.7",
+      "version": "0.0.8",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

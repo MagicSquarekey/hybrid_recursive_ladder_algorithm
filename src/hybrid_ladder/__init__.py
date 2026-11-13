@@ -128,7 +128,7 @@ __all__ = [
 try:
     __version__ = _version("hybrid-recursive-ladder")
 except PackageNotFoundError:  # running from a source tree
-    __version__ = "0.0.7"
+    __version__ = "0.0.8"
 
 
 def __getattr__(name: str):

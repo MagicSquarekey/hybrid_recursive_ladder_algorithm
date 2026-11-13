@@ -6,6 +6,35 @@
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)，项目从 0.0.1 起使用
 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## [0.0.8] — 2026-11-13
+
+正确性版本：混合读取不再盲信覆盖。
+
+### 新增
+
+* 每次混合读取（`sum_mixed`、`calc_mixed`）先校验要使用的已固化段：对
+  查询窗口内的每个固化段做 SUM 指纹比对（一次数据源区间和 vs 一次批量
+  本地和）。一致的段读本地；不一致的段本次摘除、改读数据源（数字当场
+  正确）、进入 `tb_ranges`，开启 `materialize` 即查后重固化自愈。数据源
+  不可达不阻塞查询：该段保留本地，计入 `unverified`。指纹用 SUM 不用
+  COUNT——数据源区间聚合可能吞同分钟重复点，COUNT 比对必误报。
+* 结果带 `verify` 块：`verified` / `consistent` / `mismatched` /
+  `unverified` 计数，加上截断后的 `mismatched_detail`（每个不一致段的
+  源端和与本地和）。
+* 校验窗口裁剪到本次查询（`meter_delta` 含末桶外拉的一个桶），单次查询
+  的校验成本不随历史固化增长。
+* 控制方式：`LadderConfig.verify_on_read`（默认开）、`sum_mixed` /
+  `calc_mixed` 的 `verify_on_read=` 参数、环境变量 `HL_VERIFY_ON_READ`、
+  CLI `sum`/`calc` 的 `--no-verify`、HTTP 请求字段与 MCP 参数。
+* `docs/algorithm.md` 8.4 节（含中文镜像）规定指纹、窗口裁剪与残余盲点。
+
+### 变更
+
+* `meter_delta` 锚点遍历改为对原始点的单游标一遍扫描——O(桶+点)，替代
+  每桶一次二分；逐桶回退读取保持批量。
+* 全部 README、站点、skill 与文章统一改为 `pip install
+  hybrid-recursive-ladder`（PyPI），不再随版本变动 wheel URL。
+
 ## [0.0.7] — 2026-11-13
 
 算法版本：**统一桶计算**。把上游现场部署 2026-11-13 的决策（三规则走同一

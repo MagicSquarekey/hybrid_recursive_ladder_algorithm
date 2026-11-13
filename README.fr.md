@@ -45,8 +45,8 @@ reste   10-21 18:49:00–18:49:59    1 segment
 ## Installation
 
 ```bash
-# v0.0.7 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
+# PyPI
+pip install hybrid-recursive-ladder
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git

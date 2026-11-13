@@ -66,6 +66,7 @@ class SumRequest(BaseModel):
     finest: str = "minute"
     mode: str = "tb"  # tb | mixed | local
     materialize: bool = False
+    verify_on_read: bool | None = None  # None = engine config default
 
 
 class CalcRequest(BaseModel):
@@ -76,6 +77,7 @@ class CalcRequest(BaseModel):
     rule: str = "sum"  # sum | avg | meter_delta
     mode: str = "tb"  # tb | mixed | local
     materialize: bool = False
+    verify_on_read: bool | None = None  # None = engine config default
 
 
 class VerifyRequest(BaseModel):
@@ -287,7 +289,8 @@ def create_app(
             else:
                 result = engine.sum_mixed(
                     refs, request.start_ts, request.end_ts,
-                    finest=request.finest, progress=progress, cancel=cancelled,
+                    finest=request.finest, verify_on_read=request.verify_on_read,
+                    progress=progress, cancel=cancelled,
                 )
 
             if request.materialize and engine.store is not None:
@@ -350,6 +353,7 @@ def create_app(
             else:
                 result = engine.calc_mixed(refs, request.start_ts, request.end_ts,
                                            dimension=dimension, rule=rule,
+                                           verify_on_read=request.verify_on_read,
                                            progress=progress, cancel=cancelled)
             if request.materialize and engine.store is not None:
                 if mode == "tb":

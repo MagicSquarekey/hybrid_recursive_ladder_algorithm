@@ -17,7 +17,7 @@ from hybrid_ladder import LadderEngine, LadderConfig
 | `decompose(start_ms, end_ms, finest=None)` | 返回阶梯段 |
 | `sum(refs, start_ms, end_ms, *, finest=None, progress=None, cancel=None)` | 只读数据源求和 |
 | `sum_local(refs, ...)` | 只读本地存储（离线） |
-| `sum_mixed(refs, ...)` | 本地优先的混合读 |
+| `sum_mixed(refs, ..., verify_on_read=None)` | 本地优先的混合读；默认先校验已固化段 |
 | `materialize(refs, start_ms, end_ms, ...)` | 为整个区间拉取原始点 |
 | `materialize_ranges(items, ...)` | 为每个序列的指定区间拉取原始点 |
 | `verify(refs, ..., drill_limit=50)` | 数据源与本地对比 |
@@ -44,6 +44,7 @@ from hybrid_ladder import LadderEngine, LadderConfig
 | `continue_on_error` | `False` | 收集每行错误而不是抛出 |
 | `max_segments` | `None` | 可选的防御性段数上限 |
 | `min_bucket_ms` | `60000` | 自适应桶长的最小值 |
+| `verify_on_read` | `True` | 每次混合读取前对已固化段做指纹校验（算法规范 8.4 节） |
 
 ### `calc` / `calc_local` / `calc_mixed`
 
@@ -97,7 +98,8 @@ commands:
 | `--namespace`、`--table-prefix` | PostgreSQL 命名空间/表名 |
 | `--json` | 输出原始 JSON |
 
-`sum` 还接受 `--mode tb|mixed|local` 与 `--materialize`。
+`sum` 还接受 `--mode tb|mixed|local`、`--materialize`，以及
+`--no-verify`（跳过对已固化段的查询时校验）。
 
 `calc` 接受同样的 mode/materialize 选项，另外还有：
 
@@ -150,7 +152,7 @@ hybrid-ladder serve --host 127.0.0.1 --port 8000
 ### `GET /health`
 
 ```json
-{"status": "ok", "version": "0.0.7", "source": "ThingsBoardSource", "store": "PostgresStore"}
+{"status": "ok", "version": "0.0.8", "source": "ThingsBoardSource", "store": "PostgresStore"}
 ```
 
 ### `GET /v1/meta`
@@ -242,6 +244,7 @@ Demo 区间与序列（仅当 `HL_SOURCE=memory`）。
 * `rule` — `sum`、`avg` 或 `meter_delta`（语义见 `docs/algorithm.zh-CN.md` 第七节）。
 * `mode` — `tb`（只读数据源）、`mixed`（本地优先，需要存储）或 `local`（离线，需要存储）。
 * `materialize` — `mixed` 计算之后，把 `tb_ranges` 里的缺口固化到本地。
+* `verify_on_read` — 按请求覆盖查询时校验的默认值（`true`/`false`；不传则用引擎配置）。
 
 响应行包含 `buckets`（`label`、`value`、`cnt`、`source`、`anomaly`、
 `first_ts`、`next_ts`）、组合的 `total`、`ok`（有效差个数）与 `tb_ranges`。
@@ -272,6 +275,11 @@ Demo 区间与序列（仅当 `HL_SOURCE=memory`）。
   }
 }
 ```
+
+每个 mixed 响应都带 `verify` 块：
+`{verified, consistent, mismatched, unverified, mismatched_detail}` ——
+不一致的固化段本次改读源端，并进入 `tb_ranges` 等待固化自愈
+（算法规范 8.4 节）。
 
 `meter_delta` 桶上的异常码：`no_current_reading`（本桶无读数）、
 `no_next_reading`（下一时段无读数）、`same_reading`（无新增采样）、
@@ -352,6 +360,7 @@ Demo 区间与序列（仅当 `HL_SOURCE=memory`）。
 | `HL_MAX_INTERVALS` | `500` | 单次区间请求的桶数 |
 | `HL_MAX_POINTS` | `10000` | 单次原始点请求的点数 |
 | `HL_MATERIALIZE_GRACE_MS` | `300000` | 覆盖宽限期 |
+| `HL_VERIFY_ON_READ` | `1` | 混合读取前校验已固化段（`0`/`false`/`off` 关闭） |
 | `HL_CONCURRENCY` | `8` | 并行序列数 |
 | `HL_CORS_ORIGINS` | — | 逗号分隔的 CORS 来源 |
 

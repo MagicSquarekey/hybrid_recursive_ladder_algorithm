@@ -18,7 +18,7 @@ from hybrid_ladder import LadderEngine, LadderConfig
 | `decompose(start_ms, end_ms, finest=None)` | Ladder segments |
 | `sum(refs, start_ms, end_ms, *, finest=None, progress=None, cancel=None)` | Source-only sum |
 | `sum_local(refs, ...)` | Local store only (offline) |
-| `sum_mixed(refs, ...)` | Local-first mixed read |
+| `sum_mixed(refs, ..., verify_on_read=None)` | Local-first mixed read; verifies covered runs by default |
 | `materialize(refs, start_ms, end_ms, ...)` | Pull raw points for whole ranges |
 | `materialize_ranges(items, ...)` | Pull explicit per-series ranges |
 | `verify(refs, ..., drill_limit=50)` | Source vs local comparison |
@@ -46,6 +46,7 @@ raise `CancelledError` when `cancel()` returns true.
 | `continue_on_error` | `False` | Collect per-row errors instead of raising |
 | `max_segments` | `None` | Optional defensive cap |
 | `min_bucket_ms` | `60000` | Smallest adaptive bucket |
+| `verify_on_read` | `True` | Fingerprint covered runs on every mixed read (§8.4 of the algorithm spec) |
 
 ### `calc` / `calc_local` / `calc_mixed`
 
@@ -99,7 +100,8 @@ Common options for `sum`, `calc`, `verify`, `repair`, `materialize`:
 | `--namespace`, `--table-prefix` | PostgreSQL namespace/tables |
 | `--json` | Print raw JSON |
 
-`sum` also accepts `--mode tb|mixed|local` and `--materialize`.
+`sum` also accepts `--mode tb|mixed|local`, `--materialize` and
+`--no-verify` (skip the query-time verification of covered ranges).
 
 `calc` accepts the same mode/materialize options plus:
 
@@ -152,7 +154,7 @@ Service metadata and, with demo data, a ready-to-use range and series.
 ### `GET /health`
 
 ```json
-{"status": "ok", "version": "0.0.7", "source": "ThingsBoardSource", "store": "PostgresStore"}
+{"status": "ok", "version": "0.0.8", "source": "ThingsBoardSource", "store": "PostgresStore"}
 ```
 
 ### `GET /v1/meta`
@@ -246,6 +248,8 @@ Bucket a range and compute one value per bucket under a rule. Body:
   `local` (offline, needs a store).
 * `materialize` — after a `mixed` calculation, pull the uncovered
   `tb_ranges` into the store.
+* `verify_on_read` — per-request override of the query-time verification
+  default (`true`/`false`; omit to use the engine configuration).
 
 The response rows carry `buckets` (`label`, `value`, `cnt`, `source`,
 `anomaly`, `first_ts`, `next_ts`), a per-row `total`, `ok` (valid delta count)
@@ -276,6 +280,11 @@ immediately; `POST /v1/ladder/calc/sync` runs inline.
   }
 }
 ```
+
+Every mixed response carries a `verify` block:
+`{verified, consistent, mismatched, unverified, mismatched_detail}` —
+mismatched covered runs were re-read from the source and appear in
+`tb_ranges` for healing (algorithm spec §8.4).
 
 Anomaly codes on `meter_delta` buckets: `no_current_reading`,
 `no_next_reading`, `same_reading`, `negative_delta` (meter reset) and
@@ -356,6 +365,7 @@ included only when `completed`.
 | `HL_MAX_INTERVALS` | `500` | buckets per interval request |
 | `HL_MAX_POINTS` | `10000` | points per raw request |
 | `HL_MATERIALIZE_GRACE_MS` | `300000` | coverage grace |
+| `HL_VERIFY_ON_READ` | `1` | fingerprint covered runs on mixed reads (`0`/`false`/`off` disables) |
 | `HL_CONCURRENCY` | `8` | parallel series |
 | `HL_CORS_ORIGINS` | — | comma-separated CORS origins |
 

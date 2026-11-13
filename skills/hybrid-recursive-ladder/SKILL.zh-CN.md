@@ -33,8 +33,8 @@
 ## 安装
 
 ```bash
-# v0.0.7 GitHub Release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
+# PyPI
+pip install hybrid-recursive-ladder
 
 # 可选依赖：克隆后安装
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -175,6 +175,9 @@ MCP 工具：`ladder_meta`、`ladder_decompose`、`ladder_sum`、`ladder_calc`�
 * 干净固化后 `verify` 报告 0 差异。
 * 篡改一个本地点能被发现并修复。
 * 覆盖永远不包含正在进行的尾段（默认 5 分钟宽限）。
+* 混合读取每次都会对已固化区间做 SUM 指纹校验（每段一次；
+  `HL_VERIFY_ON_READ=0` 关闭）：不一致的区间本次改读源端并进入
+  `tb_ranges`，配 `--materialize` 即可自愈；源端不可达不会阻塞查询。
 
 ## 参考
 

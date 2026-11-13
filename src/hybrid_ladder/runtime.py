@@ -26,6 +26,8 @@ def config_from_env() -> LadderConfig:
         max_points=int(os.getenv("HL_MAX_POINTS", "10000")),
         materialize_grace_ms=int(os.getenv("HL_MATERIALIZE_GRACE_MS", "300000")),
         concurrency=int(os.getenv("HL_CONCURRENCY", "8")),
+        verify_on_read=os.getenv("HL_VERIFY_ON_READ", "1").strip().lower()
+        not in ("0", "false", "no", "off"),
     )
 
 
