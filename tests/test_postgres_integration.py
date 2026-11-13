@@ -107,3 +107,25 @@ def test_partitions_are_created_across_months(store):
     points = [(start, 1.0), (start + 3_600_000, 2.0), (start + 7_200_000, 3.0)]
     store.upsert_points(ref, points, at_ms=ms(2030, 1, 1))
     assert store.sum_ranges(ref, [(start, start + 7_200_001)])[start] == (6.0, 3)
+
+
+def test_first_ranges_and_last_before(store):
+    ref = SeriesRef("device-1", "energy", "Chiller 1")
+    start = ms(2026, 1, 1)
+    points = [(start, 10.0), (start + 60_000, 20.0), (start + 10 * 60_000, 40.0)]
+    store.upsert_points(ref, points, at_ms=ms(2030, 1, 1))
+
+    firsts = store.first_ranges(
+        ref, [(start, start + 120_000), (start + 5 * 60_000, start + 6 * 60_000)]
+    )
+    assert firsts[start] == (start, 10.0)
+    assert firsts[start + 5 * 60_000] is None
+
+    lasts = store.last_before(
+        ref, [start + 30 * 60_000, start + 60_000], 60 * 60_000
+    )
+    assert lasts[start + 30 * 60_000] == (start + 10 * 60_000, 40.0)
+    assert lasts[start + 60_000] == (start, 10.0)
+
+    outside = store.last_before(ref, [start + 30 * 60_000], 5 * 60_000)
+    assert outside[start + 30 * 60_000] is None

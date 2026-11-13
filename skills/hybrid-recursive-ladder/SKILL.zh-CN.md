@@ -25,16 +25,16 @@
 
 **不要**用于：
 
-* 当前版本的平均值或累计量差分规则（平均值需要加权 sum+count；累计量差分需要
-  每段首值）。
+* **阶梯段上**的平均值或累计量差分——那是桶规则的职责：对齐桶上的 `avg` 与
+  `meter_delta` 用下面的 `calc`。
 * 非可加指标或事件流。
 * 不支持区间聚合的数据源——先实现两方法协议。
 
 ## 安装
 
 ```bash
-# v0.0.6 GitHub Release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+# v0.0.7 GitHub Release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 # 可选依赖：克隆后安装
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -78,7 +78,19 @@ hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
      --mode mixed --materialize
    ```
 
-4. **校验**本地副本，必要时修复：
+4. **按规则对区间做桶计算**（sum / avg / meter_delta）：
+
+   ```bash
+   hybrid-ladder calc --series <device_id>:<key> \
+     --start <start> --end <end> --dimension day --rule meter_delta
+   ```
+
+   区间两端必须对齐 `--dimension`。`meter_delta` 把表计清零和缺锚点记为
+   `anomaly` 异常码（`same_reading`、`negative_delta`、`no_current_reading`、
+   `no_next_reading`、`non_numeric`），不编造数值，并向 `end` 之外多读
+   一个桶作为末桶锚点。
+
+5. **校验**本地副本，必要时修复：
 
    ```bash
    hybrid-ladder verify --source thingsboard --series ... --start ... --end ...
@@ -122,7 +134,7 @@ HTTP 端点：
 
 成功信封：`{"code":0,"data":...}`；错误：`{"code":1,"detail":...}`。
 
-MCP 工具：`ladder_meta`、`ladder_decompose`、`ladder_sum`、`ladder_verify`。
+MCP 工具：`ladder_meta`、`ladder_decompose`、`ladder_sum`、`ladder_calc`、`ladder_verify`。
 
 ## 输出语义（重要）
 

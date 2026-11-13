@@ -196,3 +196,101 @@ def test_list_tasks(app_client):
     response = client.get("/v1/tasks")
     assert response.status_code == 200
     assert len(response.json()["tasks"]) >= 1
+
+
+def _calc_request(**overrides):
+    start, end = demo_range()
+    payload = {
+        "series": [{"entity": DEMO_SERIES[0].entity, "key": DEMO_SERIES[0].key}],
+        "start_ts": start,
+        "end_ts": end,
+        "dimension": "day",
+        "rule": "sum",
+        "mode": "tb",
+    }
+    payload.update(overrides)
+    return payload
+
+
+def test_calc_sync_day_sum(app_client):
+    client, engine, _ = app_client
+    start, end = demo_range()
+    expected = engine.calc([DEMO_SERIES[0]], start, end,
+                           dimension="day", rule="sum").grand_total
+    response = client.post("/v1/ladder/calc?sync=true", json=_calc_request())
+    assert response.status_code == 200
+    body = response.json()["data"]
+    assert body["rule"] == "sum"
+    assert body["dimension"] == "day"
+    assert body["grand_total"] == expected
+    assert body["rows"][0]["buckets"][0]["cnt"] > 0
+
+
+def test_calc_async_task(app_client):
+    client, _, _ = app_client
+    response = client.post("/v1/ladder/calc", json=_calc_request())
+    assert response.status_code == 200
+    task_id = response.json()["data"]["task_id"]
+
+    deadline = time.time() + 5
+    snapshot = None
+    while time.time() < deadline:
+        snapshot = client.get(f"/v1/tasks/{task_id}").json()["data"]
+        if snapshot["status"] in ("completed", "failed", "cancelled"):
+            break
+        time.sleep(0.02)
+    assert snapshot["status"] == "completed"
+    assert snapshot["result"]["rule"] == "sum"
+    start, end = demo_range()
+    expected_buckets = (end - start) // 86_400_000
+    assert len(snapshot["result"]["rows"][0]["buckets"]) == expected_buckets
+
+
+def test_calc_meter_delta_reports_anomaly_codes(app_client):
+    client, _, _ = app_client
+    body = client.post(
+        "/v1/ladder/calc/sync", json=_calc_request(rule="meter_delta")
+    ).json()["data"]
+    bucket = body["rows"][0]["buckets"][0]
+    assert bucket["anomaly"] is None
+    assert set(bucket) >= {"value", "anomaly", "first_ts", "next_ts", "source"}
+    assert body["rows"][0]["ok"] >= 1
+
+
+def test_calc_validation_errors(app_client):
+    client, _, _ = app_client
+    bad_rule = client.post("/v1/ladder/calc/sync", json=_calc_request(rule="median"))
+    assert bad_rule.status_code == 400
+    bad_dimension = client.post(
+        "/v1/ladder/calc/sync", json=_calc_request(dimension="week")
+    )
+    assert bad_dimension.status_code == 400
+    start, end = demo_range()
+    unaligned = client.post(
+        "/v1/ladder/calc/sync",
+        json=_calc_request(start_ts=start + 3_600_000, end_ts=end),
+    )
+    assert unaligned.status_code == 400
+
+
+def test_calc_mixed_materializes_missing_ranges(app_client):
+    client, _, _ = app_client
+    start, end = demo_range()
+    # Materialize everything but the last day, then run a mixed calculation.
+    materialized = client.post(
+        "/v1/ladder/materialize?sync=true",
+        json={
+            "series": [{"entity": DEMO_SERIES[0].entity, "key": DEMO_SERIES[0].key}],
+            "start_ts": start,
+            "end_ts": end - 86_400_000,
+        },
+    )
+    assert materialized.status_code == 200
+
+    body = client.post(
+        "/v1/ladder/calc/sync",
+        json=_calc_request(mode="mixed", materialize=True),
+    ).json()["data"]
+    sources = {bucket["source"] for bucket in body["rows"][0]["buckets"]}
+    assert sources == {"local", "tb"}
+    assert body["materialized"]["written"] > 0

@@ -9,7 +9,7 @@
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.7-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23683292.svg)](https://doi.org/10.5281/zenodo.23683292)
 
@@ -69,10 +69,11 @@ requests(run) = ceil(T / (K * Δ))
 ## 快速开始
 
 ```bash
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 hybrid-ladder demo
 hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule meter_delta --dimension day
 ```
 
 demo 会构造 15 分钟粒度的合成数据，分解 120 天，固化前 60 天，跑一次本地优先混合查询，并校验合计一致。不需要数据库、网络或配置。
@@ -241,7 +242,7 @@ if report["diff_segments"]:
 
 **限制**
 
-- **v0.0.6 只实现 `sum`。** `avg` 需要 `sum` + `count` 加权；`meter_delta` 需要每段首值（TB 没有 `FIRST`），暂未上阶梯。
+- **三规则、两条路径。** `sum` 在阶梯段上精确；`avg` 与 `meter_delta` 走桶计算（`hybrid-ladder calc` / `engine.calc`），按分/时/日/月对齐桶取值；`meter_delta` 会外拉末桶之后的一个桶做锚点，表计清零记为异常而不是负用量。
 - **数据完整 ≠ 算术正确。** 数据缺失会让合计偏小；`cnt`/`expected` 只暴露稀疏，不补数。
 - **ThingsBoard 限制**：约 700 个桶可接受，800 会被拒（文档说的 1000 不可信）；适配器默认 500。原始序列每请求上限 10,000 点。`COUNT` 会吞同分钟重复点。
 - **进程内任务**重启即丢；结果可重算，固化数据不丢。
@@ -321,7 +322,7 @@ pytest -m integration
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.6},
+  version = {0.0.7},
   license = {MIT},
   doi     = {10.5281/zenodo.23683292},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}

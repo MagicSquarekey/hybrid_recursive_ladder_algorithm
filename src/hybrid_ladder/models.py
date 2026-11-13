@@ -23,6 +23,31 @@ BUCKET_MS = {
     "minute": 60_000,
 }
 
+
+#: Aggregation rules supported by the bucket calculator.
+RULES = ("sum", "avg", "meter_delta")
+
+#: Display dimensions for the bucket calculator (calendar buckets).
+DIMENSIONS = ("minute", "hour", "day", "month")
+
+#: How far back a meter_delta bucket may look for its anchor when the bucket
+#: itself has no reading.  Month buckets get a longer window because meters
+#: can be silent for weeks.
+DELTA_LOOKBACK_MS = {
+    "minute": 86_400_000,
+    "hour": 86_400_000,
+    "day": 86_400_000,
+    "month": 40 * 86_400_000,
+}
+
+#: Stable anomaly codes for meter_delta.  They are machine-readable on
+#: purpose; clients can translate them without parsing prose.
+ANOMALY_NO_CURRENT = "no_current_reading"
+ANOMALY_NO_NEXT = "no_next_reading"
+ANOMALY_SAME_READING = "same_reading"
+ANOMALY_NEGATIVE_DELTA = "negative_delta"
+ANOMALY_NON_NUMERIC = "non_numeric"
+
 #: The fetch level used to build each output level.  A month has no fixed
 #: interval in most sources, so it is folded from days; day/hour are folded
 #: from the next finer level so the result stays correct in DST time zones.
@@ -232,6 +257,146 @@ class QueryResult:
         return out
 
     to_dict = as_dict
+
+
+
+@dataclass(frozen=True, slots=True)
+class Bucket:
+    """One calendar bucket of the bucket calculator.
+
+    Buckets are left-closed and right-open, aligned to the configured
+    timezone, and tile ``[start, end)`` exactly.
+    """
+
+    start: int
+    end: int
+    label: str
+    dimension: str
+
+    @property
+    def duration_ms(self) -> int:
+        return self.end - self.start
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "start": self.start,
+            "end": self.end,
+            "label": self.label,
+            "dimension": self.dimension,
+        }
+
+
+@dataclass(slots=True)
+class BucketValue:
+    """One computed bucket for a rule.
+
+    ``value`` keeps the same distinction as :class:`Segment`: ``None`` means
+    no usable reading, ``0.0`` is a real zero.  ``anomaly`` is set only for
+    ``meter_delta`` and uses the ``ANOMALY_*`` constants.
+    """
+
+    start: int
+    end: int
+    label: str
+    value: float | None = None
+    cnt: int | None = None
+    source: str | None = None
+    anomaly: str | None = None
+    first_ts: int | None = None
+    next_ts: int | None = None
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "start": self.start,
+            "end": self.end,
+            "label": self.label,
+            "value": self.value,
+            "cnt": self.cnt,
+            "source": self.source,
+            "anomaly": self.anomaly,
+            "first_ts": self.first_ts,
+            "next_ts": self.next_ts,
+        }
+
+    to_dict = as_dict
+
+
+@dataclass(slots=True)
+class CalcRow:
+    """Result for one series under one rule and dimension."""
+
+    ref: SeriesRef
+    buckets: list[BucketValue] = field(default_factory=list)
+    total: float | None = None
+    ok: int = 0
+    tb_ranges: list[tuple[int, int]] = field(default_factory=list)
+    source_counts: dict[str, int] = field(default_factory=dict)
+    error: str | None = None
+
+    @property
+    def buckets_count(self) -> int:
+        return len(self.buckets)
+
+    def as_dict(self) -> dict[str, Any]:
+        out = {
+            "device_id": self.ref.entity,
+            "device_name": self.ref.display_name,
+            "key": self.ref.key,
+            "buckets": [b.as_dict() for b in self.buckets],
+            "total": self.total,
+            "ok": self.ok,
+            "buckets_count": self.buckets_count,
+            "tb_ranges": [[int(a), int(b)] for a, b in self.tb_ranges],
+            "source_counts": dict(self.source_counts),
+        }
+        if self.error is not None:
+            out["error"] = self.error
+        return out
+
+    to_dict = as_dict
+
+
+@dataclass(slots=True)
+class CalcResult:
+    """Result of a bucket calculation across one or more series."""
+
+    rule: str = "sum"
+    dimension: str = "day"
+    rows: list[CalcRow] = field(default_factory=list)
+    grand_total: float | None = None
+    source: str = "tb"
+    source_counts: dict[str, int] = field(default_factory=dict)
+    errors: list[dict[str, Any]] = field(default_factory=list)
+    materialized: dict[str, Any] | None = None
+    materialize_error: str | None = None
+
+    def as_dict(self) -> dict[str, Any]:
+        out = {
+            "rule": self.rule,
+            "dimension": self.dimension,
+            "rows": [r.as_dict() for r in self.rows],
+            "grand_total": self.grand_total,
+            "source": self.source,
+            "source_counts": dict(self.source_counts),
+            "errors": list(self.errors),
+        }
+        if self.materialized is not None:
+            out["materialized"] = self.materialized
+        if self.materialize_error is not None:
+            out["materialize_error"] = self.materialize_error
+        return out
+
+    to_dict = as_dict
+
+
+def source_counts_calc(rows: list[CalcRow]) -> dict[str, int]:
+    """Count buckets by ``source`` across rows."""
+    counts: dict[str, int] = {}
+    for row in rows:
+        for bucket in row.buckets:
+            key = bucket.source or "unknown"
+            counts[key] = counts.get(key, 0) + 1
+    return counts
 
 
 def summarize_row(ref: SeriesRef, segments: list[Segment],

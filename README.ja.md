@@ -45,8 +45,8 @@
 ## インストール
 
 ```bash
-# v0.0.6 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+# v0.0.7 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -176,7 +176,7 @@ class PointStore(Protocol):
 
 ## 制限
 
-* v0.0.6 は `sum` のみ。`avg` は加重、`meter_delta` は各セグメントの先頭値が必要で未実装です。
+* 3 つのルール、2 つの経路。`sum` はラダーセグメント上で正確です。`avg` と `meter_delta` はバケット計算（`hybrid-ladder calc` / `engine.calc`）で、分/時/日/月に揃えたバケット上で動作します。`meter_delta` は最終バケットのため範囲を 1 バケット先まで読み、メーターリセットは負の使用量ではなく異常として報告します。
 * データ欠損があると合計は物理的な総量より小さくなります。`cnt/expected` で疎であることを示すだけで、補間はしません。
 * ThingsBoard の区間集約は約 700 バケットまで（800 は拒否）。既定は 500 です。
 * バックグラウンドタスクはプロセスメモリ上にあり、再起動で失われます（結果は再計算可能）。

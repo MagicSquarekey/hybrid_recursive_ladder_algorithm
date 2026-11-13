@@ -61,7 +61,8 @@ def test_tools_registered():
     server = build_server()
     tools = _resolve(server.list_tools())
     names = {tool.name for tool in tools}
-    assert names == {"ladder_meta", "ladder_decompose", "ladder_sum", "ladder_verify"}
+    assert names == {"ladder_meta", "ladder_decompose", "ladder_sum",
+                    "ladder_calc", "ladder_verify"}
 
 
 def test_tool_annotations():
@@ -114,3 +115,52 @@ def test_sum_tool_with_demo_data():
     payload = json.loads(result[0].text)
     assert payload["grand_total"] is not None
     assert payload["rows"][0]["segments_count"] == 1
+
+
+def test_calc_tool_sum_and_delta():
+    server = build_server()
+    payload = _call(server, "ladder_calc", {
+        "series": [],
+        "start": "2026-01-01",
+        "end": "2026-01-04",
+        "dimension": "day",
+        "rule": "sum",
+    })
+    data = json.loads(payload[0].text)
+    assert data["rule"] == "sum"
+    assert len(data["rows"][0]["buckets"]) == 3
+    assert data["rows"][0]["buckets"][0]["cnt"] > 0
+
+    payload = _call(server, "ladder_calc", {
+        "series": [],
+        "start": "2026-01-01",
+        "end": "2026-01-03",
+        "dimension": "day",
+        "rule": "meter_delta",
+    })
+    data = json.loads(payload[0].text)
+    assert data["rows"][0]["ok"] >= 1
+    assert data["rows"][0]["total"] is not None
+
+
+def test_calc_tool_rejects_bad_args():
+    """A bad dimension fails the tool call instead of returning buckets.
+
+    SDK releases differ: some raise (masked as "Error executing tool"),
+    others return an isError result.  Both are acceptable; a 200-style
+    bucket payload is not.
+    """
+    server = build_server()
+    try:
+        result = _resolve(server.call_tool("ladder_calc", {
+            "series": [],
+            "start": "2026-01-01",
+            "end": "2026-01-04",
+            "dimension": "week",
+        }))
+    except Exception:
+        return
+    if isinstance(result, tuple):
+        result = result[0]
+    texts = json.dumps(getattr(result, "content", result), default=str)
+    assert "week" in texts or "dimension" in texts or "isError" in texts

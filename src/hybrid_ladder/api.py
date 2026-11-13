@@ -68,6 +68,16 @@ class SumRequest(BaseModel):
     materialize: bool = False
 
 
+class CalcRequest(BaseModel):
+    series: list[SeriesIn] = Field(default_factory=list)
+    start_ts: int
+    end_ts: int
+    dimension: str = "day"  # minute | hour | day | month
+    rule: str = "sum"  # sum | avg | meter_delta
+    mode: str = "tb"  # tb | mixed | local
+    materialize: bool = False
+
+
 class VerifyRequest(BaseModel):
     series: list[SeriesIn] = Field(default_factory=list)
     start_ts: int
@@ -308,6 +318,68 @@ def create_app(
     @app.post("/v1/ladder/sum/sync")
     def ladder_sum_sync(request: SumRequest) -> dict[str, Any]:
         return _envelope(sum_runner(request)(lambda *_: None, lambda: False))
+
+    # --------------------------------------------------------------
+    # Bucket calculation (sum / avg / meter_delta)
+    # --------------------------------------------------------------
+    def calc_runner(request: CalcRequest):
+        refs = _refs(request.series)
+        dimension = request.dimension.lower()
+        rule = request.rule.lower()
+        if dimension not in ("minute", "hour", "day", "month"):
+            raise HTTPException(status_code=400,
+                                detail="dimension must be minute, hour, day or month")
+        if rule not in ("sum", "avg", "meter_delta"):
+            raise HTTPException(status_code=400,
+                                detail="rule must be sum, avg or meter_delta")
+        mode = request.mode.lower()
+        if mode not in ("tb", "mixed", "local"):
+            raise HTTPException(status_code=400, detail="mode must be tb, mixed or local")
+        if mode in ("mixed", "local"):
+            _require_store(engine)
+
+        def runner(progress, cancelled):
+            if mode == "tb":
+                result = engine.calc(refs, request.start_ts, request.end_ts,
+                                     dimension=dimension, rule=rule,
+                                     progress=progress, cancel=cancelled)
+            elif mode == "local":
+                result = engine.calc_local(refs, request.start_ts, request.end_ts,
+                                           dimension=dimension, rule=rule,
+                                           progress=progress, cancel=cancelled)
+            else:
+                result = engine.calc_mixed(refs, request.start_ts, request.end_ts,
+                                           dimension=dimension, rule=rule,
+                                           progress=progress, cancel=cancelled)
+            if request.materialize and engine.store is not None:
+                if mode == "tb":
+                    items = [(ref, [(request.start_ts, request.end_ts)]) for ref in refs]
+                else:
+                    items = [(row.ref, row.tb_ranges)
+                             for row in result.rows if row.tb_ranges]
+                if items:
+                    progress(len(refs), len(refs), "total ready; materializing raw points…")
+                    try:
+                        result.materialized = engine.materialize_ranges(
+                            items, progress=progress, cancel=cancelled
+                        )
+                    except Exception as exc:
+                        result.materialize_error = str(exc)[:300]
+            return result.as_dict()
+
+        return runner
+
+    @app.post("/v1/ladder/calc")
+    def ladder_calc(request: CalcRequest, sync: bool = Query(False)) -> dict[str, Any]:
+        runner = calc_runner(request)
+        if sync:
+            return _envelope(runner(lambda *_: None, lambda: False))
+        task_id = registry.create("ladder calc", len(request.series), runner)
+        return _envelope({"task_id": task_id, "async": True, "series": len(request.series)})
+
+    @app.post("/v1/ladder/calc/sync")
+    def ladder_calc_sync(request: CalcRequest) -> dict[str, Any]:
+        return _envelope(calc_runner(request)(lambda *_: None, lambda: False))
 
     # --------------------------------------------------------------
     # Verify / repair / materialize

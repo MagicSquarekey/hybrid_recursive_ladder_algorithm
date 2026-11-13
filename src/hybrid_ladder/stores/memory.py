@@ -40,6 +40,41 @@ class MemoryStore:
             out[int(start)] = (sum(values) if values else None, len(values))
         return out
 
+    def first_ranges(
+        self,
+        ref: SeriesRef,
+        ranges: Sequence[tuple[int, int]],
+    ) -> Mapping[int, tuple[int, Any] | None]:
+        points = self._points.get((ref.entity, ref.key), {})
+        timestamps = sorted(points)
+        out: dict[int, tuple[int, Any] | None] = {}
+        for start, end in ranges:
+            left = bisect.bisect_left(timestamps, start)
+            right = bisect.bisect_left(timestamps, end)
+            out[int(start)] = (
+                (timestamps[left], points[timestamps[left]]) if left < right else None
+            )
+        return out
+
+    def last_before(
+        self,
+        ref: SeriesRef,
+        timestamps: Sequence[int],
+        lookback_ms: int,
+    ) -> Mapping[int, tuple[int, Any] | None]:
+        points = self._points.get((ref.entity, ref.key), {})
+        keys = sorted(points)
+        out: dict[int, tuple[int, Any] | None] = {}
+        for target in timestamps:
+            target = int(target)
+            floor = target - int(lookback_ms)
+            index = bisect.bisect_left(keys, target) - 1
+            if index >= 0 and keys[index] >= floor:
+                out[target] = (keys[index], points[keys[index]])
+            else:
+                out[target] = None
+        return out
+
     def series(
         self,
         ref: SeriesRef,

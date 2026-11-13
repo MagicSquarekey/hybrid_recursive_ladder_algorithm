@@ -6,6 +6,41 @@
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)，项目从 0.0.1 起使用
 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## [0.0.7] — 2026-11-13
+
+算法版本：**统一桶计算**。把上游现场部署 2026-11-13 的决策（三规则走同一
+引擎）移植成本库的形态——纯日历逻辑、按协议取数、不新增依赖。阶梯 sum
+路径保持不变。
+
+### 新增
+
+* 对齐日历桶上的三种规则，覆盖库的全部入口：Python 的 `engine.calc` /
+  `calc_local` / `calc_mixed`，CLI 的 `hybrid-ladder calc`，HTTP 的
+  `POST /v1/ladder/calc`，以及 MCP 工具 `ladder_calc`。
+  * `sum` —— 桶内求和。
+  * `avg` —— 桶内均值（`sum ÷ count`）；组合合计取非空桶均值的等权平均
+    （现场既有的「均值的均值」口径）。
+  * `meter_delta` —— 下一桶首条减本桶首条；末桶向 `end` 之外多读一个桶；
+    桶内无读数时在回看窗内（1 天，月桶 40 天）回退取前一条。表计清零与
+    缺锚点以稳定异常码上报（`no_current_reading`、`no_next_reading`、
+    `same_reading`、`negative_delta`、`non_numeric`），不编造数值。
+* `hybrid_ladder.calc`：纯函数 `build_buckets`、`delta_chain`、`fold_avg`、
+  `fold_row_total`；模型 `Bucket`、`BucketValue`、`CalcRow`、`CalcResult`；
+  常量 `RULES`、`DIMENSIONS`、`DELTA_LOOKBACK_MS` 与 `ANOMALY_*` 从包根导出。
+* `PointStore` 新增 `first_ranges` 与 `last_before` 读（内存与 PostgreSQL
+  适配器均实现），`meter_delta` 锚点不依赖任何 `FIRST` 聚合。
+* `docs/algorithm.md` 第七节（含中文镜像）规定桶对齐、规则语义与异常码；
+  `docs/api.md` 补充新的 CLI / HTTP / MCP 入口。
+* MCP 分发（此前未随版本发布）：`hybrid-recursive-ladder-mcp` 包装包（可按
+  名运行）、经 GitHub OIDC 发布到官方 MCP Registry 的 `server.json`，以及
+  供 Smithery / Claude Desktop 使用的 MCPB bundle。
+
+### 变更
+
+* 阶梯 `sum` 路径未动：段分解、输出形状与请求模式与 0.0.6 完全一致。
+* README 文档导航行按语言本地化（每个 README 用自己的语言链接文档，英文行
+  不再带中文尾链）。
+
 ## [0.0.6] — 2026-10-27
 
 文档与站点发布。没有算法、API、线格式或存储变更。

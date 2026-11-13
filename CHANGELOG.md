@@ -6,6 +6,52 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from 0.0.1 onward.
 
+## [0.0.7] — 2026-11-13
+
+Algorithm release: the **bucket calculator**. Ports the upstream field
+deployment's 2026-11-13 decision ("three rules over one engine") into this
+library's shape — pure calendar logic, protocol-based reads, no new
+dependencies. The ladder sum path is unchanged.
+
+### Added
+
+* Three rules over aligned calendar buckets, everywhere the library is
+  reachable: `engine.calc` / `calc_local` / `calc_mixed` in Python,
+  `hybrid-ladder calc` on the CLI, `POST /v1/ladder/calc` on the HTTP API
+  and the `ladder_calc` MCP tool.
+  * `sum` — bucket sum.
+  * `avg` — bucket mean (`sum ÷ count`); row totals are the unweighted mean
+    of non-empty buckets (the deployment's "mean of means" convention).
+  * `meter_delta` — next bucket's first reading minus this bucket's first;
+    the last bucket reads one bucket past `end`; a bucket without a reading
+    falls back to the last reading before its start inside a bounded
+    lookback (1 day; 40 days for month buckets). Meter resets and missing
+    anchors are reported as stable anomaly codes (`no_current_reading`,
+    `no_next_reading`, `same_reading`, `negative_delta`, `non_numeric`)
+    instead of invented values.
+* `hybrid_ladder.calc`: pure `build_buckets`, `delta_chain`, `fold_avg` and
+  `fold_row_total`; `Bucket`, `BucketValue`, `CalcRow` and `CalcResult`
+  models; `RULES`, `DIMENSIONS`, `DELTA_LOOKBACK_MS` and `ANOMALY_*`
+  constants are exported from the package root.
+* `PointStore.first_ranges` and `PointStore.last_before` reads (memory and
+  PostgreSQL adapters), so `meter_delta` anchors never need a `FIRST`
+  aggregation.
+* `docs/algorithm.md §7` (and its Chinese mirror) specifies bucket
+  alignment, rule semantics and the anomaly codes; `docs/api.md` documents
+  the new CLI, HTTP and MCP surfaces.
+* MCP distribution, unreleased until now: the
+  `hybrid-recursive-ladder-mcp` wrapper package (runnable by name),
+  `server.json` published to the official MCP Registry over GitHub OIDC,
+  and an MCPB bundle for Smithery and Claude Desktop.
+
+### Changed
+
+* The ladder `sum` path is untouched: segment decomposition, output shape
+  and request pattern are exactly as in 0.0.6.
+* README doc-navigation rows are localized per language (each README links
+  docs in its own language; the English row no longer carries a Chinese
+  tail link).
+
 ## [0.0.6] — 2026-10-27
 
 Documentation and site release. No algorithm, API, wire-format or storage

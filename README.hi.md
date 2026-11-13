@@ -45,8 +45,8 @@
 ## इंस्टॉलेशन
 
 ```bash
-# v0.0.6 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+# v0.0.7 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -176,7 +176,7 @@ class PointStore(Protocol):
 
 ## सीमाएँ
 
-* v0.0.6 में केवल `sum` है। `avg` के लिए भारांकन चाहिए; `meter_delta` के लिए हर सेगमेंट का पहला मान चाहिए।
+* तीन नियम, दो रास्ते। `sum` सीढ़ी-खंडों पर सटीक है। `avg` और `meter_delta` बकेट-नियम हैं (`hybrid-ladder calc` / `engine.calc`) — मिनट/घंटा/दिन/माह पर संरेखित बकेटों पर चलते हैं; `meter_delta` `end` से एक बकेट आगे तक पढ़ता है और मीटर रीसेट को ऋणात्मक खपत नहीं, विसंगति (anomaly) बताता है।
 * डेटा छूटने पर कुल योग भौतिक कुल से कम होगा। `cnt/expected` इसे दिखाते हैं, भरपाई नहीं करते।
 * ThingsBoard लगभग 700 बकेट स्वीकारता है और 800 अस्वीकारता है; डिफ़ॉल्ट 500 है।
 * बैकग्राउंड टास्क प्रोसेस मेमोरी में रहते हैं और रीस्टार्ट पर चले जाते हैं (परिणाम दोबारा गणना योग्य)।

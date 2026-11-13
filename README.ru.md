@@ -45,8 +45,8 @@
 ## Установка
 
 ```bash
-# v0.0.6 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+# v0.0.7 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -176,7 +176,7 @@ class PointStore(Protocol):
 
 ## Ограничения
 
-* В v0.0.6 реализован только `sum`. Для `avg` нужно взвешивание; для `meter_delta` — первое значение каждого сегмента.
+* Три правила, два пути. `sum` точен на сегментах лестницы. `avg` и `meter_delta` — правила по корзинам (`hybrid-ladder calc` / `engine.calc`) на выровненных минутных/часовых/дневных/месячных корзинах; `meter_delta` читает одну корзину за `end` и сообщает сбросы счётчика как аномалии, а не как отрицательный расход.
 * При пропусках в данных итог будет меньше физического. `cnt/expected` показывают разреженность, но данные не восполняются.
 * ThingsBoard принимает около 700 бакетов и отклоняет 800; по умолчанию используется 500.
 * Фоновые задачи живут в памяти процесса и теряются при перезапуске (результаты можно пересчитать).

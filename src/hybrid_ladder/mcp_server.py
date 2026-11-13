@@ -203,6 +203,61 @@ def build_server():
             refs, start_ms, end_ms, finest=finest, drill_limit=drill_limit
         )
 
+    @server.tool(title="Bucket calculation", annotations=writes_local)
+    def ladder_calc(
+        series: list[dict[str, Any]],
+        start: str,
+        end: str,
+        dimension: str = "day",
+        rule: str = "sum",
+        mode: str = "tb",
+        materialize: bool = False,
+    ) -> dict[str, Any]:
+        """Bucket [start, end) and compute one value per bucket.
+
+        ``dimension`` is the bucket size (minute/hour/day/month, both edges
+        must align to it) and ``rule`` is one of:
+
+        * ``sum`` — bucket sum;
+        * ``avg`` — bucket mean of sums/counts, row totals are means of means;
+        * ``meter_delta`` — next bucket's first reading minus this bucket's;
+          the last bucket reads one bucket past ``end``; missing anchors,
+          repeated readings and meter resets come back as ``anomaly`` codes
+          (``no_current_reading``, ``no_next_reading``, ``same_reading``,
+          ``negative_delta``, ``non_numeric``) instead of values.
+
+        ``mode`` is ``tb`` (source only), ``mixed`` (local first) or
+        ``local`` (offline).
+        """
+        engine = _engine()
+        refs = _refs(series)
+        start_ms = _parse_time(start, engine.config.timezone)
+        end_ms = _parse_time(end, engine.config.timezone)
+        if dimension not in ("minute", "hour", "day", "month"):
+            raise ValueError("dimension must be minute, hour, day or month")
+        if rule not in ("sum", "avg", "meter_delta"):
+            raise ValueError("rule must be sum, avg or meter_delta")
+        if mode not in ("tb", "mixed", "local"):
+            raise ValueError("mode must be tb, mixed or local")
+        if mode == "tb":
+            result = engine.calc(refs, start_ms, end_ms, dimension=dimension, rule=rule)
+        elif mode == "local":
+            result = engine.calc_local(refs, start_ms, end_ms,
+                                       dimension=dimension, rule=rule)
+        else:
+            result = engine.calc_mixed(refs, start_ms, end_ms,
+                                       dimension=dimension, rule=rule)
+
+        if materialize and engine.store is not None:
+            items = (
+                [(ref, [(start_ms, end_ms)]) for ref in refs]
+                if mode == "tb"
+                else [(row.ref, row.tb_ranges) for row in result.rows if row.tb_ranges]
+            )
+            if items:
+                result.materialized = engine.materialize_ranges(items)
+        return result.as_dict()
+
     return server
 
 

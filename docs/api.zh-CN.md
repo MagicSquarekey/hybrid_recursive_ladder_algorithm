@@ -45,9 +45,23 @@ from hybrid_ladder import LadderEngine, LadderConfig
 | `max_segments` | `None` | 可选的防御性段数上限 |
 | `min_bucket_ms` | `60000` | 自适应桶长的最小值 |
 
+### `calc` / `calc_local` / `calc_mixed`
+
+```python
+result = engine.calc(refs, start_ms, end_ms, dimension="day", rule="sum")
+result = engine.calc_mixed(refs, start_ms, end_ms, dimension="day",
+                           rule="meter_delta")
+```
+
+`rule` 取 `sum`、`avg` 或 `meter_delta`；`dimension` 取 `minute`、`hour`、
+`day` 或 `month`，区间两端必须对齐。返回 `CalcResult`，含 `rule`、
+`dimension`、`rows`（`CalcRow`：`buckets`、`total`、`ok`、`tb_ranges`、
+`source_counts`）与 `grand_total`。规则语义与异常码见
+`docs/algorithm.zh-CN.md` 第七节。
+
 ### 结果
 
-`QueryResult.as_dict()` 与 `Row.as_dict()` 生成 `docs/algorithm.md §9` 中描述的
+`QueryResult.as_dict()` 与 `Row.as_dict()` 生成 `docs/algorithm.md §10` 中描述的
 JSON。`Segment` 同时支持属性访问（`segment.value`）和字典式访问
 （`segment["value"]`）。
 
@@ -60,6 +74,7 @@ commands:
   decompose     show the ladder decomposition of a range
   demo          end-to-end demo with synthetic data
   sum           sum one or more series
+  calc          bucket a range and apply sum / avg / meter_delta
   verify        compare the source with the local store
   repair        replace the local range with source data
   materialize   pull raw points into the local store
@@ -68,7 +83,7 @@ commands:
   version       print the version
 ```
 
-`sum`、`verify`、`repair`、`materialize` 的通用选项：
+`sum`、`calc`、`verify`、`repair`、`materialize` 的通用选项：
 
 | 选项 | 含义 |
 |---|---|
@@ -84,7 +99,25 @@ commands:
 
 `sum` 还接受 `--mode tb|mixed|local` 与 `--materialize`。
 
+`calc` 接受同样的 mode/materialize 选项，另外还有：
+
+| 选项 | 含义 |
+|---|---|
+| `--dimension minute|hour|day|month` | 桶粒度；区间两端都必须对齐到该粒度（默认 `day`） |
+| `--rule sum|avg|meter_delta` | 每桶的聚合规则（默认 `sum`） |
+
 示例：
+
+```bash
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule sum
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule avg --dimension hour
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule meter_delta --dimension day
+hybrid-ladder calc --source thingsboard --series 6f2c...:L_LSJ1_DB_EP \
+  --start 2026-01-01 --end 2026-02-01 --rule meter_delta --mode mixed --materialize
+```
+
+```bash
+hybrid-ladder demo
 
 ```bash
 hybrid-ladder demo
@@ -92,6 +125,8 @@ hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59 --json
 hybrid-ladder sum --series demo-chiller-1:energy --start 2026-01-01 --end 2026-02-01
 hybrid-ladder sum --source thingsboard --series 6f2c...:L_LSJ1_DB_EP \
   --start 2026-01-01 --end 2026-10-21T18:49:59 --mode mixed --materialize
+hybrid-ladder calc --series demo-chiller-1:energy --start 2026-01-01 \
+  --end 2026-02-01 --rule meter_delta
 hybrid-ladder verify --source thingsboard --series ... --start ... --end ...
 hybrid-ladder repair --source thingsboard --series ... --start ... --end ...
 ```
@@ -115,7 +150,7 @@ hybrid-ladder serve --host 127.0.0.1 --port 8000
 ### `GET /health`
 
 ```json
-{"status": "ok", "version": "0.0.6", "source": "ThingsBoardSource", "store": "PostgresStore"}
+{"status": "ok", "version": "0.0.7", "source": "ThingsBoardSource", "store": "PostgresStore"}
 ```
 
 ### `GET /v1/meta`
@@ -186,6 +221,62 @@ Demo 区间与序列（仅当 `HL_SOURCE=memory`）。
   }
 }
 ```
+
+### `POST /v1/ladder/calc`
+
+把区间切成日历桶，按规则每桶算一个值。请求体：
+
+```json
+{
+  "series": [{"entity": "demo-chiller-1", "key": "energy"}],
+  "start_ts": 1767196800000,
+  "end_ts": 1798732800000,
+  "dimension": "day",
+  "rule": "meter_delta",
+  "mode": "tb",
+  "materialize": false
+}
+```
+
+* `dimension` — `minute`、`hour`、`day` 或 `month`；区间两端必须对齐到该粒度。
+* `rule` — `sum`、`avg` 或 `meter_delta`（语义见 `docs/algorithm.zh-CN.md` 第七节）。
+* `mode` — `tb`（只读数据源）、`mixed`（本地优先，需要存储）或 `local`（离线，需要存储）。
+* `materialize` — `mixed` 计算之后，把 `tb_ranges` 里的缺口固化到本地。
+
+响应行包含 `buckets`（`label`、`value`、`cnt`、`source`、`anomaly`、
+`first_ts`、`next_ts`）、组合的 `total`、`ok`（有效差个数）与 `tb_ranges`。
+异步形式：`POST /v1/ladder/calc` 立即返回 `task_id`；
+`POST /v1/ladder/calc/sync` 同步执行。
+
+```json
+{
+  "code": 0,
+  "data": {
+    "rule": "meter_delta",
+    "dimension": "day",
+    "rows": [
+      {
+        "device_id": "demo-chiller-1",
+        "key": "energy",
+        "total": 96.0,
+        "ok": 2,
+        "buckets": [
+          {"label": "2026-01-01", "value": 48.0, "anomaly": null,
+           "first_ts": 1767196800000, "next_ts": 1767283200000, "source": "tb"}
+        ],
+        "tb_ranges": [[1767196800000, 1767283200000]]
+      }
+    ],
+    "grand_total": 96.0,
+    "source": "tb"
+  }
+}
+```
+
+`meter_delta` 桶上的异常码：`no_current_reading`（本桶无读数）、
+`no_next_reading`（下一时段无读数）、`same_reading`（无新增采样）、
+`negative_delta`（疑似清零）、`non_numeric`（读数非数值）。异常桶的
+`value` 保持 `null` —— 从不编造数值。
 
 ### `POST /v1/ladder/verify`
 
@@ -279,6 +370,7 @@ hybrid-ladder mcp
 | `ladder_meta` | — | 版本、配置、数据源/存储、demo 区间 |
 | `ladder_decompose` | `start`、`end`、`finest`、`timezone` | 段与计数 |
 | `ladder_sum` | `series`、`start`、`end`、`finest`、`mode`、`materialize` | 查询结果 |
+| `ladder_calc` | `series`、`start`、`end`、`dimension`、`rule`、`mode`、`materialize` | 桶计算结果 |
 | `ladder_verify` | `series`、`start`、`end`、`finest`、`drill_limit` | 校验报告 |
 
 时间接受 ISO-8601 或 epoch 毫秒。不传 `series` 时使用 demo 序列。配置使用

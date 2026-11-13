@@ -89,6 +89,33 @@ class PointStore(Protocol):
 | `HL_CONCURRENCY` | `8` | parallel series |
 | `HL_CORS_ORIGINS` | — | comma-separated CORS origins |
 
+## Calc output (bucket rules)
+
+`rule`: `sum | avg | meter_delta`; `dimension`: `minute | hour | day | month`
+(both edges must align). `meter_delta` reads one bucket past `end` for the
+last anchor; meter resets and missing anchors come back as `anomaly` codes
+(`no_current_reading`, `no_next_reading`, `same_reading`, `negative_delta`,
+`non_numeric`) with `value: null`.
+
+```json
+{
+  "rule": "meter_delta",
+  "dimension": "day",
+  "rows": [
+    {
+      "device_id": "meter-1", "key": "total", "total": 89.2, "ok": 2,
+      "buckets": [
+        {"label": "2026-11-01", "value": 45.0, "anomaly": null,
+         "first_ts": 1793462400000, "next_ts": 1793548800000, "source": "tb"}
+      ],
+      "tb_ranges": []
+    }
+  ],
+  "grand_total": 89.2,
+  "source": "tb"
+}
+```
+
 ## CLI cheat sheet
 
 ```bash
@@ -96,6 +123,7 @@ hybrid-ladder demo
 hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
 hybrid-ladder sum --series device:key --start 2026-01-01 --end 2026-02-01
 hybrid-ladder sum --series device:key --start ... --end ... --mode mixed --materialize
+hybrid-ladder calc --series device:key --start ... --end ... --rule meter_delta --dimension day
 hybrid-ladder verify --series device:key --start ... --end ...
 hybrid-ladder repair --series device:key --start ... --end ...
 hybrid-ladder materialize --series device:key --start ... --end ...

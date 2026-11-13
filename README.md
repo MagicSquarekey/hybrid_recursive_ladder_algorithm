@@ -9,7 +9,7 @@
 [![CI](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml/badge.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/pyproject.toml)
-[![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.0.7-green.svg)](https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/blob/main/CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23683292.svg)](https://doi.org/10.5281/zenodo.23683292)
 
@@ -92,6 +92,7 @@ pip install hybrid-recursive-ladder
 
 hybrid-ladder demo
 hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule meter_delta --dimension day
 ```
 
 The demo builds synthetic 15-minute data, decomposes a 120-day range,
@@ -286,9 +287,10 @@ data; the sum is still arithmetically correct, just based on fewer points.
 
 **Limits**
 
-- **Sum only in v0.0.6.** `avg` needs `sum` + `count` weighting; `meter_delta`
-  needs the first value of every segment (ThingsBoard has no `FIRST`), so those
-  rules are not on the ladder yet.
+- **Three rules, two paths.** `sum` is exact on ladder segments. `avg` and
+  `meter_delta` are bucket rules (`hybrid-ladder calc` / `engine.calc`) over
+  aligned minute/hour/day/month buckets; `meter_delta` reads one bucket past
+  `end` and reports meter resets as anomalies, never as negative usage.
 - **Data completeness ≠ arithmetic correctness.** Missing samples make the total
   lower than the physical total; `cnt`/`expected` expose this but do not impute.
 - **ThingsBoard limits:** ~700 buckets accepted, 800 rejected (the docs' 1000 is
@@ -388,7 +390,7 @@ adapters; Celery/RQ task backend; OpenTelemetry metrics; PyPI trusted publishing
   author  = {MagicSquarekey},
   title   = {Hybrid Recursive Ladder: Query Planning for Bucket-Limited Time-Series APIs},
   year    = {2026},
-  version = {0.0.6},
+  version = {0.0.7},
   license = {MIT},
   doi     = {10.5281/zenodo.23683292},
   url     = {https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm}

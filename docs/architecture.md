@@ -107,11 +107,16 @@ class PointStore(Protocol):
     def clear_coverage(ref, start_ms, end_ms) -> int: ...
     def upsert_points(ref, points, at_ms=None) -> int: ...
     def mark_covered(ref, start_ms, end_ms, point_cnt, at_ms) -> None: ...
+    def first_ranges(ref, ranges) -> Mapping[int, tuple[int, Any] | None]: ...
+    def last_before(ref, timestamps, lookback_ms) -> Mapping[int, tuple[int, Any] | None]: ...
 ```
 
 `sum_ranges` returns `(None, 0)` for a range with no points and `(0.0, n)` for a
 range whose points sum to zero. `series` may paginate internally; `max_points`
-is a page size, not a cap on the returned result.
+is a page size, not a cap on the returned result. `first_ranges` /
+`last_before` serve the `meter_delta` bucket rule: the first point of each
+range and the latest point before each timestamp inside a lookback window, so
+anchors never need a `FIRST` aggregation.
 
 ### PostgreSQL schema
 

@@ -45,8 +45,8 @@ cola   10-21 18:49:00–18:49:59    1 segmento
 ## Instalación
 
 ```bash
-# v0.0.6 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+# v0.0.7 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -176,7 +176,7 @@ Incluidos: `MemorySource` / `MemoryStore`, `ThingsBoardSource`, `PostgresStore`.
 
 ## Limitaciones
 
-* v0.0.6 solo implementa `sum`. `avg` requiere ponderación; `meter_delta` requiere el primer valor de cada segmento.
+* Tres reglas, dos caminos. `sum` es exacta en los segmentos de la escalera. `avg` y `meter_delta` son reglas por cubo (`hybrid-ladder calc` / `engine.calc`) sobre cubos alineados por minuto/hora/día/mes; `meter_delta` lee un cubo más allá de `end` y reporta los reinicios del contador como anomalías, nunca como consumo negativo.
 * Si faltan muestras, el total será menor que el total físico. `cnt/expected` lo evidencian, pero no se imputan datos.
 * ThingsBoard acepta ~700 buckets y rechaza 800; el valor por defecto es 500.
 * Las tareas en segundo plano viven en memoria del proceso y se pierden al reiniciar (los resultados se pueden recalcular).

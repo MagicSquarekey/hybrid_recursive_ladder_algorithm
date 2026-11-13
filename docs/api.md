@@ -47,10 +47,24 @@ raise `CancelledError` when `cancel()` returns true.
 | `max_segments` | `None` | Optional defensive cap |
 | `min_bucket_ms` | `60000` | Smallest adaptive bucket |
 
+### `calc` / `calc_local` / `calc_mixed`
+
+```python
+result = engine.calc(refs, start_ms, end_ms, dimension="day", rule="sum")
+result = engine.calc_mixed(refs, start_ms, end_ms, dimension="day",
+                           rule="meter_delta")
+```
+
+`rule` is `sum`, `avg` or `meter_delta`; `dimension` is `minute`, `hour`,
+`day` or `month` and both edges must align to it. The result is a
+`CalcResult` with `rule`, `dimension`, `rows` (`CalcRow`: `buckets`,
+`total`, `ok`, `tb_ranges`, `source_counts`) and `grand_total`. Rule
+semantics and anomaly codes are specified in `docs/algorithm.md §7`.
+
 ### Results
 
 `QueryResult.as_dict()` and `Row.as_dict()` produce the JSON documented in
-`docs/algorithm.md §9`. `Segment` supports both attribute access
+`docs/algorithm.md §10`. `Segment` supports both attribute access
 (`segment.value`) and dict-style access (`segment["value"]`).
 
 ## CLI
@@ -62,6 +76,7 @@ commands:
   decompose     show the ladder decomposition of a range
   demo          end-to-end demo with synthetic data
   sum           sum one or more series
+  calc          bucket a range and apply sum / avg / meter_delta
   verify        compare the source with the local store
   repair        replace the local range with source data
   materialize   pull raw points into the local store
@@ -70,7 +85,7 @@ commands:
   version       print the version
 ```
 
-Common options for `sum`, `verify`, `repair`, `materialize`:
+Common options for `sum`, `calc`, `verify`, `repair`, `materialize`:
 
 | Option | Meaning |
 |---|---|
@@ -86,6 +101,24 @@ Common options for `sum`, `verify`, `repair`, `materialize`:
 
 `sum` also accepts `--mode tb|mixed|local` and `--materialize`.
 
+`calc` accepts the same mode/materialize options plus:
+
+| Option | Meaning |
+|---|---|
+| `--dimension minute|hour|day|month` | Bucket size; both edges of the range must align to it (default `day`) |
+| `--rule sum|avg|meter_delta` | Per-bucket aggregation rule (default `sum`) |
+
+Examples:
+
+```bash
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule sum
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule avg --dimension hour
+hybrid-ladder calc --start 2026-01-01 --end 2026-02-01 --rule meter_delta --dimension day
+hybrid-ladder calc --source thingsboard --series 6f2c...:L_LSJ1_DB_EP \
+  --start 2026-01-01 --end 2026-02-01 --rule meter_delta --mode mixed --materialize
+```
+
+
 Examples:
 
 ```bash
@@ -94,6 +127,8 @@ hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59 --json
 hybrid-ladder sum --series demo-chiller-1:energy --start 2026-01-01 --end 2026-02-01
 hybrid-ladder sum --source thingsboard --series 6f2c...:L_LSJ1_DB_EP \
   --start 2026-01-01 --end 2026-10-21T18:49:59 --mode mixed --materialize
+hybrid-ladder calc --series demo-chiller-1:energy --start 2026-01-01 \
+  --end 2026-02-01 --rule meter_delta
 hybrid-ladder verify --source thingsboard --series ... --start ... --end ...
 hybrid-ladder repair --source thingsboard --series ... --start ... --end ...
 ```
@@ -117,7 +152,7 @@ Service metadata and, with demo data, a ready-to-use range and series.
 ### `GET /health`
 
 ```json
-{"status": "ok", "version": "0.0.6", "source": "ThingsBoardSource", "store": "PostgresStore"}
+{"status": "ok", "version": "0.0.7", "source": "ThingsBoardSource", "store": "PostgresStore"}
 ```
 
 ### `GET /v1/meta`
@@ -188,6 +223,64 @@ Result shape:
   }
 }
 ```
+
+### `POST /v1/ladder/calc`
+
+Bucket a range and compute one value per bucket under a rule. Body:
+
+```json
+{
+  "series": [{"entity": "demo-chiller-1", "key": "energy"}],
+  "start_ts": 1767196800000,
+  "end_ts": 1798732800000,
+  "dimension": "day",
+  "rule": "meter_delta",
+  "mode": "tb",
+  "materialize": false
+}
+```
+
+* `dimension` — `minute`, `hour`, `day` or `month`; both edges must align to it.
+* `rule` — `sum`, `avg` or `meter_delta` (semantics in `docs/algorithm.md §7`).
+* `mode` — `tb` (source only), `mixed` (local first, needs a store) or
+  `local` (offline, needs a store).
+* `materialize` — after a `mixed` calculation, pull the uncovered
+  `tb_ranges` into the store.
+
+The response rows carry `buckets` (`label`, `value`, `cnt`, `source`,
+`anomaly`, `first_ts`, `next_ts`), a per-row `total`, `ok` (valid delta count)
+and `tb_ranges`. Async form: `POST /v1/ladder/calc` returns a `task_id`
+immediately; `POST /v1/ladder/calc/sync` runs inline.
+
+```json
+{
+  "code": 0,
+  "data": {
+    "rule": "meter_delta",
+    "dimension": "day",
+    "rows": [
+      {
+        "device_id": "demo-chiller-1",
+        "key": "energy",
+        "total": 96.0,
+        "ok": 2,
+        "buckets": [
+          {"label": "2026-01-01", "value": 48.0, "anomaly": null,
+           "first_ts": 1767196800000, "next_ts": 1767283200000, "source": "tb"}
+        ],
+        "tb_ranges": [[1767196800000, 1767283200000]]
+      }
+    ],
+    "grand_total": 96.0,
+    "source": "tb"
+  }
+}
+```
+
+Anomaly codes on `meter_delta` buckets: `no_current_reading`,
+`no_next_reading`, `same_reading`, `negative_delta` (meter reset) and
+`non_numeric`. Anomalous buckets carry `value: null` — they never invent
+a number.
 
 ### `POST /v1/ladder/verify`
 
@@ -281,6 +374,7 @@ Tools:
 | `ladder_meta` | — | version, config, source/store, demo range |
 | `ladder_decompose` | `start`, `end`, `finest`, `timezone` | segments + counts |
 | `ladder_sum` | `series`, `start`, `end`, `finest`, `mode`, `materialize` | query result |
+* `ladder_calc` — bucket a range and apply `sum` / `avg` / `meter_delta` (`dimension`, `rule`, `mode`, `materialize`).
 | `ladder_verify` | `series`, `start`, `end`, `finest`, `drill_limit` | verify report |
 
 Times accept ISO-8601 or epoch milliseconds. With no `series`, the demo series

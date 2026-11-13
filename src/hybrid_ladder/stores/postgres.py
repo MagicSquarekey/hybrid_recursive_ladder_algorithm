@@ -204,6 +204,68 @@ class PostgresStore:
             out[start] = (float(value) if value is not None else None, int(count or 0))
         return out
 
+    def first_ranges(
+        self,
+        ref: SeriesRef,
+        ranges: Sequence[tuple[int, int]],
+    ) -> Mapping[int, tuple[int, Any] | None]:
+        if not ranges:
+            return {}
+        pool = self._ensure_ready()
+        payload = json.dumps(
+            [{"i": index, "s": int(start), "e": int(end)}
+             for index, (start, end) in enumerate(ranges)]
+        )
+        sql = (
+            "SELECT b.i, f.ts, f.value "
+            "FROM jsonb_to_recordset(%s::jsonb) AS b(i int, s bigint, e bigint) "
+            "LEFT JOIN LATERAL ("
+            "SELECT r.ts, r.value FROM " + self.readings_table + " r "
+            "WHERE r.namespace=%s AND r.entity=%s AND r.key=%s "
+            "AND r.ts >= b.s AND r.ts < b.e "
+            "ORDER BY r.ts ASC LIMIT 1) f ON true"
+        )
+        with pool.connection() as conn, conn.cursor() as cur:
+            cur.execute(sql, (payload, self.namespace, ref.entity, ref.key))
+            rows = cur.fetchall()
+        out: dict[int, tuple[int, Any] | None] = {}
+        for index, ts, value in rows:
+            start = int(ranges[int(index)][0])
+            out[start] = (int(ts), value) if ts is not None else None
+        return out
+
+    def last_before(
+        self,
+        ref: SeriesRef,
+        timestamps: Sequence[int],
+        lookback_ms: int,
+    ) -> Mapping[int, tuple[int, Any] | None]:
+        if not timestamps:
+            return {}
+        pool = self._ensure_ready()
+        payload = json.dumps(
+            [{"i": index, "t": int(target)} for index, target in enumerate(timestamps)]
+        )
+        sql = (
+            "SELECT b.i, f.ts, f.value "
+            "FROM jsonb_to_recordset(%s::jsonb) AS b(i int, t bigint) "
+            "LEFT JOIN LATERAL ("
+            "SELECT r.ts, r.value FROM " + self.readings_table + " r "
+            "WHERE r.namespace=%s AND r.entity=%s AND r.key=%s "
+            "AND r.ts >= b.t - %s AND r.ts < b.t "
+            "ORDER BY r.ts DESC LIMIT 1) f ON true"
+        )
+        with pool.connection() as conn, conn.cursor() as cur:
+            cur.execute(
+                sql, (payload, self.namespace, ref.entity, ref.key, int(lookback_ms))
+            )
+            rows = cur.fetchall()
+        out: dict[int, tuple[int, Any] | None] = {}
+        for index, ts, value in rows:
+            target = int(timestamps[int(index)])
+            out[target] = (int(ts), value) if ts is not None else None
+        return out
+
     def series(
         self,
         ref: SeriesRef,

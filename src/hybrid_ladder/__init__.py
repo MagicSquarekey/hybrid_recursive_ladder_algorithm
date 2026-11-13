@@ -21,6 +21,13 @@ from __future__ import annotations
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _version
 
+from .calc import (
+    DeltaCell,
+    build_buckets,
+    delta_chain,
+    fold_avg,
+    fold_row_total,
+)
 from .core import (
     BUCKET_MS,
     LEVELS,
@@ -44,6 +51,18 @@ from .errors import (
     StoreError,
 )
 from .models import (
+    ANOMALY_NEGATIVE_DELTA,
+    ANOMALY_NO_CURRENT,
+    ANOMALY_NO_NEXT,
+    ANOMALY_NON_NUMERIC,
+    ANOMALY_SAME_READING,
+    DELTA_LOOKBACK_MS,
+    DIMENSIONS,
+    RULES,
+    Bucket,
+    BucketValue,
+    CalcResult,
+    CalcRow,
     LadderConfig,
     QueryResult,
     Row,
@@ -57,10 +76,23 @@ from .sources.memory import MemorySource
 from .stores.memory import MemoryStore
 
 __all__ = [
+    "ANOMALY_NEGATIVE_DELTA",
+    "ANOMALY_NON_NUMERIC",
+    "ANOMALY_NO_CURRENT",
+    "ANOMALY_NO_NEXT",
+    "ANOMALY_SAME_READING",
     "BUCKET_MS",
+    "DELTA_LOOKBACK_MS",
+    "DIMENSIONS",
     "LEVELS",
+    "RULES",
+    "Bucket",
+    "BucketValue",
+    "CalcResult",
+    "CalcRow",
     "CancelledError",
     "ConfigurationError",
+    "DeltaCell",
     "LadderConfig",
     "LadderEngine",
     "LadderError",
@@ -75,12 +107,16 @@ __all__ = [
     "StoreError",
     "TimeSeriesSource",
     "__version__",
+    "build_buckets",
     "coerce_ref",
     "coerce_refs",
     "contiguous_runs",
     "decompose",
+    "delta_chain",
     "fetch_runs",
+    "fold_avg",
     "fold_count",
+    "fold_row_total",
     "fold_sum",
     "label_for",
     "merge_coverage",
@@ -92,7 +128,7 @@ __all__ = [
 try:
     __version__ = _version("hybrid-recursive-ladder")
 except PackageNotFoundError:  # running from a source tree
-    __version__ = "0.0.6"
+    __version__ = "0.0.7"
 
 
 def __getattr__(name: str):

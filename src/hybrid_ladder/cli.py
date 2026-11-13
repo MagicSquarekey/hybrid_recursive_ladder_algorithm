@@ -25,7 +25,7 @@ from . import __version__
 from .demo import DEMO_SERIES, DEMO_STEP_MS, build_demo_source, demo_range
 from .engine import LadderEngine
 from .errors import ConfigurationError, LadderError
-from .models import LEVELS, LadderConfig, SeriesRef
+from .models import DIMENSIONS, LEVELS, RULES, LadderConfig, SeriesRef
 
 __all__ = ["main"]
 
@@ -252,6 +252,57 @@ def cmd_sum(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_calc(args: argparse.Namespace) -> int:
+    refs = _refs(args)
+    start = parse_time(args.start, args.timezone)
+    end = parse_time(args.end, args.timezone)
+    engine = _build_engine(args, refs)
+    mode = args.mode
+    if mode in ("mixed", "local") and engine.store is None:
+        raise ConfigurationError("--mode mixed/local needs --dsn (or HL_PG_DSN)")
+    if mode == "tb":
+        result = engine.calc(refs, start, end, dimension=args.dimension, rule=args.rule)
+    elif mode == "local":
+        result = engine.calc_local(refs, start, end, dimension=args.dimension, rule=args.rule)
+    else:
+        result = engine.calc_mixed(refs, start, end, dimension=args.dimension, rule=args.rule)
+    if args.materialize and engine.store is not None:
+        items = (
+            [(ref, [(start, end)]) for ref in refs]
+            if mode == "tb"
+            else [(row.ref, row.tb_ranges) for row in result.rows if row.tb_ranges]
+        )
+        if items:
+            result.materialized = engine.materialize_ranges(items)
+    if args.json:
+        print(json.dumps(result.as_dict(), ensure_ascii=False, indent=2))
+        return 0
+    for row in result.rows:
+        if row.error:
+            print(f"{row.ref.display_name}:{row.ref.key} error: {row.error}")
+            continue
+        print(f"{row.ref.display_name} · {row.ref.key}  (rule={result.rule}, "
+              f"dimension={result.dimension})")
+        rows = [
+            [bucket.label, _fmt(bucket.value),
+             "-" if bucket.cnt is None else str(bucket.cnt),
+             bucket.source or "", bucket.anomaly or ""]
+            for bucket in row.buckets
+        ]
+        _print_table(["BUCKET", "VALUE", "CNT", "SOURCE", "ANOMALY"], rows)
+        extra = f"  ok={row.ok}" if result.rule == "meter_delta" else ""
+        print(f"total: {_fmt(row.total)}{extra}")
+        print()
+    print(f"grand total: {_fmt(result.grand_total)}  source: {result.source}")
+    if result.source_counts:
+        print("buckets by source: " + ", ".join(
+            f"{k}={v}" for k, v in sorted(result.source_counts.items())
+        ))
+    if result.materialized:
+        print(f"materialized: {result.materialized.get('written')} points")
+    return 0
+
+
 def cmd_verify(args: argparse.Namespace) -> int:
     refs = _refs(args)
     start = parse_time(args.start, args.timezone)
@@ -430,6 +481,18 @@ def build_parser() -> argparse.ArgumentParser:
     p_sum.add_argument("--materialize", action="store_true",
                        help="write missing raw points to the local store after the query")
     p_sum.set_defaults(func=cmd_sum)
+
+    p_calc = sub.add_parser(
+        "calc", help="bucket a range and apply sum / avg / meter_delta")
+    _common_series_args(p_calc)
+    p_calc.add_argument("--dimension", choices=DIMENSIONS, default="day",
+                         help="bucket size: minute, hour, day or month")
+    p_calc.add_argument("--rule", choices=RULES, default="sum",
+                         help="per-bucket aggregation rule")
+    p_calc.add_argument("--mode", choices=["tb", "mixed", "local"], default="tb")
+    p_calc.add_argument("--materialize", action="store_true",
+                        help="write missing raw points to the local store after the query")
+    p_calc.set_defaults(func=cmd_calc)
 
     p_verify = sub.add_parser("verify", help="compare the source with the local store")
     _common_series_args(p_verify)

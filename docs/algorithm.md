@@ -238,8 +238,8 @@ This is a correctness condition, not a claim about arbitrary time zones.
 | `sum` | ✅ | The sum of all segments equals the sum of the source's points in the range. |
 | `max` / `min` | ✅ | Fold extrema. Not implemented in v0.0.1. |
 | `last` | ✅ | The last value of the last segment. Not implemented. |
-| `avg` | ⚠️ needs weighting | Average of segment averages ≠ average of all points. Needs `sum` + `count`, and `COUNT` may collapse duplicate points. Not implemented. |
-| `meter_delta` | ⚠️ different algorithm | Requires the first value of every segment. Most sources (including ThingsBoard) have no `FIRST` aggregation, so raw points or per-segment boundary queries are needed. Not implemented. |
+| `avg` | ⚠️ needs weighting | Implemented as a bucket rule (§7): `sum` ÷ `count` per bucket, row total = mean of non-empty buckets. Source-side `COUNT` may collapse duplicate points within a minute. |
+| `meter_delta` | ⚠️ different algorithm | Implemented as a bucket rule (§7): per-bucket first readings with a bounded lookback and one bucket read past `end`. ThingsBoard has no `FIRST`, so anchors come from raw series or store first-point reads. |
 
 ### 6.1 Empty vs zero
 
@@ -255,7 +255,63 @@ samples. The sum is the sum of the points that exist. `cnt` (observed points or
 buckets) and `expected` (buckets the segment should contain) expose sparsity;
 they are not used to impute data.
 
-## 7. Coverage and the local-first read path
+## 7. Bucket calculation: `sum`, `avg`, `meter_delta`
+
+The ladder answers "what is the total over a long range". The upstream field
+deployment asked for a second question on 2026-11-13: "one value per
+minute/hour/day/month bucket, under a rule". The bucket calculator answers it
+with the same calendar boundaries, the same local-first read path and the same
+coverage bookkeeping — only the output shape differs.
+
+### 7.1 Buckets and alignment
+
+`build_buckets(start, end, dimension)` splits `[start, end)` into calendar
+buckets of `dimension` (minute/hour/day/month). Both edges must sit exactly
+on a boundary of that dimension; an unaligned range is rejected instead of
+being silently shifted. Like ladder segments, buckets tile the range exactly.
+
+### 7.2 Rules
+
+| Rule | Bucket value | Row total |
+|---|---|---|
+| `sum` | sum of the points in the bucket | sum of non-empty buckets |
+| `avg` | `sum ÷ count` of the bucket | unweighted mean of non-empty buckets ("mean of means") |
+| `meter_delta` | next bucket's first reading − this bucket's first reading | telescoping sum = last anchor − first anchor |
+
+`avg` keeps the deployment's existing convention: a row total is the mean of
+the bucket means, not a count-weighted average, and the grand total across
+series is the mean of the row totals. `null` (no samples) and `0.0` (samples
+summing to zero) stay distinct on every rule.
+
+### 7.3 `meter_delta` semantics
+
+* The last bucket reads one bucket **past `end`** for its next anchor. That
+  reading is used for the difference only and is never emitted as a bucket,
+  nor registered as covered.
+* A bucket with no reading falls back to the last reading before its start,
+  within a bounded lookback (1 day; 40 days for month buckets). Beyond the
+  lookback there is no anchor.
+* The calculator never invents a value. Four conditions are reported as
+  stable anomaly codes on the bucket instead: `no_current_reading`,
+  `no_next_reading`, `same_reading` (no new sample between buckets),
+  `negative_delta` (meter reset), plus `non_numeric` for non-numeric
+  readings. In all of them `value` stays `null`.
+* The chain telescopes: the sum of valid deltas equals the last anchor minus
+  the first anchor, which is why rows also report `ok` — the number of valid
+  deltas.
+
+### 7.4 Reads and coverage
+
+`calc` reads from the source, `calc_local` from the store, and `calc_mixed`
+is local-first: each bucket is split against the merged coverage ranges,
+covered sub-ranges come from the store, and only the missing pieces are
+fetched from the source. `sum`/`avg` use grouped interval aggregation — a
+month folds from days, a day from hours, the same `FETCH_LEVEL` table as the
+ladder — packed into requests of at most `max_intervals` buckets.
+`meter_delta` uses first-point reads: `first_ranges` and `last_before` on
+the store, raw series on the source, so no `FIRST` aggregation is required.
+
+## 8. Coverage and the local-first read path
 
 ### 7.1 Coverage
 
@@ -288,7 +344,7 @@ Before rewriting a range, the store clears coverage rows that overlap the
 range. If the pull fails halfway, the range is no longer marked as covered, so
 a later query re-fetches it instead of trusting incomplete local data.
 
-## 8. Materialization, verification and repair
+## 9. Materialization, verification and repair
 
 * **Materialize** pulls raw points in chunks of at most `max_points` (10,000),
   bisecting the window when a page is full. Points are written idempotently;
@@ -302,7 +358,7 @@ a later query re-fetches it instead of trusting incomplete local data.
   of at most `max_repair_days` (default 366), then re-marks coverage. Points
   deleted at the source disappear locally.
 
-## 9. Data model
+## 10. Data model
 
 ```json
 {
@@ -331,7 +387,7 @@ A query result contains one row per series with `segments`, `total`,
 `empty_count`, `segments_count` and `tb_ranges`, plus a `grand_total`, an
 overall `source`, `source_counts` and `errors`.
 
-## 10. Invariants
+## 11. Invariants
 
 1. Segments tile the range exactly.
 2. No zero-length segments.
@@ -341,9 +397,9 @@ overall `source`, `source_counts` and `errors`.
 6. Materialization is idempotent.
 7. The algorithm never writes to the source.
 
-## 11. Known limitations
+## 12. Known limitations
 
-* Only `sum` is implemented in v0.0.1.
+* `sum` is exact on ladder segments; `avg` and `meter_delta` are bucket rules (§7). `max`/`min`/`last` are not implemented.
 * Data gaps make the total lower than the physical total; `cnt`/`expected`
   expose this but do not fix it.
 * ThingsBoard `COUNT` collapses duplicate points within a minute; use raw
@@ -355,7 +411,7 @@ overall `source`, `source_counts` and `errors`.
 * The stable-key migration (`device_id`) from the original AutoTestHub schema
   is not automatic; see `docs/architecture.md`.
 
-## 12. Relationship to known techniques
+## 13. Relationship to known techniques
 
 The decomposition is the calendar mixed-radix instance of the canonical interval
 decomposition used by segment trees: a range is covered by aligned units, and
@@ -370,7 +426,9 @@ is intended for sources that expose a read-only interval-aggregation endpoint;
 it does not require writing to or reconfiguring the source. See
 [`related-work.md`](related-work.md) for the full comparison and citations.
 
-## 13. Version notes
+## 14. Version notes
+
+**0.0.7** — adds the bucket calculator: `sum`, `avg` and `meter_delta` over aligned minute/hour/day/month buckets (§7), with the local-first read path, anomaly codes for meter resets and missing anchors, `first_ranges`/`last_before` store reads, and `calc` entries in the CLI, HTTP API and MCP server.
 
 **0.0.4** — documentation release. No algorithm semantics changed. Reworks the READMEs and adds diagrams.
 

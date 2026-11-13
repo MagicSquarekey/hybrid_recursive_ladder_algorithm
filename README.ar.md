@@ -45,8 +45,8 @@
 ## التثبيت
 
 ```bash
-# v0.0.6 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+# v0.0.7 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -176,7 +176,7 @@ class PointStore(Protocol):
 
 ## القيود
 
-* الإصدار v0.0.6 ينفّذ `sum` فقط. `avg` يحتاج ترجيحًا؛ `meter_delta` يحتاج أول قيمة في كل مقطع.
+* ثلاث قواعد ومساران. `sum` دقيقة على مقاطع السلّم. أما `avg` و`meter_delta` فهما قاعدتان على الدلاء (`hybrid-ladder calc` / `engine.calc`) بدلاء مضبوطة على الدقيقة/الساعة/اليوم/الشهر؛ و`meter_delta` يقرأ دلوًا واحدًا بعد `end` ويُبلغ عن تصفير العداد كحالة شاذة لا كاستهلاك سالب.
 * نقص القياسات يجعل الإجمالي أقل من الإجمالي الفيزيائي. `cnt/expected` يكشفان ذلك دون تعويض.
 * ThingsBoard يقبل نحو 700 دلو ويرفض 800؛ الافتراضي 500.
 * المهام الخلفية تعيش في ذاكرة العملية وتُفقد عند إعادة التشغيل (يمكن إعادة حساب النتائج).

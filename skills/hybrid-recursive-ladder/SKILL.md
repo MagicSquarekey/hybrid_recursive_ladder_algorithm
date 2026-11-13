@@ -31,8 +31,8 @@ Use it when **all** of these are true:
 
 Do **not** use it for:
 
-* Average or meter-delta rules in v0.0.6 (average needs weighted sum+count;
-  meter-delta needs the first value of every segment).
+* Averages or meter deltas **on ladder segments** — those are bucket rules.
+  Use `calc` (see below) for `avg` and `meter_delta` over aligned buckets.
 * Non-additive metrics or event streams.
 * Sources without interval aggregation — implement the two-method protocol
   first.
@@ -40,8 +40,8 @@ Do **not** use it for:
 ## Install
 
 ```bash
-# v0.0.6 GitHub release wheel
-pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.6/hybrid_recursive_ladder-0.0.6-py3-none-any.whl
+# v0.0.7 GitHub release wheel
+pip install https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm/releases/download/v0.0.7/hybrid_recursive_ladder-0.0.7-py3-none-any.whl
 
 # optional extras: clone and install
 git clone https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm.git
@@ -85,7 +85,20 @@ hybrid-ladder decompose --start 2026-01-01 --end 2026-10-21T18:49:59
      --mode mixed --materialize
    ```
 
-4. **Verify** the local copy, then repair if needed:
+4. **Bucket a range under a rule** (sum / avg / meter_delta):
+
+   ```bash
+   hybrid-ladder calc --series <device_id>:<key> \
+     --start <start> --end <end> --dimension day --rule meter_delta
+   ```
+
+   Both edges must align to `--dimension`. `meter_delta` reports meter
+   resets and missing anchors as `anomaly` codes (`same_reading`,
+   `negative_delta`, `no_current_reading`, `no_next_reading`,
+   `non_numeric`) instead of inventing values, and reads one bucket past
+   `end` for the last anchor.
+
+5. **Verify** the local copy, then repair if needed:
 
    ```bash
    hybrid-ladder verify --source thingsboard --series ... --start ... --end ...
@@ -129,7 +142,7 @@ HTTP endpoints:
 
 Success envelope: `{"code":0,"data":...}`; errors: `{"code":1,"detail":...}`.
 
-MCP tools: `ladder_meta`, `ladder_decompose`, `ladder_sum`, `ladder_verify`.
+MCP tools: `ladder_meta`, `ladder_decompose`, `ladder_sum`, `ladder_calc`, `ladder_verify`.
 
 ## Output semantics (important)
 

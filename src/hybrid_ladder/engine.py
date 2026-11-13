@@ -9,6 +9,7 @@ from collections.abc import Callable, Iterable, Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
+from .calc_engine import CalcMixin
 from .core import (
     BUCKET_MS,
     decompose,
@@ -43,7 +44,7 @@ def _grand_total(rows: Sequence[Row]) -> float | None:
     return round(sum(values), 6) if values else None
 
 
-class LadderEngine:
+class LadderEngine(CalcMixin):
     """Coordinate a :class:`TimeSeriesSource` and an optional :class:`PointStore`.
 
     The engine is thread-safe as long as the adapters are.  Batch methods run
@@ -640,7 +641,8 @@ class LadderEngine:
         fn: Callable[[SeriesRef], Row],
         progress: ProgressFn | None,
         cancel: CancelFn | None,
-    ) -> tuple[list[Row], list[dict[str, Any]]]:
+        error_factory: Callable[..., Any] | None = None,
+    ) -> tuple[list[Any], list[dict[str, Any]]]:
         total = len(refs)
         if total == 0:
             return [], []
@@ -666,7 +668,8 @@ class LadderEngine:
                     if not self.config.continue_on_error:
                         raise
                     message = f"{type(exc).__name__}: {exc}"
-                    rows[index] = Row(ref=refs[index], error=message)
+                    make_row = error_factory or Row
+                    rows[index] = make_row(ref=refs[index], error=message)
                     errors.append(
                         {
                             "device_id": refs[index].entity,

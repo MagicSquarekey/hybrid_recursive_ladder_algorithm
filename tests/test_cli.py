@@ -119,3 +119,61 @@ def test_custom_series_gets_synthetic_demo_data(capsys):
     payload = json.loads(capsys.readouterr().out)
     assert payload["rows"][0]["device_id"] == "my-device"
     assert payload["grand_total"] is not None
+
+
+def test_calc_json(capsys):
+    assert main([
+        "calc",
+        "--start", "2026-01-01",
+        "--end", "2026-01-04",
+        "--dimension", "day",
+        "--rule", "sum",
+        "--json",
+    ]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["rule"] == "sum"
+    assert payload["dimension"] == "day"
+    assert payload["grand_total"] > 0
+    assert len(payload["rows"][0]["buckets"]) == 3
+    assert payload["rows"][0]["buckets"][0]["cnt"] > 0
+
+
+def test_calc_meter_delta_table(capsys):
+    assert main([
+        "calc",
+        "--start", "2026-01-01",
+        "--end", "2026-01-03",
+        "--rule", "meter_delta",
+    ]) == 0
+    output = capsys.readouterr().out
+    assert "BUCKET" in output
+    assert "rule=meter_delta" in output
+    assert "grand total" in output
+
+
+def test_calc_avg_hour_buckets(capsys):
+    assert main([
+        "calc",
+        "--start", "2026-01-01T00:00",
+        "--end", "2026-01-01T06:00",
+        "--dimension", "hour",
+        "--rule", "avg",
+    ]) == 0
+    output = capsys.readouterr().out
+    assert "dimension=hour" in output
+
+
+def test_calc_unaligned_range_returns_2(capsys):
+    assert main([
+        "calc",
+        "--start", "2026-01-01T09:30",
+        "--end", "2026-01-04",
+        "--dimension", "day",
+    ]) == 2
+    assert "aligned" in capsys.readouterr().err
+
+
+def test_calc_bad_rule_rejected(capsys):
+    with pytest.raises(SystemExit):
+        main(["calc", "--start", "2026-01-01", "--end", "2026-01-02",
+              "--rule", "median"])

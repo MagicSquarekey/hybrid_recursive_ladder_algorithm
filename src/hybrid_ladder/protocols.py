@@ -68,6 +68,30 @@ class PointStore(Protocol):
         """Sum each range in one call; keys are the range start timestamps."""
         ...
 
+    def first_ranges(
+        self,
+        ref: SeriesRef,
+        ranges: Sequence[tuple[int, int]],
+    ) -> Mapping[int, tuple[int, Any] | None]:
+        """First point of each range, one call; keys are the range starts.
+
+        ``None`` means the range has no points at all.
+        """
+        ...
+
+    def last_before(
+        self,
+        ref: SeriesRef,
+        timestamps: Sequence[int],
+        lookback_ms: int,
+    ) -> Mapping[int, tuple[int, Any] | None]:
+        """Latest point before each timestamp, within ``lookback_ms``.
+
+        Keys are the query timestamps.  ``None`` means no point falls into
+        ``[ts - lookback_ms, ts)``.  Used by the meter-delta fallback.
+        """
+        ...
+
     def series(
         self,
         ref: SeriesRef,
