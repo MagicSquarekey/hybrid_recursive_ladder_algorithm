@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.0.6-green.svg)](CHANGELOG.md)
 [![Website](https://img.shields.io/badge/website-live-5eead4.svg)](https://magicsquarekey.github.io/hybrid_recursive_ladder_algorithm/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24194544.svg)](https://doi.org/10.5281/zenodo.24194544)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24197965.svg)](https://doi.org/10.5281/zenodo.24197965)
 
 <p align="center">
   <img src="docs/assets/hero.hi.png" alt="Per-bucket client versus calendar ladder" width="100%">

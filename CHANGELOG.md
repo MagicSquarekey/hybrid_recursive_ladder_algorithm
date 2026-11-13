@@ -12,6 +12,7 @@ Correctness release: mixed reads no longer trust coverage blindly.
 
 ### Added
 
+* Zenodo archive and DOI: [10.5281/zenodo.24197965](https://doi.org/10.5281/zenodo.24197965).
 * Query-time verification of covered ranges on every mixed read
   (`sum_mixed`, `calc_mixed`): each covered run inside the query window is
   SUM-fingerprinted (one source interval sum vs one batched store sum). A

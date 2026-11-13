@@ -13,7 +13,7 @@ authors:
   - family-names: "MagicSquarekey"
     alias: "MagicSquarekey"
 version: "0.0.8"
-doi: "10.5281/zenodo.24194544"
+doi: "10.5281/zenodo.24197965"
 date-released: "2026-11-13"
 license: "MIT"
 repository-code: "https://github.com/MagicSquarekey/hybrid_recursive_ladder_algorithm"
